@@ -82,19 +82,15 @@
         .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
         .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
-        /* 修正按鈕樣式：讓實心與線框按鈕共用排版設定 */
+        /* 修正後的按鈕樣式：確保兩種按鈕排版一致 */
         .btn, .btn-outline { 
             display: inline-flex; align-items: center; justify-content: center; 
             padding: 10px 20px; border-radius: 8px; text-decoration: none; 
             font-size: 13px; font-weight: 600; transition: all 0.2s; 
             cursor: pointer; width: 100%; margin-top: auto; 
         }
-
-        /* 實心按鈕專屬色 */
         .btn { background-color: var(--brand-red); color: #fff; border: none; }
         .btn:hover { background-color: #c93d39; box-shadow: 0 4px 12px rgba(225, 79, 75, 0.3); }
-
-        /* 線框按鈕專屬色 */
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
 
@@ -179,6 +175,27 @@
     </main>
 
     <script>
+        // ============================================
+        //  Phase 2: Google Sheet 日誌系統設定
+        // ============================================
+        const LOGGER_URL = "https://script.google.com/a/macros/anymindgroup.com/s/AKfycbyI4OHtqUIswtXspzei7U0exJMST6tHrj527aD7S5IbMoBvBROolJrBLJWgiY0CcSz0/exec";
+
+        function sendToSheet(action, label, note) {
+            if(!LOGGER_URL.startsWith("http")) return;
+
+            fetch(LOGGER_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: action, label: label, note: note })
+            }).then(() => {
+                console.log("Log sent to Sheet:", action, label);
+            }).catch(err => console.error("Log failed:", err));
+        }
+
+        // ============================================
+        //  Phase 1: 輕量級資料庫 (Knowledge Base)
+        // ============================================
         const knowledgeBase = [
             {
                 id: "001",
@@ -277,6 +294,7 @@
         function logDecision(id, title) {
             const timestamp = new Date().toISOString();
             console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
+            sendToSheet("Click", title, `ID: ${id}`);
         }
 
         function smartSearch() {
@@ -297,6 +315,7 @@
                     if (item.riskLevel === 'high') {
                         console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
                         alertHtml = `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>`;
+                        sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
                     }
 
                     const cardHTML = `
@@ -315,6 +334,9 @@
 
             if (!hasResult) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。<br><small>(模擬日誌：紀錄搜尋失敗關鍵字 "${input}")</small></div>`;
+                if(input.length > 1) {
+                     sendToSheet("Search_Failed", input, "No Result Found");
+                }
             }
         }
 
