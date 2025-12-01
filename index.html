@@ -82,15 +82,26 @@
         .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
         .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; background-color: var(--brand-red); color: #fff; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; width: 100%; margin-top: auto; }
+        /* 修正按鈕樣式：讓實心與線框按鈕共用排版設定 */
+        .btn, .btn-outline { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            padding: 10px 20px; border-radius: 8px; text-decoration: none; 
+            font-size: 13px; font-weight: 600; transition: all 0.2s; 
+            cursor: pointer; width: 100%; margin-top: auto; 
+        }
+
+        /* 實心按鈕專屬色 */
+        .btn { background-color: var(--brand-red); color: #fff; border: none; }
         .btn:hover { background-color: #c93d39; box-shadow: 0 4px 12px rgba(225, 79, 75, 0.3); }
+
+        /* 線框按鈕專屬色 */
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
 
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px; }
         .tag-primary { background: rgba(225, 79, 75, 0.15); color: var(--brand-red); }
         .tag-secondary { background: #f0f0f0; color: #666; }
-        .tag-high-risk { background: #fee2e2; color: #ef4444; } /* 新增高風險標籤樣式 */
+        .tag-high-risk { background: #fee2e2; color: #ef4444; }
 
         .alert { padding: 20px; border-radius: 12px; margin-bottom: 24px; font-size: 15px; line-height: 1.6; border-left: 5px solid var(--brand-red); background: #fff; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 15px; overflow: hidden; }
         .alert-icon { color: var(--brand-red); font-size: 20px; flex-shrink: 0; }
@@ -168,10 +179,6 @@
     </main>
 
     <script>
-        // ============================================
-        //  Phase 1: 輕量級資料庫 (Knowledge Base)
-        //  這裡是你以後唯一需要修改內容的地方
-        // ============================================
         const knowledgeBase = [
             {
                 id: "001",
@@ -181,7 +188,7 @@
                 tagClass: "tag-primary",
                 icon: "fa-solid fa-magnifying-glass-location",
                 btnText: "前往教學",
-                btnLink: "#", // 之後替換成真實連結
+                btnLink: "#", 
                 btnStyle: "btn",
                 riskLevel: "low",
                 category: "AnyTag"
@@ -225,7 +232,6 @@
                 riskLevel: "low",
                 category: "System"
             },
-            // --- 測試高風險攔截用 ---
             {
                 id: "999",
                 title: "帳號封禁申訴",
@@ -236,9 +242,9 @@
                 btnText: "聯繫法務",
                 btnLink: "mailto:legal@anymindgroup.com",
                 btnStyle: "btn-outline",
-                riskLevel: "high", // 關鍵設定
+                riskLevel: "high", 
                 category: "AnyCreator",
-                hidden: true // 預設不在首頁顯示，只有搜尋才會出現
+                hidden: true 
             }
         ];
 
@@ -248,17 +254,12 @@
             "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
         ];
 
-        // ============================================
-        //  Render Engine (渲染引擎) - 負責把資料畫出來
-        // ============================================
-        
-        // 1. 初始化：渲染首頁卡片
         function initDashboard() {
             const container = document.getElementById('quick-access-container');
-            container.innerHTML = ''; // 清空
+            container.innerHTML = ''; 
 
             knowledgeBase.forEach(item => {
-                if (item.hidden) return; // 隱藏項目跳過
+                if (item.hidden) return; 
 
                 const cardHTML = `
                     <div class="card">
@@ -273,30 +274,25 @@
             });
         }
 
-        // 2. 模擬日誌系統 (Logger)
         function logDecision(id, title) {
             const timestamp = new Date().toISOString();
             console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
-            // 未來這裡會把資料傳送給 Cloudflare D1 資料庫
         }
 
-        // 3. 智能搜尋 (含高風險攔截邏輯)
         function smartSearch() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
-            container.innerHTML = ''; // 清空目前顯示
+            container.innerHTML = ''; 
 
             let hasResult = false;
 
             knowledgeBase.forEach(item => {
-                // 搜尋邏輯：比對標題、描述、標籤
                 if (item.title.toLowerCase().includes(input) || 
                     item.desc.toLowerCase().includes(input) || 
                     item.tag.toLowerCase().includes(input)) {
                     
                     hasResult = true;
                     
-                    // 高風險攔截邏輯
                     let alertHtml = '';
                     if (item.riskLevel === 'high') {
                         console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
@@ -322,13 +318,10 @@
             }
         }
 
-        // 頁面載入後執行
         window.onload = function() {
             initDashboard();
             startNoticeCarousel();
         };
-
-        // --- 以下維持原本的 UI 邏輯 (頁面切換、公告輪播) ---
 
         function showPage(pageId, navElement) {
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
@@ -336,9 +329,8 @@
             document.getElementById(pageId).classList.add('active');
             if(navElement) navElement.classList.add('active');
             
-            // 簡單標題切換
             const map = {
-                'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？'],
+                'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'],
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
