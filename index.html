@@ -87,10 +87,9 @@
         .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
         .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
-        /* 按鈕樣式整齊化 */
         .btn, .btn-outline { 
             display: flex; align-items: center; justify-content: center; 
-            padding: 0 10px; height: 42px; /* 固定高度 */
+            padding: 0 10px; height: 42px; 
             border-radius: 8px; text-decoration: none; 
             font-size: 13px; font-weight: 600; transition: all 0.2s; 
             cursor: pointer; width: 100%; margin-top: auto; 
@@ -101,7 +100,6 @@
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
 
-        /* 雙按鈕容器 - 強制等寬 */
         .btn-group { display: flex; gap: 10px; margin-top: auto; width: 100%; }
         .btn-group .btn, .btn-group .btn-outline { margin-top: 0; flex: 1 1 0; width: 0; } 
 
@@ -148,7 +146,6 @@
 </head>
 <body>
 
-    <!-- 許願池留言板：使用 Google Form iframe (獨立運作) -->
     <div id="bugModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -224,18 +221,13 @@
     </main>
 
     <script>
-        // ============================================
-        //  Phase 2: 自動日誌系統 (Logger)
-        //  功能：負責在背景偷偷紀錄使用者的點擊、搜尋失敗等行為，作為優化參考。
-        //  目標：AnyTag_Wiki_Logs Sheet
-        // ============================================
         const LOGGER_URL = "https://script.google.com/macros/s/AKfycbxdLO-ubptCO9gE_1yRj5TT-nY6Yujl9Dr-oSlyhQHUyBxUxTJpDLruk-H32fuPlOLb/exec";
 
         function sendToSheet(action, label, note) {
-            // 使用 no-cors 模式，這是讓靜態網頁能發送數據給 Apps Script 的關鍵
+            if(!LOGGER_URL.startsWith("http")) return;
             fetch(LOGGER_URL, {
                 method: "POST",
-                mode: "no-cors", 
+                mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ action: action, label: label, note: note })
             }).then(() => {
@@ -243,10 +235,6 @@
             }).catch(err => console.error("Log failed:", err));
         }
 
-        // ============================================
-        //  Phase 1: 輕量級資料庫 (Knowledge Base)
-        //  這部分決定網頁上顯示什麼卡片
-        // ============================================
         const knowledgeBase = [
             {
                 id: "001",
@@ -283,9 +271,7 @@
                 tag: "Wishlist",
                 tagClass: "tag-primary",
                 icon: "fa-solid fa-comments",
-                // 新增 keywords：讓搜尋引擎看得到 'bug', '需求'
                 keywords: "bug, 需求, 建議, issue, error, 錯誤",
-                
                 customHtml: `
                     <div class="btn-group">
                         <button class="btn" onclick="openModal()">我要留言</button>
@@ -361,8 +347,8 @@
             "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
         ];
 
-        // 全域變數
         let currentRole = 'All';
+        let searchDebounce = null; // 用來儲存計時器
 
         function filterRole(role) {
             currentRole = role;
@@ -373,7 +359,6 @@
                 }
             });
             renderCards();
-            // 紀錄：切換 Tab 也算是重要的使用者行為，要記下來
             sendToSheet("Switch_Tab", role, "User switched view");
         }
 
@@ -406,7 +391,6 @@
             });
         }
 
-        // --- Modal 相關功能 (開啟 Google Form iframe) ---
         function openModal() {
             document.getElementById('bugModal').style.display = "flex";
         }
@@ -422,7 +406,6 @@
             }
         }
 
-        // 紀錄點擊 (只負責記錄行為，不負責跳轉，跳轉由 <a> 標籤處理)
         function logDecision(id, title) {
             const timestamp = new Date().toISOString();
             console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
@@ -430,6 +413,9 @@
         }
 
         function smartSearch() {
+            // 每次輸入就先清除舊的計時器
+            if (searchDebounce) clearTimeout(searchDebounce);
+
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
@@ -437,7 +423,6 @@
             let hasResult = false;
 
             knowledgeBase.forEach(item => {
-                // 修改：搜尋邏輯加入 keywords 檢查
                 if (item.title.toLowerCase().includes(input) || 
                     item.desc.toLowerCase().includes(input) || 
                     item.tag.toLowerCase().includes(input) ||
@@ -449,7 +434,6 @@
                     if (item.riskLevel === 'high') {
                         console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
                         alertHtml = `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>`;
-                        // 紀錄：高風險關鍵字觸發
                         sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
                     }
 
@@ -475,10 +459,13 @@
             });
 
             if (!hasResult) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。<br><small>(模擬日誌：紀錄搜尋失敗關鍵字 "${input}")</small></div>`;
-                if(input.length > 2) {
-                     // 紀錄：搜尋失敗 (使用者想找但找不到的東西)
-                     sendToSheet("Search_Failed", input, "No Result Found");
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
+                
+                // 防抖邏輯：只有當使用者停下來 2 秒，且還是沒結果，才發送紀錄
+                if(input.length > 1) {
+                    searchDebounce = setTimeout(() => {
+                        sendToSheet("Search_Failed", input, "No Result Found");
+                    }, 2000);
                 }
             }
         }
