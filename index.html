@@ -87,6 +87,7 @@
         .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
         .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
+        /* 按鈕樣式 */
         .btn, .btn-outline { 
             display: flex; align-items: center; justify-content: center; 
             padding: 0 10px; height: 42px; 
@@ -122,26 +123,28 @@
         .tech-table td { padding: 16px; border-bottom: 1px solid #eee; font-size: 15px; color: #333; }
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; background: var(--brand-red); box-shadow: 0 0 8px var(--brand-red); }
 
-        .modal {
-            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; 
-            background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
-            align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background-color: #fff; border-radius: 16px; width: 90%; max-width: 640px; height: 85%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden;
-            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fff; border-radius: 16px; width: 90%; max-width: 640px; height: 85%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        
-        .close-modal { 
-            position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #666; z-index: 10;
-            background: rgba(255,255,255,0.8); border-radius: 50%; width: 40px; height: 40px; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        .close-modal { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #666; z-index: 10; background: rgba(255,255,255,0.8); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
         .close-modal:hover { color: #000; background: #fff; }
-        
         iframe.gform-frame { width: 100%; height: 100%; border: none; }
+
+        /* --- Blog 日誌樣式 --- */
+        .blog-container { max-width: 800px; margin: 0 auto; }
+        .blog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .blog-timeline { position: relative; padding-left: 20px; border-left: 2px solid #e2e8f0; }
+        .blog-post { position: relative; background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 30px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.05); }
+        .blog-post::before { content: ''; position: absolute; left: -27px; top: 24px; width: 12px; height: 12px; background: var(--brand-red); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 3px #e2e8f0; }
+        .post-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .post-date { font-weight: 700; color: #64748b; font-size: 14px; }
+        .post-version { background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 12px; color: #475569; font-weight: 600; }
+        .post-content h4 { font-size: 20px; margin-bottom: 12px; color: #1e293b; }
+        .post-content p { color: #475569; line-height: 1.7; margin-bottom: 15px; }
+        .post-content ul { padding-left: 20px; color: #475569; margin-bottom: 15px; }
+        .post-content li { margin-bottom: 8px; }
+        .post-tags { display: flex; gap: 8px; }
+        .tag-small { font-size: 11px; padding: 3px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; }
     </style>
 </head>
 <body>
@@ -213,6 +216,25 @@
             </div>
         </div>
 
+        <!-- 產品更新日誌頁面 -->
+        <div id="updates" class="section">
+            <div class="blog-container">
+                <div class="blog-header">
+                    <button class="btn-outline" style="width: auto;" onclick="showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
+                    <!-- 預留：未來這裡可以放圖表按鈕 -->
+                </div>
+                <!-- 預留：Dashboard 圖表區塊 -->
+                <div style="background:#fff; padding:20px; border-radius:12px; margin-bottom:30px; display:none;">
+                    <h4 style="margin-bottom:10px;">更新趨勢 (Demo)</h4>
+                    <div style="height:150px; background:#f4f4f9; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999;">Chart Area (Phase 3)</div>
+                </div>
+
+                <div class="blog-timeline" id="blog-container">
+                    <!-- 日誌內容將由 JS 自動生成 -->
+                </div>
+            </div>
+        </div>
+
         <div id="anytag" class="section"><div class="card"><h3>AnyTag 指南建置中...</h3></div></div>
         <div id="anycreator" class="section"><div class="card"><h3>AnyCreator 指南建置中...</h3></div></div>
         <div id="troubleshoot" class="section"><div class="card"><h3>疑難排解建置中...</h3></div></div>
@@ -221,6 +243,9 @@
     </main>
 
     <script>
+        // ============================================
+        //  Phase 2: Google Sheet 日誌系統 (自動追蹤)
+        // ============================================
         const LOGGER_URL = "https://script.google.com/macros/s/AKfycbxdLO-ubptCO9gE_1yRj5TT-nY6Yujl9Dr-oSlyhQHUyBxUxTJpDLruk-H32fuPlOLb/exec";
 
         function sendToSheet(action, label, note) {
@@ -235,6 +260,43 @@
             }).catch(err => console.error("Log failed:", err));
         }
 
+        // ============================================
+        //  產品更新日誌資料庫 (Blog Posts)
+        //  在這裡新增每月的更新內容，支援 HTML 標籤
+        // ============================================
+        const blogPosts = [
+            {
+                date: "2025-11-20",
+                version: "v2.5.0",
+                title: "AnyCreator 創作者頁面大改版",
+                content: `
+                    <p>本次更新重點在於優化創作者的案件管理體驗，新增了案件狀態追蹤功能，創作者現在可以清楚看到每個階段的審核進度。</p>
+                    <ul>
+                        <li><strong>新增：</strong>案件狀態進度條 (Pending -> Approved -> Completed)</li>
+                        <li><strong>優化：</strong>手機版介面載入速度提升 30%</li>
+                        <li><strong>修復：</strong>部分 Android 裝置無法上傳 Insight 截圖的問題</li>
+                    </ul>
+                `,
+                tags: ["AnyCreator", "Feature", "Mobile"]
+            },
+            {
+                date: "2025-11-05",
+                version: "v2.4.8",
+                title: "Threads 平台擴充支援",
+                content: `
+                    <p>因應 Threads 用戶快速增長，AnyTag 現在正式支援 Threads 貼文數據抓取。目前僅限公開帳號。</p>
+                    <ul>
+                        <li>支援抓取最近 100 篇貼文數據 (Likes, Replies)</li>
+                        <li>可將 Threads 貼文加入報表 (Report)</li>
+                    </ul>
+                `,
+                tags: ["AnyTag", "New Platform"]
+            }
+        ];
+
+        // ============================================
+        //  知識庫資料 (Knowledge Base)
+        // ============================================
         const knowledgeBase = [
             {
                 id: "001",
@@ -289,9 +351,8 @@
                 tag: "Updates",
                 tagClass: "tag-secondary",
                 icon: "fa-solid fa-rocket",
-                btnText: "查看月報",
-                btnLink: "https://drive.google.com/drive/folders/14daMo66pLUHM3-DSSe3r5nAHAMh3PQg8?usp=drive_link",
-                btnStyle: "btn-outline",
+                // 修改：使用自定義按鈕呼叫內部頁面
+                customHtml: `<button class="btn-outline" onclick="showPage('updates'); logDecision('004', '產品動態更新')">查看月報</button>`,
                 riskLevel: "low",
                 category: "System",
                 roles: ['BD', 'IM']
@@ -348,7 +409,7 @@
         ];
 
         let currentRole = 'All';
-        let searchDebounce = null; // 用來儲存計時器
+        let searchDebounce = null; 
 
         function filterRole(role) {
             currentRole = role;
@@ -391,6 +452,29 @@
             });
         }
 
+        function renderBlog() {
+            const container = document.getElementById('blog-container');
+            container.innerHTML = '';
+            
+            blogPosts.forEach(post => {
+                const tagsHtml = post.tags.map(t => `<span class="tag-small">#${t}</span>`).join('');
+                const html = `
+                    <div class="blog-post">
+                        <div class="post-meta">
+                            <div class="post-date">${post.date}</div>
+                            <span class="post-version">${post.version}</span>
+                        </div>
+                        <div class="post-content">
+                            <h4>${post.title}</h4>
+                            ${post.content}
+                        </div>
+                        <div class="post-tags">${tagsHtml}</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
         function openModal() {
             document.getElementById('bugModal').style.display = "flex";
         }
@@ -413,7 +497,6 @@
         }
 
         function smartSearch() {
-            // 每次輸入就先清除舊的計時器
             if (searchDebounce) clearTimeout(searchDebounce);
 
             let input = document.getElementById('searchInput').value.toLowerCase();
@@ -460,8 +543,6 @@
 
             if (!hasResult) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
-                
-                // 防抖邏輯：只有當使用者停下來 2 秒，且還是沒結果，才發送紀錄
                 if(input.length > 1) {
                     searchDebounce = setTimeout(() => {
                         sendToSheet("Search_Failed", input, "No Result Found");
@@ -472,6 +553,7 @@
 
         window.onload = function() {
             renderCards(); 
+            renderBlog(); // 初始化日誌
             startNoticeCarousel();
         };
 
@@ -483,6 +565,7 @@
             
             const map = {
                 'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'],
+                'updates': ['Changelog', 'AnyTag / AnyCreator 產品更新日誌'], // 新增日誌標題
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
