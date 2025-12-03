@@ -109,18 +109,28 @@
         /* 修正後的按鈕樣式：確保兩種按鈕排版一致 */
         .btn, .btn-outline { 
             display: inline-flex; align-items: center; justify-content: center; 
-            padding: 10px 20px; border-radius: 8px; text-decoration: none; 
+            padding: 10px 10px; /* 減少左右內距，避免太長 */
+            border-radius: 8px; text-decoration: none; 
             font-size: 13px; font-weight: 600; transition: all 0.2s; 
-            cursor: pointer; width: 100%; margin-top: auto; box-sizing: border-box; 
+            cursor: pointer; width: 100%; margin-top: auto; 
+            box-sizing: border-box; height: 40px; /* 強制固定高度 */
         }
         .btn { background-color: var(--brand-red); color: #fff; border: none; }
         .btn:hover { background-color: #c93d39; box-shadow: 0 4px 12px rgba(225, 79, 75, 0.3); }
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
 
-        /* 雙按鈕容器 (給 Bug Report 用) - 修改：增加 flex: 1 讓按鈕均分寬度 */
-        .btn-group { display: flex; gap: 10px; margin-top: auto; width: 100%; }
-        .btn-group .btn, .btn-group .btn-outline { margin-top: 0; flex: 1; } 
+        /* 雙按鈕容器 (修正版) */
+        .btn-group { 
+            display: flex; gap: 8px; margin-top: auto; width: 100%; 
+        }
+        .btn-group .btn, .btn-group .btn-outline { 
+            margin-top: 0; 
+            flex: 1; /* 強制等寬 */
+            text-align: center;
+            padding: 0 5px; /* 避免文字太長換行 */
+            white-space: nowrap; /* 不允許換行 */
+        } 
 
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px; }
         .tag-primary { background: rgba(225, 79, 75, 0.15); color: var(--brand-red); }
@@ -282,8 +292,10 @@
                 tag: "Wishlist",
                 tagClass: "tag-primary",
                 icon: "fa-solid fa-comments",
+                // 新增 keywords 關鍵字：讓搜尋引擎看得到
+                keywords: "bug, 需求, 建議, issue, error, 錯誤",
+                
                 // 自定義 HTML：留言按鈕 + 查看 Sheet 按鈕
-                // 🚨 請確認下方的 Sheet 連結是您可以查看的
                 customHtml: `
                     <div class="btn-group">
                         <button class="btn" onclick="openModal()">我要留言</button>
@@ -418,7 +430,7 @@
             }
         }
 
-        // 搜尋邏輯
+        // 搜尋邏輯 (已新增 keywords 檢查)
         function smartSearch() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
@@ -427,9 +439,11 @@
             let hasResult = false;
 
             knowledgeBase.forEach(item => {
+                // 檢查 title, desc, tag 以及 keywords
                 if (item.title.toLowerCase().includes(input) || 
                     item.desc.toLowerCase().includes(input) || 
-                    item.tag.toLowerCase().includes(input)) {
+                    item.tag.toLowerCase().includes(input) ||
+                    (item.keywords && item.keywords.toLowerCase().includes(input))) {
                     
                     hasResult = true;
                     
