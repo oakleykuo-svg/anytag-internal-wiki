@@ -111,16 +111,16 @@
             display: inline-flex; align-items: center; justify-content: center; 
             padding: 10px 20px; border-radius: 8px; text-decoration: none; 
             font-size: 13px; font-weight: 600; transition: all 0.2s; 
-            cursor: pointer; width: 100%; margin-top: auto; 
+            cursor: pointer; width: 100%; margin-top: auto; box-sizing: border-box; 
         }
         .btn { background-color: var(--brand-red); color: #fff; border: none; }
         .btn:hover { background-color: #c93d39; box-shadow: 0 4px 12px rgba(225, 79, 75, 0.3); }
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
 
-        /* 雙按鈕容器 (給 Bug Report 用) */
+        /* 雙按鈕容器 (給 Bug Report 用) - 修改：增加 flex: 1 讓按鈕均分寬度 */
         .btn-group { display: flex; gap: 10px; margin-top: auto; width: 100%; }
-        .btn-group .btn, .btn-group .btn-outline { margin-top: 0; }
+        .btn-group .btn, .btn-group .btn-outline { margin-top: 0; flex: 1; } 
 
         .tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px; }
         .tag-primary { background: rgba(225, 79, 75, 0.15); color: var(--brand-red); }
@@ -140,9 +140,40 @@
         .tech-table th { background: #091632; text-align: left; padding: 16px; font-size: 13px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
         .tech-table td { padding: 16px; border-bottom: 1px solid #eee; font-size: 15px; color: #333; }
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; background: var(--brand-red); box-shadow: 0 0 8px var(--brand-red); }
+
+        /* --- Modal 彈窗樣式 (嵌入 iframe) --- */
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff; border-radius: 16px; width: 90%; max-width: 640px; height: 85%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .close-modal { 
+            position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #666; z-index: 10;
+            background: rgba(255,255,255,0.8); border-radius: 50%; width: 40px; height: 40px; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .close-modal:hover { color: #000; background: #fff; }
+        
+        iframe.gform-frame { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
+
+    <!-- 留言板 Modal (改用 iframe 嵌入 Google Form) -->
+    <div id="bugModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <!-- 嵌入 Google Form 網址 -->
+            <iframe class="gform-frame" src="https://docs.google.com/forms/d/e/1FAIpQLSdbQCLdb9L3c7CBt5zFZOD3pIX4H869HkqWi9TSQXu56537YA/viewform?embedded=true">Loading...</iframe>
+        </div>
+    </div>
 
     <nav class="sidebar">
         <div class="brand"><span>●</span> TAIWAN<br>AnyTag/AnyCreator<br>Support Hub</div>
@@ -213,23 +244,6 @@
 
     <script>
         // ============================================
-        //  Phase 2: Google Sheet 日誌系統設定
-        // ============================================
-        const LOGGER_URL = "https://script.google.com/macros/s/AKfycbxdLO-ubptCO9gE_1yRj5TT-nY6Yujl9Dr-oSlyhQHUyBxUxTJpDLruk-H32fuPlOLb/exec";
-
-        function sendToSheet(action, label, note) {
-            if(!LOGGER_URL.startsWith("http")) return;
-            fetch(LOGGER_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: action, label: label, note: note })
-            }).then(() => {
-                console.log("Log sent to Sheet:", action, label);
-            }).catch(err => console.error("Log failed:", err));
-        }
-
-        // ============================================
         //  Phase 1: 輕量級資料庫 (Knowledge Base)
         // ============================================
         const knowledgeBase = [
@@ -245,7 +259,7 @@
                 btnStyle: "btn",
                 riskLevel: "low",
                 category: "AnyTag",
-                roles: ['IM'] // 修改：移除 BD，僅 IM 可見
+                roles: ['IM'] 
             },
             {
                 id: "002",
@@ -268,11 +282,12 @@
                 tag: "Wishlist",
                 tagClass: "tag-primary",
                 icon: "fa-solid fa-comments",
-                // 特殊處理：這裡我們用 HTML string 來自定義雙按鈕
+                // 自定義 HTML：留言按鈕 + 查看 Sheet 按鈕
+                // 🚨 請確認下方的 Sheet 連結是您可以查看的
                 customHtml: `
                     <div class="btn-group">
-                        <button class="btn" onclick="reportBug()">我要留言</button>
-                        <a href="https://docs.google.com/spreadsheets/d/your-google-sheet-id" target="_blank" class="btn-outline">查看留言板</a>
+                        <button class="btn" onclick="openModal()">我要留言</button>
+                        <a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a>
                     </div>
                 `,
                 riskLevel: "low",
@@ -293,7 +308,6 @@
                 category: "System",
                 roles: ['BD', 'IM']
             },
-            // --- 新增：Marketplace Sales Kit ---
             {
                 id: "005",
                 title: "Marketplace 銷售門檻",
@@ -306,9 +320,8 @@
                 btnStyle: "btn",
                 riskLevel: "low",
                 category: "Sales",
-                roles: ['BD'] // 僅 BD 可見
+                roles: ['BD'] 
             },
-            // --- 測試資料：執行專區 ---
             {
                 id: "006",
                 title: "結案報告範本",
@@ -323,7 +336,6 @@
                 category: "IM",
                 roles: ['IM']
             },
-            // --- 高風險項目 ---
             {
                 id: "999",
                 title: "帳號封禁申訴",
@@ -359,7 +371,6 @@
                 }
             });
             renderCards();
-            sendToSheet("Switch_Tab", role, "User switched view");
         }
 
         function renderCards() {
@@ -370,12 +381,11 @@
                 if (item.hidden) return; 
 
                 if (currentRole === 'All' || item.roles.includes(currentRole)) {
-                    // 特殊處理自定義 HTML (如雙按鈕)
                     let actionHtml = '';
                     if (item.customHtml) {
                         actionHtml = item.customHtml;
                     } else {
-                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}">${item.btnText}</a>`;
                     }
 
                     const cardHTML = `
@@ -392,21 +402,23 @@
             });
         }
 
-        // 留言回報功能
-        function reportBug() {
-            const msg = prompt("請輸入您的問題或需求 (自然語言即可，例如：我想找某某資料但找不到)：");
-            if (msg) {
-                sendToSheet("Bug_Report", "User_Input", msg);
-                alert("感謝您的回饋！已記錄至後台，我們將盡快處理。");
+        // --- Modal 相關功能 (開啟 Google Form) ---
+        function openModal() {
+            document.getElementById('bugModal').style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('bugModal').style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('bugModal');
+            if (event.target == modal) {
+                closeModal();
             }
         }
 
-        function logDecision(id, title) {
-            const timestamp = new Date().toISOString();
-            console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
-            sendToSheet("Click", title, `ID: ${id}`);
-        }
-
+        // 搜尋邏輯
         function smartSearch() {
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
@@ -423,17 +435,14 @@
                     
                     let alertHtml = '';
                     if (item.riskLevel === 'high') {
-                        console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
                         alertHtml = `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>`;
-                        sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
                     }
 
-                    // 搜尋結果顯示邏輯 (包含自定義HTML處理)
                     let actionHtml = '';
                     if (item.customHtml) {
                         actionHtml = item.customHtml;
                     } else {
-                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}">${item.btnText}</a>`;
                     }
 
                     const cardHTML = `
@@ -451,10 +460,7 @@
             });
 
             if (!hasResult) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。<br><small>(模擬日誌：紀錄搜尋失敗關鍵字 "${input}")</small></div>`;
-                if(input.length > 2) {
-                     sendToSheet("Search_Failed", input, "No Result Found");
-                }
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
             }
         }
 
