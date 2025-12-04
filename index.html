@@ -226,7 +226,7 @@
         <div class="modal-content" style="max-width: 750px;">
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
             <div class="editor-container">
-                <div class="editor-title">📝 新增產品日誌 (Visual Editor)</div>
+                <div class="editor-title">📝 新增產品日誌</div>
                 <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #0369a1;">
                     <i class="fa-solid fa-circle-info"></i> <strong>使用說明：</strong>在此處編輯完內容後，點擊「複製整列資料」，然後到 Google Sheet 的 <strong>A 欄 (Date)</strong> 貼上即可。
                 </div>
@@ -241,7 +241,7 @@
                     </div>
                 </div>
                 <div class="editor-field">
-                    <label class="editor-label">標題 (Title)</label>
+                    <label class="editor-label">標題 (Title) <span style="color:red;">*必填</span></label>
                     <input type="text" id="postTitle" class="editor-input" placeholder="本次更新的重點標題">
                 </div>
                 <div class="editor-field">
@@ -251,7 +251,6 @@
                 
                 <!-- 視覺化編輯器 -->
                 <div class="editor-field">
-                    <!-- 修正 Label -->
                     <label class="editor-label">內容 (Content)</label>
                     <div class="rich-editor-wrapper">
                         <div class="rich-editor-toolbar">
@@ -429,11 +428,21 @@
 
             // 反轉陣列，讓最新的在最上面
             posts.reverse().forEach(post => {
+                // 時間格式修正 (處理 UTC 時間差)
+                let displayDate = post.date;
+                const dateObj = new Date(post.date);
+                if (!isNaN(dateObj.getTime())) {
+                    const y = dateObj.getFullYear();
+                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(dateObj.getDate()).padStart(2, '0');
+                    displayDate = `${y}-${m}-${d}`;
+                }
+
                 const tagsHtml = post.tags.map(t => `<span class="tag-small">#${t}</span>`).join('');
                 const html = `
                     <div class="blog-post">
                         <div class="post-meta">
-                            <div class="post-date">${post.date}</div>
+                            <div class="post-date">${displayDate}</div>
                             <span class="post-version">${post.version}</span>
                         </div>
                         <div class="post-content">
@@ -688,6 +697,12 @@
             const title = document.getElementById('postTitle').value;
             const tags = document.getElementById('postTags').value;
             
+            // 防呆檢查：如果標題是空的，就不執行
+            if (!title.trim()) {
+                alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。");
+                return;
+            }
+
             // 抓取視覺化編輯器的 HTML 內容
             let content = document.getElementById('richEditor').innerHTML;
 
@@ -698,7 +713,7 @@
             const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}`;
 
             navigator.clipboard.writeText(rowString).then(() => {
-                alert("已複製整列資料！\n請直接去 Google Sheet 的 A 欄 (Date) 按下 Ctrl+V 貼上即可。");
+                alert("✅ 已複製整列資料！\n請直接去 Google Sheet 的 A 欄 (Date) 按下 Ctrl+V 貼上即可。");
             });
         }
 
@@ -771,7 +786,7 @@
             
             const map = {
                 'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'],
-                'updates': ['Changelog', 'AnyTag / AnyCreator 產品更新日誌'], 
+                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], // 修改：更新標題
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
