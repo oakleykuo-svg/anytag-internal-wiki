@@ -189,7 +189,7 @@
         .editor-input { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
         
         /* 視覺化編輯器樣式 */
-        .rich-editor-toolbar { background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
+        .rich-editor-toolbar { background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
         .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
         .toolbar-btn:hover { background: #e2e8f0; color: #000; }
         .rich-editor-content { 
@@ -200,6 +200,11 @@
         .rich-editor-content ul { padding-left: 20px; margin-bottom: 10px; }
         .rich-editor-content p { margin-bottom: 10px; }
         .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
+        
+        /* 顏色選擇器樣式 */
+        .toolbar-color-input {
+            width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle;
+        }
 
         .helper-btn { padding: 5px 10px; font-size: 12px; background: #f1f5f9; border: none; border-radius: 4px; cursor: pointer; color: #475569; }
         .helper-btn:hover { background: #e2e8f0; }
@@ -216,7 +221,7 @@
         </div>
     </div>
 
-    <!-- 新增日誌編輯器 Modal (視覺化升級版) -->
+    <!-- 新增日誌編輯器 Modal (視覺化升級版 + 顏色選擇) -->
     <div id="postEditorModal" class="modal">
         <div class="modal-content" style="max-width: 750px;">
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
@@ -246,12 +251,20 @@
                 
                 <!-- 視覺化編輯器 -->
                 <div class="editor-field">
-                    <label class="editor-label">內容 (Content) - 所見即所得</label>
+                    <label class="editor-label">內容 (Content)</label>
                     <div class="rich-editor-wrapper">
                         <div class="rich-editor-toolbar">
                             <button class="toolbar-btn" onclick="formatDoc('bold')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button class="toolbar-btn" onclick="formatDoc('italic')" title="斜體"><i class="fa-solid fa-italic"></i></button>
                             <button class="toolbar-btn" onclick="formatDoc('underline')" title="底線"><i class="fa-solid fa-underline"></i></button>
+                            
+                            <!-- 顏色選擇器 -->
+                            <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
+                            <div style="display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 5px; background: #fff;" title="文字顏色">
+                                <i class="fa-solid fa-font" style="font-size: 12px; color: #475569; margin-right: 2px;"></i>
+                                <input type="color" onchange="formatDoc('foreColor', this.value)" class="toolbar-color-input" value="#000000">
+                            </div>
+
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onclick="formatDoc('insertUnorderedList')" title="清單列表"><i class="fa-solid fa-list-ul"></i></button>
                             <button class="toolbar-btn" onclick="formatDoc('insertOrderedList')" title="數字列表"><i class="fa-solid fa-list-ol"></i></button>
@@ -600,7 +613,7 @@
             if (password === "AnyTagAdmin") { 
                 openModal('postEditorModal');
                 document.getElementById('postDate').valueAsDate = new Date();
-                // 如果編輯區是空的，預設填入提示文字，但要讓它可編輯
+                // 如果編輯區是空的，預設填入提示文字
                 if(document.getElementById('richEditor').innerHTML.trim() === '') {
                     document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
                 }
@@ -631,6 +644,31 @@
             if (url) formatDoc('createLink', url);
         }
 
+        // 處理 Tab 鍵縮排功能
+        window.onload = function() {
+            // 初始化其他功能
+            renderCards(); 
+            // 預設先不要抓日誌，等點擊查看月報時再抓，節省效能
+            startNoticeCarousel();
+
+            // 為編輯器加入 Tab 鍵攔截
+            const editor = document.getElementById('richEditor');
+            if (editor) {
+                editor.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault(); // 阻止原本的「跳到下一個按鈕」行為
+                        if (e.shiftKey) {
+                            // Shift + Tab = 凸排 (Outdent)
+                            document.execCommand('outdent', false, null);
+                        } else {
+                            // Tab = 縮排 (Indent)
+                            document.execCommand('indent', false, null);
+                        }
+                    }
+                });
+            }
+        };
+
         function copyRowForSheet() {
             const date = document.getElementById('postDate').value;
             const version = document.getElementById('postVersion').value;
@@ -640,7 +678,7 @@
             // 抓取視覺化編輯器的 HTML 內容
             let content = document.getElementById('richEditor').innerHTML;
 
-            // 移除換行符號以免破壞 Excel 貼上格式 (Sheet 欄位內換行不影響，但避免 \n 被視為下一列)
+            // 移除換行符號以免破壞 Excel 貼上格式
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
 
             // 組合 Tab 分隔字串 (Excel/Sheet 貼上格式)
@@ -711,12 +749,6 @@
                 }
             }
         }
-
-        window.onload = function() {
-            renderCards(); 
-            // 預設先不要抓日誌，等點擊查看月報時再抓，節省效能
-            startNoticeCarousel();
-        };
 
         function showPage(pageId, navElement) {
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
