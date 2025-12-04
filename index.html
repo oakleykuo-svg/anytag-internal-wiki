@@ -82,7 +82,7 @@
         @media (max-width: 768px) { .grid-4 { grid-template-columns: 1fr; } }
 
         /* --- 分流頁籤 (Tabs) 樣式 --- */
-        .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;}
         .tab-btn { 
             padding: 8px 20px; border-radius: 20px; border: 1px solid #e2e8f0; 
             background: #fff; color: #64748b; cursor: pointer; font-size: 14px; font-weight: 600;
@@ -93,6 +93,14 @@
             background: var(--brand-red); color: #fff; border-color: var(--brand-red); 
             box-shadow: 0 4px 10px rgba(225, 79, 75, 0.2);
         }
+
+        /* --- 篩選器下拉選單樣式 --- */
+        .filter-select {
+            padding: 8px 14px; border-radius: 20px; border: 1px solid #e2e8f0;
+            background: #fff; color: #64748b; font-size: 14px; font-weight: 600;
+            cursor: pointer; outline: none; margin-left: 5px;
+        }
+        .filter-select:focus { border-color: var(--brand-red); color: #333; }
 
         /* --- 卡片樣式 --- */
         .card { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
@@ -191,6 +199,16 @@
         
         .loading-state { padding: 40px; text-align: center; color: #64748b; }
 
+        /* --- 分頁按鈕樣式 --- */
+        .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 30px; padding-bottom: 30px; }
+        .pagination-btn { 
+            background: #fff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; 
+            cursor: pointer; color: #475569; font-size: 14px; transition: all 0.2s;
+        }
+        .pagination-btn:hover:not(:disabled) { background: #f8fafc; color: var(--brand-red); border-color: var(--brand-red); }
+        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-info { font-size: 14px; color: #64748b; font-weight: 600; }
+
         /* --- 編輯器樣式 --- */
         .editor-container { padding: 30px; overflow-y: auto; }
         .editor-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
@@ -231,7 +249,7 @@
         </div>
     </div>
 
-    <!-- 新增日誌編輯器 Modal (升級版) -->
+    <!-- 新增日誌編輯器 Modal (視覺化升級版 + 顏色選擇) -->
     <div id="postEditorModal" class="modal">
         <div class="modal-content" style="max-width: 750px;">
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
@@ -287,11 +305,14 @@
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('bold')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('italic')" title="斜體"><i class="fa-solid fa-italic"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('underline')" title="底線"><i class="fa-solid fa-underline"></i></button>
+                            
+                            <!-- 顏色選擇器 -->
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <div style="display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 5px; background: #fff;" title="文字顏色">
                                 <i class="fa-solid fa-font" style="font-size: 12px; color: #475569; margin-right: 2px;"></i>
                                 <input type="color" onmousedown="saveSelection()" oninput="restoreSelection(); formatDoc('foreColor', this.value)" class="toolbar-color-input" value="#000000">
                             </div>
+
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('insertUnorderedList')" title="清單列表"><i class="fa-solid fa-list-ul"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('insertOrderedList')" title="數字列表"><i class="fa-solid fa-list-ol"></i></button>
@@ -379,11 +400,28 @@
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
                 </div>
                 
-                <!-- 日誌篩選器 (新增) -->
-                <div class="tabs-container" style="margin-bottom: 30px;">
-                    <button class="tab-btn active" onclick="filterBlog('All')">全部更新</button>
-                    <button class="tab-btn" onclick="filterBlog('BD')">業務重點 (for BD)</button>
-                    <button class="tab-btn" onclick="filterBlog('IM')">功能操作 (for IM)</button>
+                <!-- 日誌進階篩選與排序 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <div class="tabs-container" style="margin-bottom: 0;">
+                        <button class="tab-btn active" onclick="filterBlogRole('All')">全部更新</button>
+                        <button class="tab-btn" onclick="filterBlogRole('BD')">業務重點 (BD)</button>
+                        <button class="tab-btn" onclick="filterBlogRole('IM')">功能操作 (IM)</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                         <select id="statusFilter" class="filter-select" onchange="filterBlogStatus(this.value)">
+                            <option value="All">全部狀態</option>
+                            <option value="Released">🟢 已釋出</option>
+                            <option value="Testing">🔵 測試中</option>
+                            <option value="In Progress">🟡 開發中</option>
+                            <option value="Planning">🟣 待討論</option>
+                            <option value="Hold">⚪️ 已暫停</option>
+                        </select>
+                        <select id="sortFilter" class="filter-select" onchange="sortBlog(this.value)">
+                            <option value="desc">最新優先</option>
+                            <option value="asc">最舊優先</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- 預留 Dashboard 圖表區塊 -->
@@ -396,6 +434,13 @@
                     <div class="loading-state">
                         <i class="fa-solid fa-circle-notch fa-spin"></i> 正在載入更新日誌...
                     </div>
+                </div>
+                
+                <!-- 分頁按鈕 -->
+                <div id="pagination" class="pagination-controls" style="display: none;">
+                    <button class="pagination-btn" onclick="changePage(-1)" id="prevPageBtn">上一頁</button>
+                    <span class="pagination-info" id="pageInfo">第 1 / 1 頁</span>
+                    <button class="pagination-btn" onclick="changePage(1)" id="nextPageBtn">下一頁</button>
                 </div>
             </div>
         </div>
@@ -432,8 +477,15 @@
         // ============================================
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
 
-        let allBlogPosts = []; // 儲存所有日誌，供篩選使用
-        let currentBlogFilter = 'All';
+        let allBlogPosts = []; // 原始資料
+        let filteredPosts = []; // 篩選後資料
+        let currentRoleFilter = 'All';
+        let currentStatusFilter = 'All';
+        let currentSortOrder = 'desc';
+        
+        // 分頁變數
+        let currentPage = 1;
+        const postsPerPage = 5;
 
         async function fetchBlogPosts() {
             if(!BLOG_SCRIPT_URL.startsWith("http")) {
@@ -445,8 +497,8 @@
             try {
                 const response = await fetch(BLOG_SCRIPT_URL + "?t=" + new Date().getTime());
                 const posts = await response.json();
-                allBlogPosts = posts; // 存起來
-                renderBlog(); // 渲染
+                allBlogPosts = posts; 
+                applyFilters(); // 載入後執行篩選與渲染
             } catch (error) {
                 console.error("Fetch Blog Failed:", error);
                 document.getElementById('blog-container').innerHTML = 
@@ -454,35 +506,76 @@
             }
         }
 
-        function filterBlog(role) {
-            currentBlogFilter = role;
-            // 更新按鈕狀態
+        function filterBlogRole(role) {
+            currentRoleFilter = role;
+            // 更新 UI 按鈕狀態
             const buttons = document.querySelectorAll('#updates .tab-btn');
             buttons.forEach(btn => {
                 btn.classList.remove('active');
                 if(btn.innerText.includes(role === 'All' ? '全部' : role)) btn.classList.add('active');
             });
-            renderBlog();
+            applyFilters();
         }
 
-        function renderBlog() {
-            const container = document.getElementById('blog-container');
-            container.innerHTML = ''; 
-            
-            // 篩選資料 (若 Role 空白預設為 All)
-            const filteredPosts = allBlogPosts.filter(post => {
+        function filterBlogStatus(status) {
+            currentStatusFilter = status;
+            applyFilters();
+        }
+
+        function sortBlog(order) {
+            currentSortOrder = order;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            // 1. 篩選 Role 和 Status
+            filteredPosts = allBlogPosts.filter(post => {
                 const postRole = post.role || 'All';
-                return currentBlogFilter === 'All' || postRole === 'All' || postRole === currentBlogFilter;
+                const postStatus = post.status || 'Unknown';
+                
+                const matchRole = currentRoleFilter === 'All' || postRole === 'All' || postRole === currentRoleFilter;
+                const matchStatus = currentStatusFilter === 'All' || postStatus === currentStatusFilter;
+                
+                return matchRole && matchStatus;
             });
 
+            // 2. 排序
+            filteredPosts.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return currentSortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+            });
+
+            // 3. 重置分頁並渲染
+            currentPage = 1;
+            renderBlogPage();
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderBlogPage();
+            // 滾動回頂部
+            document.querySelector('.blog-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderBlogPage() {
+            const container = document.getElementById('blog-container');
+            container.innerHTML = ''; 
+
             if(filteredPosts.length === 0) {
-                container.innerHTML = `<div class="loading-state">目前沒有相關更新紀錄。</div>`;
+                container.innerHTML = `<div class="loading-state">沒有符合條件的紀錄。</div>`;
+                document.getElementById('pagination').style.display = 'none';
                 return;
             }
 
-            // 反轉陣列，讓最新的在最上面
-            filteredPosts.reverse().forEach(post => {
-                // 時間格式修正 (處理 UTC 時間差)
+            // 計算分頁
+            const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+            const start = (currentPage - 1) * postsPerPage;
+            const end = start + postsPerPage;
+            const pageData = filteredPosts.slice(start, end);
+
+            // 渲染文章
+            pageData.forEach(post => {
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
@@ -501,9 +594,7 @@
                 else if(statusText.includes('In Progress')) statusClass = 'status-progress';
                 else if(statusText.includes('Planning')) statusClass = 'status-planning';
 
-                // 狀態標籤 HTML
                 const statusHtml = `<span class="status-badge ${statusClass}">${statusText}</span>`;
-                
                 const tagsHtml = post.tags.map(t => `<span class="tag-small">#${t}</span>`).join('');
                 
                 const html = `
@@ -524,122 +615,28 @@
                 `;
                 container.innerHTML += html;
             });
+
+            // 更新分頁控制項
+            document.getElementById('pagination').style.display = 'flex';
+            document.getElementById('pageInfo').innerText = `第 ${currentPage} / ${totalPages} 頁`;
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
         }
 
         // ============================================
         //  3. 知識庫資料 (Knowledge Base)
         // ============================================
         const knowledgeBase = [
-            {
-                id: "001",
-                title: "網紅搜尋 SOP",
-                desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？",
-                tag: "User Guide",
-                tagClass: "tag-primary",
-                icon: "fa-solid fa-magnifying-glass-location",
-                btnText: "前往教學",
-                btnLink: "#", 
-                btnStyle: "btn",
-                riskLevel: "low",
-                category: "AnyTag",
-                roles: ['IM'] 
-            },
-            {
-                id: "002",
-                title: "數據沒更新？",
-                desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。",
-                tag: "FAQ",
-                tagClass: "tag-secondary",
-                icon: "fa-regular fa-circle-question",
-                btnText: "查看解決方案",
-                btnLink: "#",
-                btnStyle: "btn-outline",
-                riskLevel: "low",
-                category: "AnyTag",
-                roles: ['BD', 'IM']
-            },
-            {
-                id: "003",
-                title: "許願池 / 問題回報",
-                desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。",
-                tag: "Wishlist",
-                tagClass: "tag-primary",
-                icon: "fa-solid fa-comments",
-                keywords: "bug, 需求, 建議, issue, error, 錯誤",
-                customHtml: `
-                    <div class="btn-group">
-                        <button class="btn" onclick="openModal('bugModal')">我要留言</button>
-                        <a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a>
-                    </div>
-                `,
-                riskLevel: "low",
-                category: "System",
-                roles: ['BD', 'IM']
-            },
-            {
-                id: "004",
-                title: "產品動態更新",
-                desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。",
-                tag: "Updates",
-                tagClass: "tag-secondary",
-                icon: "fa-solid fa-rocket",
-                // 點擊觸發頁面切換並呼叫 API 抓取
-                customHtml: `<button class="btn-outline" onclick="showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看月報</button>`,
-                riskLevel: "low",
-                category: "System",
-                roles: ['BD', 'IM']
-            },
-            {
-                id: "005",
-                title: "Marketplace 銷售門檻",
-                desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。",
-                tag: "Sales Kit",
-                tagClass: "tag-primary",
-                icon: "fa-solid fa-shop",
-                btnText: "查看規範表",
-                btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0",
-                btnStyle: "btn",
-                riskLevel: "low",
-                category: "Sales",
-                roles: ['BD'] 
-            },
-            {
-                id: "006",
-                title: "結案報告範本",
-                desc: "標準結案報告 PPT 模板與數據填寫說明。",
-                tag: "Template",
-                tagClass: "tag-secondary",
-                icon: "fa-solid fa-file-powerpoint",
-                btnText: "下載 PPT",
-                btnLink: "#",
-                btnStyle: "btn-outline",
-                riskLevel: "low",
-                category: "IM",
-                roles: ['IM']
-            },
-            {
-                id: "999",
-                title: "帳號封禁申訴",
-                desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。",
-                tag: "High Risk",
-                tagClass: "tag-high-risk",
-                icon: "fa-solid fa-ban",
-                btnText: "聯繫法務",
-                btnLink: "mailto:legal@anymindgroup.com",
-                btnStyle: "btn-outline",
-                riskLevel: "high", 
-                category: "AnyCreator",
-                roles: ['BD', 'IM'],
-                hidden: true 
-            }
+            { id: "001", title: "網紅搜尋 SOP", desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", tag: "User Guide", tagClass: "tag-primary", icon: "fa-solid fa-magnifying-glass-location", btnText: "前往教學", btnLink: "#", btnStyle: "btn", riskLevel: "low", category: "AnyTag", roles: ['IM'] },
+            { id: "002", title: "數據沒更新？", desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", tag: "FAQ", tagClass: "tag-secondary", icon: "fa-regular fa-circle-question", btnText: "查看解決方案", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "AnyTag", roles: ['BD', 'IM'] },
+            { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
+            { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看月報</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
+            { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
+            { id: "006", title: "結案報告範本", desc: "標準結案報告 PPT 模板與數據填寫說明。", tag: "Template", tagClass: "tag-secondary", icon: "fa-solid fa-file-powerpoint", btnText: "下載 PPT", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "IM", roles: ['IM'] },
+            { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
         ];
 
-        const notices = [
-            "<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。",
-            "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。",
-            "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
-        ];
-
+        const notices = ["<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。", "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。", "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"];
         let currentRole = 'All';
         let searchDebounce = null; 
 
@@ -664,67 +661,32 @@
         function renderCards() {
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
-
             knowledgeBase.forEach(item => {
                 if (item.hidden) return; 
-
                 if (currentRole === 'All' || item.roles.includes(currentRole)) {
-                    let actionHtml = '';
-                    if (item.customHtml) {
-                        actionHtml = item.customHtml;
-                    } else {
-                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
-                    }
-
-                    const cardHTML = `
-                        <div class="card">
-                            <div class="card-icon"><i class="${item.icon}"></i></div>
-                            <span class="tag ${item.tagClass}">${item.tag}</span>
-                            <h3>${item.title}</h3>
-                            <p>${item.desc}</p>
-                            ${actionHtml}
-                        </div>
-                    `;
+                    let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                    const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
                     container.innerHTML += cardHTML;
                 }
             });
         }
 
-        function openModal(id) {
-            document.getElementById(id).style.display = "flex";
-        }
-        
+        function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function openEditor() {
             const password = prompt("請輸入管理員密碼：");
             if (password === "AnyTagAdmin") { 
                 openModal('postEditorModal');
                 document.getElementById('postDate').valueAsDate = new Date();
-                // 如果編輯區是空的，預設填入提示文字
-                if(document.getElementById('richEditor').innerHTML.trim() === '') {
-                    document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
-                }
-            } else if (password !== null) {
-                alert("密碼錯誤，無法存取。");
-            }
+                if(document.getElementById('richEditor').innerHTML.trim() === '') document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
+            } else if (password !== null) { alert("密碼錯誤，無法存取。"); }
         }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
 
-        function closeModal(id) {
-            document.getElementById(id).style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = "none";
-            }
-        }
-
-        // --- 視覺化編輯器功能 ---
         let savedRange = null;
         function saveSelection() {
             const sel = window.getSelection();
-            if (sel.getRangeAt && sel.rangeCount) {
-                savedRange = sel.getRangeAt(0);
-            }
+            if (sel.getRangeAt && sel.rangeCount) savedRange = sel.getRangeAt(0);
         }
         function restoreSelection() {
             if (savedRange) {
@@ -742,26 +704,17 @@
             const url = prompt('請輸入連結網址：', 'https://');
             if (url) formatDoc('createLink', url);
         }
-
-        // Tab 鍵縮排支援
+        
         window.onload = function() {
             renderCards(); 
-            // 預設先不要抓日誌，等點擊查看月報時再抓，節省效能
             startNoticeCarousel();
-
-            // 為編輯器加入 Tab 鍵攔截
             const editor = document.getElementById('richEditor');
             if (editor) {
                 editor.addEventListener('keydown', function(e) {
                     if (e.key === 'Tab') {
-                        e.preventDefault(); // 阻止原本的「跳到下一個按鈕」行為
-                        if (e.shiftKey) {
-                            // Shift + Tab = 凸排 (Outdent)
-                            document.execCommand('outdent', false, null);
-                        } else {
-                            // Tab = 縮排 (Indent)
-                            document.execCommand('indent', false, null);
-                        }
+                        e.preventDefault();
+                        if (e.shiftKey) document.execCommand('outdent', false, null);
+                        else document.execCommand('indent', false, null);
                     }
                 });
             }
@@ -776,15 +729,9 @@
             const status = document.getElementById('postStatus').value;
             const role = document.getElementById('postRole').value;
 
-            if (!title.trim()) {
-                alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。");
-                return;
-            }
+            if (!title.trim()) { alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。"); return; }
 
-            // 移除換行符號以免破壞 Excel 貼上格式
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
-
-            // 組合 Tab 分隔字串 (Excel/Sheet 貼上格式)
             const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}\t${status}\t${role}`;
 
             navigator.clipboard.writeText(rowString).then(() => {
@@ -800,56 +747,23 @@
 
         function smartSearch() {
             if (searchDebounce) clearTimeout(searchDebounce);
-
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
-
             let hasResult = false;
-
             knowledgeBase.forEach(item => {
-                if (item.title.toLowerCase().includes(input) || 
-                    item.desc.toLowerCase().includes(input) || 
-                    item.tag.toLowerCase().includes(input) ||
-                    (item.keywords && item.keywords.toLowerCase().includes(input))) {
-                    
+                if (item.title.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input) || item.tag.toLowerCase().includes(input) || (item.keywords && item.keywords.toLowerCase().includes(input))) {
                     hasResult = true;
-                    
-                    let alertHtml = '';
-                    if (item.riskLevel === 'high') {
-                        console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
-                        alertHtml = `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>`;
-                        sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
-                    }
-
-                    let actionHtml = '';
-                    if (item.customHtml) {
-                        actionHtml = item.customHtml;
-                    } else {
-                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
-                    }
-
-                    const cardHTML = `
-                        <div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}">
-                            <div class="card-icon"><i class="${item.icon}"></i></div>
-                            <span class="tag ${item.tagClass}">${item.tag}</span>
-                            ${alertHtml}
-                            <h3>${item.title}</h3>
-                            <p>${item.desc}</p>
-                            ${actionHtml}
-                        </div>
-                    `;
+                    let alertHtml = item.riskLevel === 'high' ? `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>` : '';
+                    if (item.riskLevel === 'high') sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
+                    let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                    const cardHTML = `<div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span>${alertHtml}<h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
                     container.innerHTML += cardHTML;
                 }
             });
-
             if (!hasResult) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
-                if(input.length > 1) {
-                    searchDebounce = setTimeout(() => {
-                        sendToSheet("Search_Failed", input, "No Result Found");
-                    }, 2000);
-                }
+                if(input.length > 1) { searchDebounce = setTimeout(() => { sendToSheet("Search_Failed", input, "No Result Found"); }, 2000); }
             }
         }
 
@@ -858,10 +772,9 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if(navElement) navElement.classList.add('active');
-            
             const map = {
                 'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'],
-                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], // 修改：更新標題
+                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
