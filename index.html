@@ -8,16 +8,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* --- 主視覺定義 --- */
             --brand-red: #E14F4B;
             --sidebar-bg: #091632; 
             --sidebar-text: #a0a0a0;
             --sidebar-hover: #1c2b4a;
             --sidebar-active: var(--brand-red);
+            
             --main-bg: #f4f4f9;
             --card-bg: #ffffff;
             --text-primary: #222222;
             --text-secondary: #666666;
+            
             --shadow-sm: 0 2px 4px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 6px 12px -2px rgb(0 0 0 / 0.1);
             --radius: 12px;
         }
 
@@ -30,6 +34,7 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            
             background: 
                 linear-gradient(135deg, rgba(9, 22, 50, 0.03) 25%, transparent 25%) -20px 0,
                 linear-gradient(225deg, rgba(9, 22, 50, 0.03) 25%, transparent 25%) -20px 0,
@@ -45,6 +50,7 @@
             100% { background-position: 60px 60px; }
         }
 
+        /* --- 側邊導航欄 --- */
         .sidebar { width: 280px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,0.05); z-index: 10; }
         .brand { color: #fff; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; padding-left: 8px; line-height: 1.4; }
         .brand span { color: var(--brand-red); font-size: 24px; line-height: 0; }
@@ -55,6 +61,7 @@
         .nav-item.active { background-color: rgba(225, 79, 75, 0.15); color: var(--brand-red); border-left: 3px solid var(--brand-red); }
         .nav-item.active i { color: var(--brand-red); }
 
+        /* --- 主內容區 --- */
         .main { flex: 1; overflow-y: auto; padding: 40px; position: relative; z-index: 5; background: rgba(244, 244, 249, 0.8); }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .page-title h1 { font-size: 32px; font-weight: 800; color: #000; letter-spacing: -0.5px; }
@@ -65,6 +72,7 @@
         .search-box input:focus { border-color: var(--brand-red); box-shadow: 0 0 0 4px rgba(225, 79, 75, 0.1); }
         .search-icon { position: absolute; left: 16px; top: 14px; opacity: 0.4; }
 
+        /* --- 內容區塊與 Grid --- */
         .section { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .section.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -73,11 +81,20 @@
         @media (max-width: 1200px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .grid-4 { grid-template-columns: 1fr; } }
 
+        /* --- 分流頁籤 (Tabs) 樣式 --- */
         .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { padding: 8px 20px; border-radius: 20px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; }
+        .tab-btn { 
+            padding: 8px 20px; border-radius: 20px; border: 1px solid #e2e8f0; 
+            background: #fff; color: #64748b; cursor: pointer; font-size: 14px; font-weight: 600;
+            transition: all 0.2s ease;
+        }
         .tab-btn:hover { background: #f8fafc; color: var(--brand-red); border-color: rgba(225, 79, 75, 0.3); }
-        .tab-btn.active { background: var(--brand-red); color: #fff; border-color: var(--brand-red); box-shadow: 0 4px 10px rgba(225, 79, 75, 0.2); }
+        .tab-btn.active { 
+            background: var(--brand-red); color: #fff; border-color: var(--brand-red); 
+            box-shadow: 0 4px 10px rgba(225, 79, 75, 0.2);
+        }
 
+        /* --- 卡片樣式 --- */
         .card { background: var(--card-bg); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); transition: all 0.3s ease; border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(9, 22, 50, 0.15); border-color: rgba(9, 22, 50, 0.1); }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--brand-red); opacity: 0; transition: opacity 0.3s; }
@@ -87,11 +104,20 @@
         .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #000; }
         .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         
-        .btn, .btn-outline { display: flex; align-items: center; justify-content: center; padding: 0 10px; height: 42px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: all 0.2s; cursor: pointer; width: 100%; margin-top: auto; box-sizing: border-box; white-space: nowrap; }
+        /* 按鈕樣式 */
+        .btn, .btn-outline { 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 0 10px; height: 42px; 
+            border-radius: 8px; text-decoration: none; 
+            font-size: 13px; font-weight: 600; transition: all 0.2s; 
+            cursor: pointer; width: 100%; margin-top: auto; 
+            box-sizing: border-box; white-space: nowrap; 
+        }
         .btn { background-color: var(--brand-red); color: #fff; border: none; }
         .btn:hover { background-color: #c93d39; box-shadow: 0 4px 12px rgba(225, 79, 75, 0.3); }
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
         .btn-outline:hover { border-color: var(--brand-red); color: var(--brand-red); background: rgba(225, 79, 75, 0.05); }
+
         .btn-group { display: flex; gap: 10px; margin-top: auto; width: 100%; }
         .btn-group .btn, .btn-group .btn-outline { margin-top: 0; flex: 1 1 0; width: 0; } 
 
@@ -114,11 +140,27 @@
         .tech-table td { padding: 16px; border-bottom: 1px solid #eee; font-size: 15px; color: #333; }
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; background: var(--brand-red); box-shadow: 0 0 8px var(--brand-red); }
 
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); align-items: center; justify-content: center; }
-        .modal-content { background-color: #fff; border-radius: 16px; width: 90%; max-width: 640px; height: 85%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        /* --- Modal 彈窗樣式 --- */
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff; border-radius: 16px; width: 90%; max-width: 640px; height: 85%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column;
+        }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .close-modal { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #666; z-index: 10; background: rgba(255,255,255,0.8); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        
+        .close-modal { 
+            position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #666; z-index: 10;
+            background: rgba(255,255,255,0.8); border-radius: 50%; width: 40px; height: 40px; 
+            display: flex; align-items: center; justify-content: center;
+        }
         .close-modal:hover { color: #000; background: #fff; }
+        
         iframe.gform-frame { width: 100%; flex: 1; border: none; }
 
         /* --- Blog 日誌樣式 --- */
@@ -146,6 +188,7 @@
         .post-content li { margin-bottom: 8px; }
         .post-tags { display: flex; gap: 8px; }
         .tag-small { font-size: 11px; padding: 3px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; }
+        
         .loading-state { padding: 40px; text-align: center; color: #64748b; }
 
         /* --- 編輯器樣式 --- */
@@ -155,14 +198,26 @@
         .editor-label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: #64748b; }
         .editor-input, .editor-select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
         
+        /* 視覺化編輯器樣式 */
         .rich-editor-toolbar { background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
         .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
         .toolbar-btn:hover { background: #e2e8f0; color: #000; }
-        .rich-editor-content { width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; background: #fff; outline: none; line-height: 1.6; color: #333; }
+        .rich-editor-content { 
+            width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; 
+            min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; 
+            background: #fff; outline: none; line-height: 1.6; color: #333;
+        }
         .rich-editor-content ul { padding-left: 20px; margin-bottom: 10px; }
         .rich-editor-content p { margin-bottom: 10px; }
         .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
-        .toolbar-color-input { width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle; }
+        
+        /* 顏色選擇器樣式 */
+        .toolbar-color-input {
+            width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle;
+        }
+
+        .helper-btn { padding: 5px 10px; font-size: 12px; background: #f1f5f9; border: none; border-radius: 4px; cursor: pointer; color: #475569; }
+        .helper-btn:hover { background: #e2e8f0; }
         .code-output { background: #1e293b; color: #a5b4fc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; margin-top: 20px; white-space: pre-wrap; word-break: break-all; display: none; }
     </style>
 </head>
@@ -320,12 +375,13 @@
             <div class="blog-container">
                 <div class="blog-header">
                     <button class="btn-outline" style="width: auto;" onclick="showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
+                    <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
                 </div>
                 
                 <!-- 日誌篩選器 (新增) -->
                 <div class="tabs-container" style="margin-bottom: 30px;">
-                    <button class="tab-btn active" onclick="filterBlog('for All')">全部更新</button>
+                    <button class="tab-btn active" onclick="filterBlog('All')">全部更新</button>
                     <button class="tab-btn" onclick="filterBlog('BD')">業務重點 (for BD)</button>
                     <button class="tab-btn" onclick="filterBlog('IM')">功能操作 (for IM)</button>
                 </div>
@@ -352,11 +408,12 @@
     </main>
 
     <script>
+        // ============================================
+        //  1. Google Sheet 日誌系統 (Action Logger)
+        //  目標：AnyTag_Wiki_Logs Sheet
+        //  ⚠️ 請務必將下方網址替換為您的「個人 Gmail」 Apps Script 網址 ⚠️
+        // ============================================
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
-        const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
-
-        let allBlogPosts = []; // 儲存所有日誌，供篩選使用
-        let currentBlogFilter = 'All';
 
         function sendToSheet(action, label, note) {
             if(!LOGGER_URL.startsWith("http") || LOGGER_URL.includes("YOUR_PERSONAL")) return;
@@ -368,11 +425,23 @@
             }).catch(err => console.error("Log failed:", err));
         }
 
+        // ============================================
+        //  2. 產品日誌系統 (Blog Fetcher)
+        //  目標：從 Google Sheet (Posts) 抓取資料
+        //  ⚠️ 請填入您的 Sheet Script 網址 ⚠️
+        // ============================================
+        const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
+
+        let allBlogPosts = []; // 儲存所有日誌，供篩選使用
+        let currentBlogFilter = 'All';
+
         async function fetchBlogPosts() {
             if(!BLOG_SCRIPT_URL.startsWith("http")) {
-                document.getElementById('blog-container').innerHTML = `<div class="loading-state">請先設定 Google Sheet API 網址</div>`;
+                document.getElementById('blog-container').innerHTML = 
+                    `<div class="loading-state">請先設定 Google Sheet API 網址</div>`;
                 return;
             }
+
             try {
                 const response = await fetch(BLOG_SCRIPT_URL + "?t=" + new Date().getTime());
                 const posts = await response.json();
@@ -380,7 +449,8 @@
                 renderBlog(); // 渲染
             } catch (error) {
                 console.error("Fetch Blog Failed:", error);
-                document.getElementById('blog-container').innerHTML = `<div class="loading-state">載入失敗，請檢查網路或 Script 設定。</div>`;
+                document.getElementById('blog-container').innerHTML = 
+                    `<div class="loading-state">載入失敗，請檢查網路或 Script 設定。</div>`;
             }
         }
 
@@ -410,8 +480,9 @@
                 return;
             }
 
+            // 反轉陣列，讓最新的在最上面
             filteredPosts.reverse().forEach(post => {
-                // 時間格式修正
+                // 時間格式修正 (處理 UTC 時間差)
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
@@ -455,23 +526,126 @@
             });
         }
 
+        // ============================================
+        //  3. 知識庫資料 (Knowledge Base)
+        // ============================================
         const knowledgeBase = [
-            { id: "001", title: "網紅搜尋 SOP", desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", tag: "User Guide", tagClass: "tag-primary", icon: "fa-solid fa-magnifying-glass-location", btnText: "前往教學", btnLink: "#", btnStyle: "btn", riskLevel: "low", category: "AnyTag", roles: ['IM'] },
-            { id: "002", title: "數據沒更新？", desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", tag: "FAQ", tagClass: "tag-secondary", icon: "fa-regular fa-circle-question", btnText: "查看解決方案", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "AnyTag", roles: ['BD', 'IM'] },
-            { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
-            { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看月報</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
-            { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
-            { id: "006", title: "結案報告範本", desc: "標準結案報告 PPT 模板與數據填寫說明。", tag: "Template", tagClass: "tag-secondary", icon: "fa-solid fa-file-powerpoint", btnText: "下載 PPT", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "IM", roles: ['IM'] },
-            { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
+            {
+                id: "001",
+                title: "網紅搜尋 SOP",
+                desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？",
+                tag: "User Guide",
+                tagClass: "tag-primary",
+                icon: "fa-solid fa-magnifying-glass-location",
+                btnText: "前往教學",
+                btnLink: "#", 
+                btnStyle: "btn",
+                riskLevel: "low",
+                category: "AnyTag",
+                roles: ['IM'] 
+            },
+            {
+                id: "002",
+                title: "數據沒更新？",
+                desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。",
+                tag: "FAQ",
+                tagClass: "tag-secondary",
+                icon: "fa-regular fa-circle-question",
+                btnText: "查看解決方案",
+                btnLink: "#",
+                btnStyle: "btn-outline",
+                riskLevel: "low",
+                category: "AnyTag",
+                roles: ['BD', 'IM']
+            },
+            {
+                id: "003",
+                title: "許願池 / 問題回報",
+                desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。",
+                tag: "Wishlist",
+                tagClass: "tag-primary",
+                icon: "fa-solid fa-comments",
+                keywords: "bug, 需求, 建議, issue, error, 錯誤",
+                customHtml: `
+                    <div class="btn-group">
+                        <button class="btn" onclick="openModal('bugModal')">我要留言</button>
+                        <a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a>
+                    </div>
+                `,
+                riskLevel: "low",
+                category: "System",
+                roles: ['BD', 'IM']
+            },
+            {
+                id: "004",
+                title: "產品動態更新",
+                desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。",
+                tag: "Updates",
+                tagClass: "tag-secondary",
+                icon: "fa-solid fa-rocket",
+                // 點擊觸發頁面切換並呼叫 API 抓取
+                customHtml: `<button class="btn-outline" onclick="showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看月報</button>`,
+                riskLevel: "low",
+                category: "System",
+                roles: ['BD', 'IM']
+            },
+            {
+                id: "005",
+                title: "Marketplace 銷售門檻",
+                desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。",
+                tag: "Sales Kit",
+                tagClass: "tag-primary",
+                icon: "fa-solid fa-shop",
+                btnText: "查看規範表",
+                btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0",
+                btnStyle: "btn",
+                riskLevel: "low",
+                category: "Sales",
+                roles: ['BD'] 
+            },
+            {
+                id: "006",
+                title: "結案報告範本",
+                desc: "標準結案報告 PPT 模板與數據填寫說明。",
+                tag: "Template",
+                tagClass: "tag-secondary",
+                icon: "fa-solid fa-file-powerpoint",
+                btnText: "下載 PPT",
+                btnLink: "#",
+                btnStyle: "btn-outline",
+                riskLevel: "low",
+                category: "IM",
+                roles: ['IM']
+            },
+            {
+                id: "999",
+                title: "帳號封禁申訴",
+                desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。",
+                tag: "High Risk",
+                tagClass: "tag-high-risk",
+                icon: "fa-solid fa-ban",
+                btnText: "聯繫法務",
+                btnLink: "mailto:legal@anymindgroup.com",
+                btnStyle: "btn-outline",
+                riskLevel: "high", 
+                category: "AnyCreator",
+                roles: ['BD', 'IM'],
+                hidden: true 
+            }
         ];
 
-        const notices = ["<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。", "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。", "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"];
+        const notices = [
+            "<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。",
+            "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。",
+            "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
+        ];
+
         let currentRole = 'All';
         let searchDebounce = null; 
 
         function filterRole(role) {
             currentRole = role;
-            document.querySelectorAll('#quick-access-container + .grid-4, #dashboard .tab-btn').forEach(el => { // Fix scope
+            document.querySelectorAll('#quick-access-container + .grid-4, #dashboard .tab-btn').forEach(el => { 
                 if(el.classList.contains('tab-btn')) {
                      el.classList.remove('active');
                      if(el.innerText.includes(role === 'All' ? '全部' : role)) el.classList.add('active');
@@ -490,32 +664,67 @@
         function renderCards() {
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
+
             knowledgeBase.forEach(item => {
                 if (item.hidden) return; 
+
                 if (currentRole === 'All' || item.roles.includes(currentRole)) {
-                    let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
-                    const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
+                    let actionHtml = '';
+                    if (item.customHtml) {
+                        actionHtml = item.customHtml;
+                    } else {
+                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                    }
+
+                    const cardHTML = `
+                        <div class="card">
+                            <div class="card-icon"><i class="${item.icon}"></i></div>
+                            <span class="tag ${item.tagClass}">${item.tag}</span>
+                            <h3>${item.title}</h3>
+                            <p>${item.desc}</p>
+                            ${actionHtml}
+                        </div>
+                    `;
                     container.innerHTML += cardHTML;
                 }
             });
         }
 
-        function openModal(id) { document.getElementById(id).style.display = "flex"; }
+        function openModal(id) {
+            document.getElementById(id).style.display = "flex";
+        }
+        
         function openEditor() {
             const password = prompt("請輸入管理員密碼：");
             if (password === "AnyTagAdmin") { 
                 openModal('postEditorModal');
                 document.getElementById('postDate').valueAsDate = new Date();
-                if(document.getElementById('richEditor').innerHTML.trim() === '') document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
-            } else if (password !== null) { alert("密碼錯誤，無法存取。"); }
+                // 如果編輯區是空的，預設填入提示文字
+                if(document.getElementById('richEditor').innerHTML.trim() === '') {
+                    document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
+                }
+            } else if (password !== null) {
+                alert("密碼錯誤，無法存取。");
+            }
         }
-        function closeModal(id) { document.getElementById(id).style.display = "none"; }
-        window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
 
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        // --- 視覺化編輯器功能 ---
         let savedRange = null;
         function saveSelection() {
             const sel = window.getSelection();
-            if (sel.getRangeAt && sel.rangeCount) savedRange = sel.getRangeAt(0);
+            if (sel.getRangeAt && sel.rangeCount) {
+                savedRange = sel.getRangeAt(0);
+            }
         }
         function restoreSelection() {
             if (savedRange) {
@@ -533,17 +742,26 @@
             const url = prompt('請輸入連結網址：', 'https://');
             if (url) formatDoc('createLink', url);
         }
-        
+
+        // Tab 鍵縮排支援
         window.onload = function() {
             renderCards(); 
+            // 預設先不要抓日誌，等點擊查看月報時再抓，節省效能
             startNoticeCarousel();
+
+            // 為編輯器加入 Tab 鍵攔截
             const editor = document.getElementById('richEditor');
             if (editor) {
                 editor.addEventListener('keydown', function(e) {
                     if (e.key === 'Tab') {
-                        e.preventDefault();
-                        if (e.shiftKey) document.execCommand('outdent', false, null);
-                        else document.execCommand('indent', false, null);
+                        e.preventDefault(); // 阻止原本的「跳到下一個按鈕」行為
+                        if (e.shiftKey) {
+                            // Shift + Tab = 凸排 (Outdent)
+                            document.execCommand('outdent', false, null);
+                        } else {
+                            // Tab = 縮排 (Indent)
+                            document.execCommand('indent', false, null);
+                        }
                     }
                 });
             }
@@ -558,10 +776,15 @@
             const status = document.getElementById('postStatus').value;
             const role = document.getElementById('postRole').value;
 
-            if (!title.trim()) { alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。"); return; }
+            if (!title.trim()) {
+                alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。");
+                return;
+            }
 
+            // 移除換行符號以免破壞 Excel 貼上格式
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
-            // 產生 7 欄位資料：Date, Version, Title, Tags, Content, Status, Role
+
+            // 組合 Tab 分隔字串 (Excel/Sheet 貼上格式)
             const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}\t${status}\t${role}`;
 
             navigator.clipboard.writeText(rowString).then(() => {
@@ -577,23 +800,56 @@
 
         function smartSearch() {
             if (searchDebounce) clearTimeout(searchDebounce);
+
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
+
             let hasResult = false;
+
             knowledgeBase.forEach(item => {
-                if (item.title.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input) || item.tag.toLowerCase().includes(input) || (item.keywords && item.keywords.toLowerCase().includes(input))) {
+                if (item.title.toLowerCase().includes(input) || 
+                    item.desc.toLowerCase().includes(input) || 
+                    item.tag.toLowerCase().includes(input) ||
+                    (item.keywords && item.keywords.toLowerCase().includes(input))) {
+                    
                     hasResult = true;
-                    let alertHtml = item.riskLevel === 'high' ? `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>` : '';
-                    if (item.riskLevel === 'high') sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
-                    let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
-                    const cardHTML = `<div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span>${alertHtml}<h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
+                    
+                    let alertHtml = '';
+                    if (item.riskLevel === 'high') {
+                        console.warn(`[Risk Alert] User searched for high risk item: ${item.title}`);
+                        alertHtml = `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>`;
+                        sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
+                    }
+
+                    let actionHtml = '';
+                    if (item.customHtml) {
+                        actionHtml = item.customHtml;
+                    } else {
+                        actionHtml = `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
+                    }
+
+                    const cardHTML = `
+                        <div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}">
+                            <div class="card-icon"><i class="${item.icon}"></i></div>
+                            <span class="tag ${item.tagClass}">${item.tag}</span>
+                            ${alertHtml}
+                            <h3>${item.title}</h3>
+                            <p>${item.desc}</p>
+                            ${actionHtml}
+                        </div>
+                    `;
                     container.innerHTML += cardHTML;
                 }
             });
+
             if (!hasResult) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
-                if(input.length > 1) { searchDebounce = setTimeout(() => { sendToSheet("Search_Failed", input, "No Result Found"); }, 2000); }
+                if(input.length > 1) {
+                    searchDebounce = setTimeout(() => {
+                        sendToSheet("Search_Failed", input, "No Result Found");
+                    }, 2000);
+                }
             }
         }
 
@@ -602,9 +858,10 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if(navElement) navElement.classList.add('active');
+            
             const map = {
                 'dashboard': ['Dashboard', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'],
-                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
+                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], // 修改：更新標題
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
