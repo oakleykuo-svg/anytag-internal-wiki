@@ -170,7 +170,11 @@
         .post-date { font-weight: 700; color: #64748b; font-size: 14px; }
         .post-version { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 12px; color: #475569; display: inline-block; width: fit-content;}
         .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 700; color: #fff; display: inline-block; }
-        .status-released { background: #10b981; } .status-beta { background: #3b82f6; } .status-progress { background: #f59e0b; } .status-planning { background: #8b5cf6; } .status-hold { background: #94a3b8; }
+        .status-released { background: #10b981; } 
+        .status-beta { background: #3b82f6; }
+        .status-progress { background: #f59e0b; }
+        .status-planning { background: #8b5cf6; }
+        .status-hold { background: #94a3b8; }
         .post-content h4 { font-size: 20px; margin-bottom: 12px; color: #1e293b; }
         .post-content p { color: #475569; line-height: 1.7; margin-bottom: 15px; }
         
@@ -198,7 +202,8 @@
         .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
         .toolbar-btn:hover { background: #e2e8f0; color: #000; }
         .rich-editor-content { width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; background: #fff; outline: none; line-height: 1.6; color: #333; }
-        .rich-editor-content ul, .rich-editor-content ol { padding-left: 25px; margin-bottom: 10px; }
+        /* 編輯器內的清單也同步修正 */
+        .rich-editor-content ul, .rich-editor-content ol { padding-left: 20px; margin-bottom: 10px; }
         .rich-editor-content p { margin-bottom: 10px; }
         .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
         .rich-editor-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; }
@@ -333,8 +338,9 @@
         </div>
 
         <div id="dashboard" class="section active">
-            <!-- 產品動態圖表區 -->
+            <!-- 產品動態圖表區 (取代原本的輪播) -->
             <div class="dashboard-stats">
+                <!-- 左側：曲線圖 -->
                 <div class="chart-card" style="flex: 2;">
                     <div class="chart-title">
                         <span>📊 產品動態趨勢 (Product Velocity)</span>
@@ -344,6 +350,8 @@
                          <canvas id="updateChart"></canvas>
                     </div>
                 </div>
+                
+                <!-- 右側：近期更新 Roadmap -->
                 <div class="chart-card" style="flex: 1;">
                     <div class="chart-title">🚀 近期更新 (Roadmap)</div>
                     <ul class="mini-roadmap" id="mini-roadmap-list">
@@ -382,6 +390,7 @@
                 <div class="blog-header">
                     <!-- 修正：加入 scrollTo(0,0) -->
                     <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
+                    <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
                 </div>
                 
@@ -516,8 +525,6 @@
             });
             const roadmapList = document.getElementById('mini-roadmap-list');
             roadmapList.innerHTML = '';
-            
-            // 修正排序: 最新到最舊
             const sortedPosts = allBlogPosts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
             const latestPosts = sortedPosts.slice(0, 4); 
             
@@ -712,8 +719,15 @@
         }
         
         function addImage() {
-            let url = prompt('請輸入圖片網址 (支援 Google Drive 分享連結)：', 'https://');
+            let url = prompt('請輸入圖片網址 (支援 Google Drive 分享連結，請直接複製分享連結貼上)：', 'https://');
             if (url) {
+                // 防呆：如果使用者貼了 drive-viewer，提示錯誤
+                if (url.includes('drive-viewer')) {
+                    alert("⚠️ 請勿使用 drive-viewer 網址！\n這只是預覽連結，無法公開顯示。\n\n請回到 Google Drive，對圖片按右鍵 -> 共用 -> 複製連結 (連結通常包含 /file/d/...)");
+                    return;
+                }
+                
+                // 自動轉換 Google Drive 分享連結
                 if (url.includes('drive.google.com')) {
                     const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
                     if (idMatch) {
