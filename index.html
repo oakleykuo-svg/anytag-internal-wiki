@@ -220,7 +220,7 @@
         </div>
     </div>
 
-    <!-- 新增日誌編輯器 Modal -->
+    <!-- 新增日誌編輯器 Modal (視覺化升級版 + 顏色選擇) -->
     <div id="postEditorModal" class="modal">
         <div class="modal-content" style="max-width: 750px;">
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
@@ -290,7 +290,7 @@
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onclick="addLink()" title="插入連結"><i class="fa-solid fa-link"></i></button>
                             <!-- 智慧圖片按鈕 -->
-                            <button class="toolbar-btn" onclick="addImage()" title="插入圖片 (支援 Google Drive 分享連結)"><i class="fa-regular fa-image"></i></button>
+                            <button class="toolbar-btn" onmousedown="saveSelection()" onclick="addImage()" title="插入圖片 (支援 Google Drive 分享連結)"><i class="fa-regular fa-image"></i></button>
                             
                             <button class="toolbar-btn" onclick="formatDoc('removeFormat')" title="清除格式"><i class="fa-solid fa-eraser"></i></button>
                         </div>
@@ -731,10 +731,17 @@
                 if (url.includes('drive.google.com')) {
                     const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
                     if (idMatch) {
-                        url = `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+                        // 修改：使用 thumbnail API 替代 uc?export=view，解決破圖問題
+                        url = `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
                     }
                 }
-                formatDoc('insertImage', url);
+                
+                // 修改：使用 insertHTML 插入帶有樣式的圖片
+                // 加上 referrerpolicy="no-referrer" 減少被擋的機率
+                const imgTag = `<img src="${url}" style="max-width:100%; height:auto; border-radius:8px; margin:10px 0; display:block; box-shadow:0 4px 6px rgba(0,0,0,0.1);" referrerpolicy="no-referrer">`;
+                
+                restoreSelection();
+                document.execCommand('insertHTML', false, imgTag);
             }
         }
 
@@ -788,41 +795,6 @@
             }
         }
 
-        // 輪播公告邏輯
-        const notices = [
-            "<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。",
-            "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。",
-            "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
-        ];
-
-        function startNoticeCarousel() {
-            let noticeIndex = 0;
-            const noticeBox = document.getElementById('notice-box');
-            if (!noticeBox) return; // 防呆
-            
-            // 初始化
-            noticeBox.innerHTML = `<div class="notice-text notice-active">${notices[0]}</div>`;
-
-            function rotate() {
-                const current = noticeBox.querySelector('.notice-text');
-                if(current) {
-                    current.classList.remove('notice-active');
-                    current.classList.add('notice-hidden');
-                }
-                setTimeout(() => {
-                    noticeIndex = (noticeIndex + 1) % notices.length;
-                    noticeBox.innerHTML = `<div class="notice-text notice-hidden">${notices[noticeIndex]}</div>`;
-                    setTimeout(() => {
-                        const newText = noticeBox.querySelector('.notice-text');
-                        newText.classList.remove('notice-hidden');
-                        newText.classList.add('notice-active');
-                    }, 50);
-                }, 500);
-            }
-            setInterval(rotate, 4000);
-        }
-        
-        // 確保 showPage 在全域可被呼叫
         function showPage(pageId, navElement) {
             // 1. 強制滾動到最上方 (解決點擊沒反應的錯覺)
             window.scrollTo(0, 0);
