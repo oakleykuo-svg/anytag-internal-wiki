@@ -192,6 +192,9 @@
         .post-content ul, .post-content ol { padding-left: 20px; color: #475569; margin-bottom: 15px; }
         .post-content li { margin-bottom: 8px; }
         
+        /* 圖片樣式 - 自適應 */
+        .post-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
         .post-tags { display: flex; gap: 8px; }
         .tag-small { font-size: 11px; padding: 3px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; }
         .loading-state { padding: 40px; text-align: center; color: #64748b; }
@@ -215,6 +218,7 @@
         .rich-editor-content ul, .rich-editor-content ol { padding-left: 20px; margin-bottom: 10px; }
         .rich-editor-content p { margin-bottom: 10px; }
         .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
+        .rich-editor-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; }
         .toolbar-color-input { width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle; }
     </style>
 </head>
@@ -284,16 +288,22 @@
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('bold')" title="粗體"><i class="fa-solid fa-bold"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('italic')" title="斜體"><i class="fa-solid fa-italic"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('underline')" title="底線"><i class="fa-solid fa-underline"></i></button>
+                            
+                            <!-- 顏色選擇器 -->
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <div style="display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 5px; background: #fff;" title="文字顏色">
                                 <i class="fa-solid fa-font" style="font-size: 12px; color: #475569; margin-right: 2px;"></i>
                                 <input type="color" onmousedown="saveSelection()" oninput="restoreSelection(); formatDoc('foreColor', this.value)" class="toolbar-color-input" value="#000000">
                             </div>
+
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('insertUnorderedList')" title="清單列表"><i class="fa-solid fa-list-ul"></i></button>
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('insertOrderedList')" title="數字列表"><i class="fa-solid fa-list-ol"></i></button>
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onclick="addLink()" title="插入連結"><i class="fa-solid fa-link"></i></button>
+                            <!-- 新增圖片按鈕 -->
+                            <button class="toolbar-btn" onclick="addImage()" title="插入圖片"><i class="fa-regular fa-image"></i></button>
+                            
                             <button class="toolbar-btn" onclick="formatDoc('removeFormat')" title="清除格式"><i class="fa-solid fa-eraser"></i></button>
                         </div>
                         <div id="richEditor" class="rich-editor-content" contenteditable="true">
@@ -771,6 +781,13 @@
             if (url) formatDoc('createLink', url);
         }
         
+        function addImage() {
+            const url = prompt('請輸入圖片網址 (Image URL)：', 'https://');
+            if (url) {
+                formatDoc('insertImage', url);
+            }
+        }
+
         window.onload = function() {
             renderCards(); 
             // 支援 Tab 縮排
