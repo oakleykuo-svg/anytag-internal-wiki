@@ -214,7 +214,7 @@
 </head>
 <body>
 
-    <!-- 許願池 Modal (新版：自定義表單) -->
+    <!-- 許願池 Modal (新版：自定義表單 - 已移除 Email) -->
     <div id="bugModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close-modal" onclick="closeModal('bugModal')">&times;</span>
@@ -225,8 +225,9 @@
                 </div>
 
                 <div class="editor-field">
-                    <label class="editor-label">姓名 *</label>
-                    <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex">
+                    <!-- 修改：提示改為 Slack ID -->
+                    <label class="editor-label">姓名 (Slack ID) *</label>
+                    <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex (alex_chen)">
                 </div>
 
                 <div class="editor-field">
@@ -241,11 +242,6 @@
                 <div class="editor-field">
                     <label class="editor-label">問題或建議說明 *</label>
                     <textarea id="bugContent" class="editor-textarea" placeholder="請詳細說明您遇到的狀況，或希望新增的功能..."></textarea>
-                </div>
-                
-                <div class="editor-field">
-                    <label class="editor-label">您的 Email (方便我們回覆您) *</label>
-                    <input type="email" id="bugEmail" class="editor-input" placeholder="example@anymindgroup.com">
                 </div>
 
                 <button class="btn" onclick="submitBugReport()">送出留言</button>
@@ -473,7 +469,7 @@
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
         
-        // ⚠️ 許願池 (Bug Report) 的 Apps Script URL (新)
+        // ⚠️ 許願池 (Bug Report) 的 Apps Script URL
         const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
 
         let allBlogPosts = [];
@@ -564,6 +560,7 @@
             const latestPosts = sortedPosts.slice(0, 4); 
             
             latestPosts.forEach(post => {
+                // 修正：格式化日期
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
@@ -686,7 +683,8 @@
             const name = document.getElementById('bugName').value;
             const type = document.getElementById('bugType').value;
             const content = document.getElementById('bugContent').value;
-            const email = document.getElementById('bugEmail').value;
+            // 變數名稱改為 email (對應 Apps Script 的變數名)，但內容是 Slack ID
+            const slackId = document.getElementById('bugName').value; // 其實這裡可以不用重複抓，因為 Apps Script 是讀 payload 的 key
 
             if (!name || !content) {
                 alert("❌ 請填寫姓名與內容！");
@@ -699,12 +697,14 @@
             btn.innerText = "傳送中...";
             btn.disabled = true;
 
-            // 準備資料
+            // 準備資料 (注意 key 要跟 Apps Script 裡的 data.name, data.email 對應)
             const payload = {
                 name: name,
                 type: type,
                 content: content,
-                email: email
+                // 因為我們移除了 Email 輸入框，這裡可以傳送 Slack ID 到 Email 欄位，或者傳送空字串
+                // 為了讓 Sheet 裡的 Email 欄位有東西，我們把 Slack ID 填進去 (或是標註一下)
+                email: "Slack: " + name 
             };
 
             fetch(BUG_REPORT_SCRIPT_URL, {
@@ -716,7 +716,7 @@
                 alert("✅ 留言已送出！感謝您的回饋。");
                 document.getElementById('bugName').value = '';
                 document.getElementById('bugContent').value = '';
-                document.getElementById('bugEmail').value = '';
+                // document.getElementById('bugEmail').value = ''; // 已移除
                 closeModal('bugModal');
             }).catch(err => {
                 alert("❌ 發送失敗，請稍後再試。");
@@ -730,7 +730,7 @@
         const knowledgeBase = [
             { id: "001", title: "網紅搜尋 SOP", desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", tag: "User Guide", tagClass: "tag-primary", icon: "fa-solid fa-magnifying-glass-location", btnText: "前往教學", btnLink: "#", btnStyle: "btn", riskLevel: "low", category: "AnyTag", roles: ['IM'] },
             { id: "002", title: "數據沒更新？", desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", tag: "FAQ", tagClass: "tag-secondary", icon: "fa-regular fa-circle-question", btnText: "查看解決方案", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "AnyTag", roles: ['BD', 'IM'] },
-            { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1p76lv6-WMDtE6kccM3X9eBJEuyUNBz6IG6q9hp7Jj5I/edit?gid=954115785#gid=954115785" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
+            { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1l2B4IXrtivcZlb_lBjhlaq_coBKE01SoVBGvg_92zmc/edit?gid=0#gid=0" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
             { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="window.scrollTo(0,0); showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看日誌</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] }, 
             { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
             { id: "006", title: "結案報告範本", desc: "標準結案報告 PPT 模板與數據填寫說明。", tag: "Template", tagClass: "tag-secondary", icon: "fa-solid fa-file-powerpoint", btnText: "下載 PPT", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "IM", roles: ['IM'] },
