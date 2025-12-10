@@ -63,7 +63,7 @@
         .nav-item.active { background-color: rgba(225, 79, 75, 0.15); color: var(--brand-red); border-left: 3px solid var(--brand-red); }
         .nav-item.active i { color: var(--brand-red); }
 
-        /* 子選單樣式 (新) */
+        /* 子選單樣式 */
         .submenu { 
             padding-left: 20px; display: none; overflow: hidden; transition: max-height 0.3s ease-out; 
         }
@@ -257,7 +257,6 @@
                 </div>
 
                 <div class="editor-field">
-                    <!-- 修改：提示改為 Slack ID -->
                     <label class="editor-label">姓名 (Slack ID) *</label>
                     <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex (alex_chen)">
                 </div>
@@ -433,7 +432,6 @@
                     <ul class="mini-roadmap" id="mini-roadmap-list">
                         <li style="text-align:center; color:#999; margin-top:20px;">載入中...</li>
                     </ul>
-                    <!-- 修正：加入 window.scrollTo(0,0) -->
                     <button class="btn-outline" style="margin-top:10px; width:100%; height:35px;" onclick="window.scrollTo(0,0); showPage('updates')">查看完整日誌</button>
                 </div>
             </div>
@@ -464,7 +462,6 @@
         <div id="updates" class="section">
             <div class="blog-container">
                 <div class="blog-header">
-                    <!-- 修正：加入 scrollTo(0,0) -->
                     <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
                     <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
@@ -581,7 +578,7 @@
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
         
         // ⚠️ 許願池 (Bug Report) 的 Apps Script URL (新)
-        const BUG_REPORT_SCRIPT_URL = "YOUR_BUG_REPORT_SCRIPT_URL";
+        const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
 
         let allBlogPosts = [];
         let filteredPosts = [];
