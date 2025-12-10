@@ -243,13 +243,18 @@
                     <label class="editor-label">問題或建議說明 *</label>
                     <textarea id="bugContent" class="editor-textarea" placeholder="請詳細說明您遇到的狀況，或希望新增的功能..."></textarea>
                 </div>
+                
+                <div class="editor-field">
+                    <label class="editor-label">您的 Email (方便我們回覆您) *</label>
+                    <input type="email" id="bugEmail" class="editor-input" placeholder="example@anymindgroup.com">
+                </div>
 
                 <button class="btn" onclick="submitBugReport()">送出留言</button>
             </div>
         </div>
     </div>
 
-    <!-- 新增日誌編輯器 Modal -->
+    <!-- 新增日誌編輯器 Modal (視覺化升級版 + 顏色選擇) -->
     <div id="postEditorModal" class="modal">
         <div class="modal-content" style="max-width: 750px;">
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
@@ -469,7 +474,7 @@
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
         
-        // ⚠️ 許願池 (Bug Report) 的 Apps Script URL
+        // ⚠️ 許願池 (Bug Report) 的 Apps Script URL (新)
         const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
 
         let allBlogPosts = [];
@@ -495,6 +500,7 @@
                 });
             }
             fetchBlogPosts();
+            startNoticeCarousel();
         };
 
         async function fetchBlogPosts() {
@@ -560,7 +566,6 @@
             const latestPosts = sortedPosts.slice(0, 4); 
             
             latestPosts.forEach(post => {
-                // 修正：格式化日期
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
@@ -683,8 +688,10 @@
             const name = document.getElementById('bugName').value;
             const type = document.getElementById('bugType').value;
             const content = document.getElementById('bugContent').value;
-            // 變數名稱改為 email (對應 Apps Script 的變數名)，但內容是 Slack ID
-            const slackId = document.getElementById('bugName').value; // 其實這裡可以不用重複抓，因為 Apps Script 是讀 payload 的 key
+            // 修改：變數名稱 email 改為 slackId，以符合後端邏輯 (雖然送出的 payload 欄位名稱可以不改，但為了語意清晰)
+            // 這裡我們繼續用 email 這個 key 傳送，因為 Apps Script 那邊接收的是 data.email，
+            // 只要我們知道這欄位現在填的是 Slack ID 即可。
+            const slackId = document.getElementById('bugEmail').value; 
 
             if (!name || !content) {
                 alert("❌ 請填寫姓名與內容！");
@@ -892,6 +899,29 @@
                 document.getElementById('header-title').innerText = map[pageId][0];
                 document.getElementById('header-desc').innerText = map[pageId][1];
             }
+        }
+
+        function startNoticeCarousel() {
+            let noticeIndex = 0;
+            const noticeBox = document.getElementById('notice-box');
+            function rotate() {
+                const current = noticeBox.querySelector('.notice-text');
+                if(current) {
+                    current.classList.remove('notice-active');
+                    current.classList.add('notice-hidden');
+                }
+                setTimeout(() => {
+                    noticeIndex = (noticeIndex + 1) % notices.length;
+                    noticeBox.innerHTML = `<div class="notice-text notice-hidden">${notices[noticeIndex]}</div>`;
+                    setTimeout(() => {
+                        const newText = noticeBox.querySelector('.notice-text');
+                        newText.classList.remove('notice-hidden');
+                        newText.classList.add('notice-active');
+                    }, 50);
+                }, 500);
+            }
+            noticeBox.innerHTML = `<div class="notice-text notice-active">${notices[0]}</div>`;
+            setInterval(rotate, 4000);
         }
     </script>
 </body>
