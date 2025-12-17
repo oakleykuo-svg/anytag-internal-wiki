@@ -822,8 +822,8 @@
             let currentRef = data[data.length - 1];
             weeklySnapshots.push(currentRef);
             
-            // 取過去 6 週的數據點
-            for (let i = 0; i < 6; i++) {
+            // 修改：取過去 8 週的數據點 (原為 6 週)
+            for (let i = 0; i < 8; i++) {
                 const targetDate = new Date(currentRef.date);
                 targetDate.setDate(targetDate.getDate() - 7);
                 
