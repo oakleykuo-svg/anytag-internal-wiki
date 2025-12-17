@@ -176,7 +176,7 @@
         .plat-card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
         .plat-icon { font-size: 20px; width: 30px; text-align: center; }
         .plat-info div:first-child { font-size: 12px; color: #cbd5e1; }
-        .plat-info div:last-child { font-size: 18px; font-weight: 700; }
+        .plat-info div:last-child { font-size: 18px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;} /* 修改 Flex 讓數字與增長量對齊 */
 
         .chart-section { background: #fff; padding: 20px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 350px; display: flex; flex-direction: column;}
 
@@ -503,7 +503,7 @@
 
                 <!-- 右側：成長趨勢圖 -->
                 <div class="chart-section">
-                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 網紅資料庫成長趨勢 (Database Growth)</div>
+                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 每週網紅新增數 (Weekly Growth)</div>
                     <div style="flex:1; position:relative;">
                         <canvas id="influencerGrowthChart"></canvas>
                     </div>
@@ -611,7 +611,7 @@
                      <div class="doc-content">
                          <div class="doc-header">
                              <h1 class="doc-title">業務重點功能說明</h1>
-                             <div class="doc-meta">最後更新：2025-12-10 | 對象：Business Development (BD)</div>
+                             <div class="doc-meta">最後更新：2025-12-08 | 對象：Business Development (BD)</div>
                          </div>
                          <div class="doc-body">
                              <p>這裡將列出 AnyTag 針對品牌客戶最核心的銷售賣點。請業務同仁在提案時務必強調以下優勢。</p>
@@ -647,7 +647,7 @@
                     <div class="doc-content">
                         <div class="doc-header">
                             <h1 class="doc-title">執行操作手冊 (SOP)</h1>
-                            <div class="doc-meta">最後更新：2025-12-10 | 對象：Influencer Marketing (IM)</div>
+                            <div class="doc-meta">最後更新：2025-12-08 | 對象：Influencer Marketing (IM)</div>
                         </div>
                         <div class="doc-body">
                             <p>本手冊詳細說明專案執行的標準作業流程。</p>
@@ -719,38 +719,95 @@
         function renderInfluencerStats(data) {
             if (!data || data.length === 0) return;
 
+            // --- 日期格式化工具函式 (修正時區問題) ---
+            const formatDate = (isoString) => {
+                if (!isoString) return '';
+                const date = new Date(isoString);
+                
+                // 修正：使用 Intl.DateTimeFormat 強制以「台北時間」解析日期
+                try {
+                    const formatter = new Intl.DateTimeFormat('zh-TW', {
+                        timeZone: 'Asia/Taipei',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                    
+                    const parts = formatter.formatToParts(date);
+                    const y = parts.find(p => p.type === 'year').value;
+                    const m = parts.find(p => p.type === 'month').value;
+                    const d = parts.find(p => p.type === 'day').value;
+                    return `${y}-${m}-${d}`;
+                } catch (e) {
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+            };
+
             // 1. 處理最新數據 (Hero Card & Platform Grid)
             const latest = data[data.length - 1];
             
-            // 填入數值 (加上千分位)
-            document.getElementById('hero-total').innerText = Number(latest.total).toLocaleString();
-            document.getElementById('stat-ig').innerText = Number(latest.ig).toLocaleString();
-            document.getElementById('stat-fb').innerText = Number(latest.fb).toLocaleString();
-            document.getElementById('stat-yt').innerText = Number(latest.yt).toLocaleString();
-            document.getElementById('stat-tiktok').innerText = Number(latest.tiktok).toLocaleString();
-            document.getElementById('stat-threads').innerText = Number(latest.threads).toLocaleString();
-
-            // 計算 MoM (月環比)
-            // 邏輯：找 30 天前的數據，若找不到則找最接近的
-            const today = new Date(latest.date);
-            const targetDate = new Date(today);
-            targetDate.setDate(today.getDate() - 30);
-            
-            // 尋找最接近 30 天前的資料
-            let prevData = data[0];
-            let minDiff = Infinity;
-            
-            data.forEach(item => {
-                const d = new Date(item.date);
-                const diff = Math.abs(d - targetDate);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    prevData = item;
+            // Helper: 尋找指定天數前的資料
+            const findDataDaysAgo = (dataset, days) => {
+                const targetDate = new Date(latest.date);
+                targetDate.setDate(targetDate.getDate() - days);
+                
+                let bestMatch = dataset[0];
+                let minDiff = Infinity;
+                
+                for(let i = 0; i < dataset.length; i++) {
+                     const d = new Date(dataset[i].date);
+                     const diff = Math.abs(d - targetDate);
+                     if (diff < minDiff) {
+                         minDiff = diff;
+                         bestMatch = dataset[i];
+                     }
                 }
-            });
+                return bestMatch;
+            };
 
-            if (prevData && prevData.total > 0) {
-                const growth = ((latest.total - prevData.total) / prevData.total) * 100;
+            // 抓取 7 天前的資料來計算本週成長
+            const weekAgoData = findDataDaysAgo(data, 7);
+
+            // 渲染各平台數據與增長量
+            const renderPlatStat = (id, current, past) => {
+                const diff = current - past;
+                let color = '#94a3b8'; // 預設灰
+                let icon = '';
+                let diffStr = '0';
+                
+                if (diff > 0) {
+                    color = '#10b981'; // 綠色
+                    icon = '<i class="fa-solid fa-caret-up"></i>';
+                    diffStr = '+' + Number(diff).toLocaleString();
+                } else if (diff < 0) {
+                    color = '#ef4444'; // 紅色
+                    icon = '<i class="fa-solid fa-caret-down"></i>';
+                    diffStr = Number(diff).toLocaleString();
+                }
+
+                document.getElementById(id).innerHTML = `
+                    ${Number(current).toLocaleString()} 
+                    <span style="font-size:12px; color:${color}; font-weight:600;">${icon} ${diffStr}</span>
+                `;
+            };
+
+            document.getElementById('hero-total').innerText = Number(latest.total).toLocaleString();
+            
+            // 更新各平台數據顯示
+            renderPlatStat('stat-ig', latest.ig, weekAgoData.ig);
+            renderPlatStat('stat-fb', latest.fb, weekAgoData.fb);
+            renderPlatStat('stat-yt', latest.yt, weekAgoData.yt);
+            renderPlatStat('stat-tiktok', latest.tiktok, weekAgoData.tiktok);
+            renderPlatStat('stat-threads', latest.threads, weekAgoData.threads);
+
+
+            // 計算 Hero Card MoM (月環比 - 維持不變)
+            const monthAgoData = findDataDaysAgo(data, 30);
+            if (monthAgoData && monthAgoData.total > 0) {
+                const growth = ((latest.total - monthAgoData.total) / monthAgoData.total) * 100;
                 const trendEl = document.getElementById('hero-trend');
                 if (growth >= 0) {
                     trendEl.innerHTML = `<span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +${growth.toFixed(1)}% (MoM)</span>`;
@@ -759,19 +816,59 @@
                 }
             }
 
-            // 2. 繪製趨勢圖 (最近 3-6 個月)
-            // 取最後 6 筆資料 (假設是月更) 或最近 180 天的資料
-            // 這裡簡單取最後 6 筆顯示
-            const chartData = data.slice(-6); 
+            // 2. 繪製趨勢圖 (每週淨成長量)
+            // 邏輯：從最新日期往回推，每7天取樣一次，計算該週的增長量
+            const weeklySnapshots = [];
+            let currentRef = data[data.length - 1];
+            weeklySnapshots.push(currentRef);
+            
+            // 取過去 6 週的數據點
+            for (let i = 0; i < 6; i++) {
+                const targetDate = new Date(currentRef.date);
+                targetDate.setDate(targetDate.getDate() - 7);
+                
+                let closest = null;
+                let minDiff = Infinity;
+                // 優化：從 currentRef 的位置往前找
+                let currentIndex = data.indexOf(currentRef);
+                
+                for(let j = currentIndex - 1; j >= 0; j--) {
+                     const d = new Date(data[j].date);
+                     const diff = Math.abs(d - targetDate);
+                     if(diff < minDiff) {
+                         minDiff = diff;
+                         closest = data[j];
+                     }
+                }
+                
+                // 寬容度設為3天，若找不到接近7天前的資料就停止
+                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { 
+                     weeklySnapshots.unshift(closest); 
+                     currentRef = closest;
+                } else {
+                     break; 
+                }
+            }
+            
+            // 計算每週增長量 (Delta)
+            const chartLabels = [];
+            const chartData = [];
+            
+            // 因為 weeklySnapshots 是 [Week1, Week2, Week3...] (時間由舊到新)
+            // 所以增長量計算是 Week[i] - Week[i-1]
+            for(let i = 1; i < weeklySnapshots.length; i++) {
+                 chartLabels.push(formatDate(weeklySnapshots[i].date)); // 使用當週日期作為 Label
+                 chartData.push(weeklySnapshots[i].total - weeklySnapshots[i-1].total);
+            }
             
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: chartData.map(d => d.date),
+                    labels: chartLabels,
                     datasets: [{
-                        label: 'Total Unique Influencers',
-                        data: chartData.map(d => d.total),
+                        label: 'Weekly New Influencers', // 每週新增數
+                        data: chartData,
                         borderColor: '#E14F4B',
                         backgroundColor: 'rgba(225, 79, 75, 0.1)',
                         borderWidth: 3,
@@ -788,7 +885,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { 
-                            beginAtZero: false, // 讓曲線波動更明顯
+                            beginAtZero: true, // 增長量通常從0開始看比較清楚
                             grid: { borderDash: [2, 4] }
                         },
                         x: { grid: { display: false } }
@@ -1201,13 +1298,22 @@
 
         function showPage(pageId, navElement) {
             window.scrollTo(0, 0);
+            
+            // 1. 清除所有區塊的 active
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            
+            // 2. 清除主選單的 active
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // 3. (新增修正) 清除子選單的 active，確保互斥效果
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
             const targetSection = document.getElementById(pageId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
             if(navElement) navElement.classList.add('active');
+            
             const map = {
                 'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
                 'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
