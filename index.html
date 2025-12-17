@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAIWAN AnyTag & AnyCreator Support Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 更新 Font Awesome 版本至 6.5.1 以支援 Threads 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -150,6 +151,36 @@
         .tag-secondary { background: #f0f0f0; color: #666; }
         .tag-high-risk { background: #fee2e2; color: #ef4444; }
 
+        /* --- 戰情室數據樣式 (New) --- */
+        .data-war-room {
+            display: grid; grid-template-columns: 3fr 4fr; gap: 24px; margin-bottom: 30px;
+        }
+        @media (max-width: 1000px) { .data-war-room { grid-template-columns: 1fr; } }
+
+        .stat-hero-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff; padding: 30px; border-radius: 16px;
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;
+        }
+        .stat-hero-card::after {
+            content: ''; position: absolute; right: -20px; bottom: -20px; width: 150px; height: 150px;
+            background: rgba(255,255,255,0.05); border-radius: 50%;
+        }
+        .stat-hero-title { font-size: 14px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-hero-value { font-size: 48px; font-weight: 800; margin: 10px 0; letter-spacing: -1px; }
+        .stat-hero-trend { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+        .trend-up { color: #4ade80; } .trend-down { color: #f87171; }
+        
+        .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .plat-card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
+        .plat-icon { font-size: 20px; width: 30px; text-align: center; }
+        .plat-info div:first-child { font-size: 12px; color: #cbd5e1; }
+        .plat-info div:last-child { font-size: 18px; font-weight: 700; }
+
+        .chart-section { background: #fff; padding: 20px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 350px; display: flex; flex-direction: column;}
+
+        /* --- 原有 Dashboard 樣式調整 --- */
         .dashboard-stats { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
         @media (max-width: 900px) { .dashboard-stats { grid-template-columns: 1fr; } }
         
@@ -257,6 +288,7 @@
                 </div>
 
                 <div class="editor-field">
+                    <!-- 修改：提示改為 Slack ID -->
                     <label class="editor-label">姓名 (Slack ID) *</label>
                     <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex (alex_chen)">
                 </div>
@@ -413,20 +445,83 @@
         </div>
 
         <div id="dashboard" class="section active">
-            <!-- 產品動態圖表區 (取代原本的輪播) -->
+            <!-- 數據戰情區塊 (New) -->
+            <div class="data-war-room">
+                <!-- 左側：核心指標與平台分佈 -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="stat-hero-card">
+                        <div class="stat-hero-title">TOTAL UNIQUE INFLUENCERS</div>
+                        <div class="stat-hero-value" id="hero-total">0</div>
+                        <div class="stat-hero-trend" id="hero-trend">
+                            <i class="fa-solid fa-minus"></i> 載入中...
+                        </div>
+                    </div>
+                    
+                    <div class="platform-grid">
+                        <!-- IG -->
+                        <div class="plat-card">
+                            <div class="plat-icon" style="color:#E1306C"><i class="fa-brands fa-instagram"></i></div>
+                            <div class="plat-info">
+                                <div>Instagram</div>
+                                <div id="stat-ig">0</div>
+                            </div>
+                        </div>
+                        <!-- FB -->
+                        <div class="plat-card">
+                            <div class="plat-icon" style="color:#1877F2"><i class="fa-brands fa-facebook"></i></div>
+                            <div class="plat-info">
+                                <div>Facebook</div>
+                                <div id="stat-fb">0</div>
+                            </div>
+                        </div>
+                        <!-- YT -->
+                        <div class="plat-card">
+                            <div class="plat-icon" style="color:#FF0000"><i class="fa-brands fa-youtube"></i></div>
+                            <div class="plat-info">
+                                <div>YouTube</div>
+                                <div id="stat-yt">0</div>
+                            </div>
+                        </div>
+                        <!-- TikTok -->
+                        <div class="plat-card">
+                            <div class="plat-icon" style="color:#000000"><i class="fa-brands fa-tiktok"></i></div>
+                            <div class="plat-info">
+                                <div>TikTok</div>
+                                <div id="stat-tiktok">0</div>
+                            </div>
+                        </div>
+                          <!-- Threads -->
+                        <div class="plat-card">
+                            <div class="plat-icon" style="color:#000000"><i class="fa-brands fa-threads"></i></div>
+                            <div class="plat-info">
+                                <div>Threads</div>
+                                <div id="stat-threads">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：成長趨勢圖 -->
+                <div class="chart-section">
+                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 網紅資料庫成長趨勢 (Database Growth)</div>
+                    <div style="flex:1; position:relative;">
+                        <canvas id="influencerGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下方：舊有的產品更新趨勢與 Roadmap -->
             <div class="dashboard-stats">
-                <!-- 左側：曲線圖 -->
                 <div class="chart-card" style="flex: 2;">
                     <div class="chart-title">
-                        <span>📊 產品動態趨勢 (Product Velocity)</span>
-                        <span style="font-size:12px; font-weight:400; color:#666;">近 6 個月更新頻率</span>
+                        <span>🛠️ 產品功能更新頻率 (Update Velocity)</span>
+                        <span style="font-size:12px; font-weight:400; color:#666;">近 3 個月</span>
                     </div>
                     <div style="flex: 1; position: relative;">
                          <canvas id="updateChart"></canvas>
                     </div>
                 </div>
                 
-                <!-- 右側：近期更新 Roadmap -->
                 <div class="chart-card" style="flex: 1;">
                     <div class="chart-title">🚀 近期更新 (Roadmap)</div>
                     <ul class="mini-roadmap" id="mini-roadmap-list">
@@ -462,6 +557,7 @@
         <div id="updates" class="section">
             <div class="blog-container">
                 <div class="blog-header">
+                    <!-- 修正：加入 scrollTo(0,0) -->
                     <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
                     <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
@@ -576,9 +672,11 @@
     <script>
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
-        
         // ⚠️ 許願池 (Bug Report) 的 Apps Script URL (新)
         const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
+        
+        // ⚠️ 新增：Stats 數據的 Apps Script URL (已更新)
+        const STATS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBYe9GkHGiba9t0IG4LTM7Sl7D_uArUDRwoKl4QhdLpvVOl8uYm6wEqLakaxRbUGY0CQ/exec"; 
 
         let allBlogPosts = [];
         let filteredPosts = [];
@@ -591,7 +689,6 @@
         // 自動執行
         window.onload = function() {
             renderCards(); 
-            // 支援 Tab 縮排
             const editor = document.getElementById('richEditor');
             if (editor) {
                 editor.addEventListener('keydown', function(e) {
@@ -603,8 +700,102 @@
                 });
             }
             fetchBlogPosts();
+            fetchStatsData(); // 新增：抓取 Stats 數據
             startNoticeCarousel();
         };
+
+        // --- 新增：抓取 Stats 數據並繪圖 ---
+        async function fetchStatsData() {
+            if(!STATS_SCRIPT_URL.startsWith("http")) return;
+            try {
+                const response = await fetch(STATS_SCRIPT_URL + "?t=" + new Date().getTime());
+                const data = await response.json();
+                renderInfluencerStats(data);
+            } catch (error) {
+                console.error("Fetch Stats Failed:", error);
+            }
+        }
+
+        function renderInfluencerStats(data) {
+            if (!data || data.length === 0) return;
+
+            // 1. 處理最新數據 (Hero Card & Platform Grid)
+            const latest = data[data.length - 1];
+            
+            // 填入數值 (加上千分位)
+            document.getElementById('hero-total').innerText = Number(latest.total).toLocaleString();
+            document.getElementById('stat-ig').innerText = Number(latest.ig).toLocaleString();
+            document.getElementById('stat-fb').innerText = Number(latest.fb).toLocaleString();
+            document.getElementById('stat-yt').innerText = Number(latest.yt).toLocaleString();
+            document.getElementById('stat-tiktok').innerText = Number(latest.tiktok).toLocaleString();
+            document.getElementById('stat-threads').innerText = Number(latest.threads).toLocaleString();
+
+            // 計算 MoM (月環比)
+            // 邏輯：找 30 天前的數據，若找不到則找最接近的
+            const today = new Date(latest.date);
+            const targetDate = new Date(today);
+            targetDate.setDate(today.getDate() - 30);
+            
+            // 尋找最接近 30 天前的資料
+            let prevData = data[0];
+            let minDiff = Infinity;
+            
+            data.forEach(item => {
+                const d = new Date(item.date);
+                const diff = Math.abs(d - targetDate);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    prevData = item;
+                }
+            });
+
+            if (prevData && prevData.total > 0) {
+                const growth = ((latest.total - prevData.total) / prevData.total) * 100;
+                const trendEl = document.getElementById('hero-trend');
+                if (growth >= 0) {
+                    trendEl.innerHTML = `<span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +${growth.toFixed(1)}% (MoM)</span>`;
+                } else {
+                    trendEl.innerHTML = `<span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> ${growth.toFixed(1)}% (MoM)</span>`;
+                }
+            }
+
+            // 2. 繪製趨勢圖 (最近 3-6 個月)
+            // 取最後 6 筆資料 (假設是月更) 或最近 180 天的資料
+            // 這裡簡單取最後 6 筆顯示
+            const chartData = data.slice(-6); 
+            
+            const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.date),
+                    datasets: [{
+                        label: 'Total Unique Influencers',
+                        data: chartData.map(d => d.total),
+                        borderColor: '#E14F4B',
+                        backgroundColor: 'rgba(225, 79, 75, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#E14F4B',
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: false, // 讓曲線波動更明顯
+                            grid: { borderDash: [2, 4] }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
 
         // --- 側邊欄縮放功能 ---
         function toggleSubmenu(menuId, element) {
@@ -620,7 +811,6 @@
             }
         }
 
-        // --- 其他原有功能保留 ---
         async function fetchBlogPosts() {
             if(!BLOG_SCRIPT_URL.startsWith("http")) return;
             try {
@@ -634,13 +824,15 @@
             }
         }
 
-        // --- 首頁圖表與 Roadmap ---
+        // 修改後的 renderDashboardStats (只顯示產品更新部分，網紅數據由 renderInfluencerStats 處理)
         function renderDashboardStats() {
             if(allBlogPosts.length === 0) return;
+            // 這裡原本是畫圖，現在改為只畫 "Product Velocity" (3個月)
             const monthCounts = {};
             const months = [];
             const today = new Date();
-            for(let i=5; i>=0; i--) {
+            // 改為 3 個月 (i=2)
+            for(let i=2; i>=0; i--) {
                 const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
                 const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
                 monthCounts[key] = 0;
@@ -655,17 +847,20 @@
             });
             const ctx = document.getElementById('updateChart').getContext('2d');
             new Chart(ctx, {
-                type: 'line',
+                type: 'line', // 修改：改為波浪狀折線圖
                 data: {
                     labels: months,
                     datasets: [{
-                        label: '更新數量',
+                        label: '功能更新數',
                         data: months.map(m => monthCounts[m]),
-                        borderColor: '#E14F4B',
-                        backgroundColor: 'rgba(225, 79, 75, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // 修改：半透明填充色
+                        borderColor: '#3b82f6', // 修改：線條顏色
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3b82f6',
+                        pointRadius: 5,
+                        fill: true, // 修改：啟用填充效果
+                        tension: 0.4 // 修改：設定波浪曲線張力
                     }]
                 },
                 options: {
@@ -673,11 +868,17 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1 },
+                            grid: { borderDash: [2, 4] }
+                        },
                         x: { grid: { display: false } }
                     }
                 }
             });
+            
+            // Roadmap 渲染
             const roadmapList = document.getElementById('mini-roadmap-list');
             roadmapList.innerHTML = '';
             const sortedPosts = allBlogPosts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -692,7 +893,6 @@
                     const d = String(dateObj.getDate()).padStart(2, '0');
                     displayDate = `${y}-${m}-${d}`;
                 }
-
                 let statusClass = 'status-hold';
                 let statusText = post.status || 'Unknown';
                 if(statusText.includes('Released')) statusClass = 'status-released';
@@ -784,16 +984,6 @@
             document.getElementById('pageInfo').innerText = `第 ${currentPage} / ${totalPages} 頁`;
             document.getElementById('prevPageBtn').disabled = currentPage === 1;
             document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
-        }
-
-        function sendToSheet(action, label, note) {
-            if(!LOGGER_URL.startsWith("http") || LOGGER_URL.includes("YOUR_PERSONAL")) return;
-            fetch(LOGGER_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: action, label: label, note: note })
-            }).catch(err => console.error("Log failed:", err));
         }
 
         // 新增：許願池提交功能 (Headless Form) - 已更新 Script URL
@@ -970,6 +1160,20 @@
             sendToSheet("Click", title, `ID: ${id}`);
         }
 
+        function sendToSheet(action, label, detail) {
+             // 這裡保留空函式或您原本的實作，因為上方 script URL 是 placeholder
+             if(LOGGER_URL === "YOUR_PERSONAL_SCRIPT_URL_HERE") {
+                 console.log("Mock logging:", action, label, detail);
+                 return;
+             }
+             fetch(LOGGER_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action, label, detail, user: "Unknown" })
+            }).catch(e => console.error("Log failed", e));
+        }
+
         function smartSearch() {
             if (searchDebounce) clearTimeout(searchDebounce);
             let input = document.getElementById('searchInput').value.toLowerCase();
@@ -979,13 +1183,7 @@
             
             let foundCount = 0;
             knowledgeBase.forEach(item => {
-                // 修改：同時搜尋日誌內容 (從 allBlogPosts)
-                const inKnowledgeBase = item.title.toLowerCase().includes(input) || 
-                                      item.desc.toLowerCase().includes(input) || 
-                                      item.tag.toLowerCase().includes(input) || 
-                                      (item.keywords && item.keywords.toLowerCase().includes(input));
-                
-                if (inKnowledgeBase) {
+                if (item.title.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input) || item.tag.toLowerCase().includes(input) || (item.keywords && item.keywords.toLowerCase().includes(input))) {
                     foundCount++;
                     let alertHtml = item.riskLevel === 'high' ? `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>` : '';
                     if (item.riskLevel === 'high') sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
@@ -995,23 +1193,6 @@
                 }
             });
             
-            // 搜尋日誌
-            allBlogPosts.forEach(post => {
-                if (post.title.toLowerCase().includes(input) || post.tags.join(' ').toLowerCase().includes(input)) {
-                     foundCount++;
-                     const html = `
-                        <div class="card" style="border-left: 4px solid #3b82f6;">
-                            <div class="card-icon"><i class="fa-solid fa-newspaper"></i></div>
-                            <span class="tag tag-secondary">Update Log</span>
-                            <h3>${post.title}</h3>
-                            <p>${post.date} - ${post.tags.join(', ')}</p>
-                            <button class="btn-outline" onclick="showPage('updates')">查看日誌</button>
-                        </div>
-                     `;
-                     container.innerHTML += html;
-                }
-            });
-
             if (foundCount === 0) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
                 if(input.length > 1) { searchDebounce = setTimeout(() => { sendToSheet("Search_Failed", input, "No Result Found"); }, 2000); }
@@ -1021,28 +1202,19 @@
         function showPage(pageId, navElement) {
             window.scrollTo(0, 0);
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
-
             const targetSection = document.getElementById(pageId);
             if (targetSection) {
                 targetSection.classList.add('active');
             }
-
-            if(navElement) {
-                navElement.classList.add('active');
-            }
-            
+            if(navElement) navElement.classList.add('active');
             const map = {
                 'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
                 'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
                 'anycreator': ['AnyCreator', '創作者端功能'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
-                'resources': ['Resources', '資源中心'],
-                'anytag-sales': ['業務重點功能說明', 'AnyTag Sales Highlights'],
-                'anytag-ops': ['執行操作手冊', 'AnyTag Operation SOP']
+                'resources': ['Resources', '資源中心']
             };
             if(map[pageId]) {
                 document.getElementById('header-title').innerText = map[pageId][0];
@@ -1066,9 +1238,8 @@
         function startNoticeCarousel() {
             let noticeIndex = 0;
             const noticeBox = document.getElementById('notice-box');
-            if (!noticeBox) return; // 防呆
+            if (!noticeBox) return; 
             
-            // 初始化
             const notices = [
                 "<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。",
                 "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。",
