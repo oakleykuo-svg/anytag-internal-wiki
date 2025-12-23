@@ -247,20 +247,20 @@
         .editor-input, .editor-select, .editor-textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
         .editor-textarea { min-height: 120px; resize: vertical; }
 
-        .rich-editor-toolbar { background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
-        .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
-        .toolbar-btn:hover { background: #e2e8f0; color: #000; }
-        .rich-editor-content { width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; background: #fff; outline: none; line-height: 1.6; color: #333; }
-        /* 編輯器內的清單也同步修正 */
-        .rich-editor-content ul, .rich-editor-content ol { padding-left: 20px; margin-bottom: 10px; }
-        .rich-editor-content p { margin-bottom: 10px; }
-        .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
-        .rich-editor-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; }
-        .toolbar-color-input { width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle; }
-
-        /* --- 新增：文件頁面樣式 --- */
-        .doc-layout { display: flex; gap: 40px; }
-        .doc-sidebar { width: 200px; border-right: 1px solid #e2e8f0; padding-right: 20px; flex-shrink: 0; }
+        .doc-layout { display: flex; gap: 40px; position: relative; } /* 修改：加入 relative */
+        .doc-sidebar { 
+            width: 200px; 
+            border-right: 1px solid #e2e8f0; 
+            padding-right: 20px; 
+            flex-shrink: 0; 
+            /* 修改：加入 Sticky 屬性讓目錄固定 */
+            position: sticky;
+            top: 0;
+            align-self: start;
+            height: fit-content;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
         .doc-toc-title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
         .doc-toc-link { display: block; padding: 8px 0; color: #475569; font-size: 14px; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; }
         .doc-toc-link:hover { color: var(--brand-red); padding-left: 5px; }
@@ -604,31 +604,111 @@
                  <div class="doc-layout">
                      <div class="doc-sidebar">
                          <div class="doc-toc-title">ON THIS PAGE</div>
-                         <a href="#intro" class="doc-toc-link">功能總覽</a>
-                         <a href="#search" class="doc-toc-link">網紅搜尋亮點</a>
-                         <a href="#report" class="doc-toc-link">報表與數據</a>
+                         <!-- 修改：移除 一站式管理 連結 -->
+                         <a href="#discovery" class="doc-toc-link">精準網紅開發</a>
+                         <a href="#efficiency" class="doc-toc-link">提升提案效率</a>
+                         <a href="#automation" class="doc-toc-link">自動化與數據洞察</a>
+                         <a href="#mkp" class="doc-toc-link">Marketplace (MKP)</a>
                      </div>
                      <div class="doc-content">
                          <div class="doc-header">
                              <h1 class="doc-title">業務重點功能說明</h1>
-                             <div class="doc-meta">最後更新：2025-12-08 | 對象：Business Development (BD)</div>
+                             <div class="doc-meta">最後更新：2025-12-23 | 對象：Business Development (BD)</div>
                          </div>
                          <div class="doc-body">
-                             <p>這裡將列出 AnyTag 針對品牌客戶最核心的銷售賣點。請業務同仁在提案時務必強調以下優勢。</p>
                              
-                             <h2 id="search">1. 網紅搜尋亮點 (Discovery)</h2>
-                             <p>AnyTag 擁有亞洲最大的網紅資料庫，支援 AI 智慧搜尋。</p>
-                             <div class="doc-alert">
-                                 <i class="fa-solid fa-circle-exclamation"></i>
-                                 <div><strong>注意：</strong>向客戶介紹時，請強調我們可以搜尋到「未註冊」的公開資料，這是競品做不到的。</div>
+                             <!-- 修改：移除 一站式管理 區塊，並重新編號 -->
+                             
+                             <h2 id="discovery" style="margin-top: 0;">1. 精準網紅開發</h2>
+                             <ul style="list-style: none; padding-left: 0;">
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-share-nodes" style="color: var(--brand-red); margin-right: 8px;"></i> 平台覆蓋廣度</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         除了 IG、FB、TikTok 與 YouTube，我們更支援 <strong>Threads、抖音與小紅書</strong> 的數據資料，滿足客戶跨平台的需求！
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-robot" style="color: var(--brand-red); margin-right: 8px;"></i> LLM 預測粉絲輪廓 (AI)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         針對未註冊的網紅，系統利用大型語言模型 (LLM) 分析貼文留言與互動內容，預測其粉絲的性別、年齡與地區，幫業務精準排除「粉絲受眾不對」的人選。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-calendar-check" style="color: var(--brand-red); margin-right: 8px;"></i> 近 30 天活躍度分析</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         系統自動分析網紅近 30 天內的貼文互動狀況，確認其近期表現是否依然活躍且成效優良，有效篩除久未更新的「沈睡帳號」，確保提案名單的品質。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-fire" style="color: var(--brand-red); margin-right: 8px;"></i> 熱門網紅捕捉</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         透過系統顯示的漲粉趨勢數據，協助觀察近期漲粉快速的網紅，挑選正處於話題中心、具有高潛力的 KOL。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-id-badge" style="color: var(--brand-red); margin-right: 8px;"></i> 已註冊網紅 (Registered Influencer)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         可獲取網紅社群後台的真實第一方數據，準確性與數據維度遠高於一般預估值。
+                                     </span>
+                                 </li>
+                             </ul>
+
+                             <h2 id="efficiency">2. 提升提案效率</h2>
+                             <ul style="list-style: none; padding-left: 0;">
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-brands fa-searchengin" style="color: var(--brand-red); margin-right: 8px;"></i> 貼文/留言抓取器 (Post/comment Fetcher)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         突破 AnyTag 內部資料庫限制，可指定關鍵字和時間，搜集市場上最新的公開貼文。這讓你在提案時能加入最新的社群趨勢分析，大幅提升內容競爭力！
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-file-export" style="color: var(--brand-red); margin-right: 8px;"></i> 一鍵輸出多筆資料</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         可在「提案名單」中批次下載多位網紅的輪廓資料與數據，縮短 PPT 製作時間。
+                                     </span>
+                                 </li>
+                             </ul>
+
+                             <h2 id="automation">3. 自動化與數據洞察</h2>
+                             <ul style="padding-left: 20px; margin-bottom: 20px;">
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>發文習慣與熱力圖 (Posting Habits)：</strong><br>
+                                     系統分析網紅過去貼文成效產出「紅格子熱力圖」，顏色越深代表互動率越高。這能引導品牌選擇在最佳時間點發布內容，極大化觸及效益。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>Engagement 報告自動生成：</strong><br>
+                                     自動追蹤各社群平台的公開互動數據，並支持 AI OCR 讀取限動截圖，自動產出結案報告。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>Threads 數據抓取：</strong><br>
+                                     追蹤 Threads 的轉發、分享與串文瀏覽數。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>品牌帳號分析 (Analytics)：</strong><br>
+                                     品牌客戶可免費註冊，深度分析自身官方社群帳號的受眾輪廓、貼文洞察及粉絲增長趨勢。
+                                 </li>
+                             </ul>
+
+                             <h2 id="mkp">4. 靈活的 Marketplace (MKP)</h2>
+                             <p>專為<strong>「低門檻、標準化」</strong>的任務型專案設計。此模式鎖定高黏著度且配合度高的「有效註冊網紅」，並能獲取真實後台數據。</p>
+                             
+                             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--brand-red); margin: 15px 0;">
+                                 <strong style="color: var(--brand-red);">什麼是「低門檻」活動？</strong>
+                                 <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+                                     <li style="margin-bottom: 6px;"><strong>篩選條件寬鬆：</strong>客戶不指定特定人選或風格，接受符合基本門檻（如粉絲數、類別）的 KOC 自行報名。</li>
+                                     <li><strong>執行規則簡單：</strong>合作條件明確且單純，不涉及複雜的腳本審核與多次修改。
+                                         <br><em style="color: #94a3b8; font-size: 13px;">（例如：發佈一篇貼文固定稿酬 $1,200，或互動率達標即發放獎金。）</em>
+                                     </li>
+                                 </ul>
                              </div>
                              
-                             <h2 id="report">2. 報表與數據 (Reporting)</h2>
-                             <p>自動生成的結案報告，包含詳細的受眾輪廓分析。</p>
-                             <ul>
-                                 <li>即時數據追蹤 (Real-time Tracking)</li>
-                                 <li>競品分析功能 (Competitor Analysis)</li>
-                             </ul>
+                             <div class="doc-alert" style="margin-top: 20px;">
+                                 <i class="fa-solid fa-star" style="margin-top: 3px;"></i>
+                                 <div>
+                                     <strong>獨家策略：Hybrid (混合) 模式</strong><br>
+                                     我們建議採用混合模式：利用 MKP 進行公開招募大量的 KOC 進行廣泛擴散（低門檻任務），而複雜的專案內容溝通與頭部網紅執行，則由 AnyMind 專業顧問團隊負責。
+                                 </div>
+                             </div>
                          </div>
                      </div>
                  </div>
@@ -641,22 +721,149 @@
                 <div class="doc-layout">
                     <div class="doc-sidebar">
                         <div class="doc-toc-title">操作目錄</div>
-                        <a href="#setup" class="doc-toc-link">專案設定</a>
-                        <a href="#invite" class="doc-toc-link">邀請網紅</a>
+                        <a href="#influencers" class="doc-toc-link">網紅搜尋與資料庫 (Influencers)</a>
+                        <a href="#profile" class="doc-toc-link">網紅輪廓分析 (Profile)</a>
+                        <a href="#propose" class="doc-toc-link">高效提案管理 (Propose & Packages)</a>
+                        <a href="#campaign" class="doc-toc-link">專案執行流程 (Engagement Campaign)</a>
+                        <a href="#analytics" class="doc-toc-link">品牌分析與媒合 (Analytics & Marketplace)</a>
                     </div>
                     <div class="doc-content">
                         <div class="doc-header">
                             <h1 class="doc-title">執行操作手冊 (SOP)</h1>
-                            <div class="doc-meta">最後更新：2025-12-08 | 對象：Influencer Marketing (IM)</div>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Influencer Marketing (IM)</div>
                         </div>
                         <div class="doc-body">
-                            <p>本手冊詳細說明專案執行的標準作業流程。</p>
                             
-                            <h2 id="setup">1. 專案設定 (Campaign Setup)</h2>
-                            <p>在開始任何專案前，請確保已建立 Campaign 並設定好預算與走期。</p>
+                            <h2 id="influencers" style="margin-top: 0;">1. 網紅搜尋與資料庫管理 (Influencers)</h2>
+                            <p><strong>功能定義：</strong>AnyTag 的核心網紅資料庫，收錄全球超過 300 萬筆資料，其中台灣約有 10 萬多筆。</p>
                             
-                            <h2 id="invite">2. 邀請網紅</h2>
-                            <p>如何透過系統發送邀請信給網紅，並追蹤回應狀態。</p>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-magnifying-glass" style="color: var(--brand-red); margin-right: 8px;"></i> 一般/精確搜尋</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        利用搜尋欄位輸入網紅名稱或關鍵字。若要精準定位，建議直接輸入該網紅的 <strong>Username (ID)</strong>。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-filter" style="color: var(--brand-red); margin-right: 8px;"></i> 進階篩選 (More Filter)</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        可透過性別、國家、粉絲數、互動率、貼文價格等維度進行細部過濾。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--brand-red); margin-right: 8px;"></i> AI 智慧搜尋 (AI Search)</strong>
+                                    <ul style="margin-top: 4px; padding-left: 24px; font-size: 14px; color: #475569; margin-bottom: 0;">
+                                        <li><strong>文字指令：</strong>輸入具體需求（如：尋找互動率 > 3% 且常提及咖啡的飲食類網紅）。</li>
+                                        <li><strong>圖片搜尋：</strong>上傳特定風格的形象照，尋找視覺特色相似的網紅。</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>資料產出時間：</strong>網紅 Profile 內的數據（如互動率、受眾輪廓）在新增後，系統約需 <strong>2 個工作天</strong> 收集與計算。</li>
+                                    <li><strong>AI 搜尋限制：</strong>目前 AI 搜尋功能僅支援 Instagram、TikTok、YouTube 三大平台。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="profile">2. 網紅輪廓分析與數據判讀 (Profile)</h2>
+                            <p><strong>功能內容：</strong>查看網紅的詳細社群表現與受眾組成。</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>數據監測：</strong>觀察近 30 天的粉絲成長曲線、平均互動數及互動率。系統約一週更新一次整體數據。</li>
+                                <li style="margin-bottom: 8px;"><strong>受眾洞察 (Estimated Audience)：</strong>系統串接 LLM 分析受眾的年齡分佈、性別比以及地區分佈（如台北、新北等）。</li>
+                                <li style="margin-bottom: 8px;"><strong>內容習慣分析：</strong>參考「貼文發布時段 (Posting Habits)」熱力圖，顏色越深代表該時段互動率越高。</li>
+                                <li><strong>關鍵字雲 (Tag Cloud)：</strong>了解該網紅社群帳號中常用的標籤與內容關鍵字。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>欄位更動限制：</strong>Profile 頁面中的 Tags、Post Price、Internal Memo 均由內部規範管理，<strong>請勿自行增加或修改</strong>。</li>
+                                    <li style="margin-bottom: 4px;"><strong>註冊身分差異：</strong>
+                                        <ul style="margin-top: 2px; margin-bottom: 2px;">
+                                            <li>已註冊網紅：抓取授權的第一方真實數據，準確性高。</li>
+                                            <li>非註冊網紅：數據來源為系統 AI 預測模型，顯示為「預估值」。</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>IG 專屬數據：</strong>Est. Reach (預估觸及人數) 目前僅在 Instagram 平台提供。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="propose">3. 高效提案與名單管理 (Propose & Packages)</h2>
+                            <p><strong>功能內容：</strong>批次管理網紅名單，並一鍵產出客戶提案資料。</p>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-folder-plus" style="color: var(--brand-red); margin-right: 8px;"></i> 建立 Package 與加入名單</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        在 Packages 功能中按 Add Package 建立名單；在搜尋結果頁面點選左側「+」號即可將網紅加入。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-file-export" style="color: var(--brand-red); margin-right: 8px;"></i> 一鍵輸出資料 (Propose Influencers)</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        進入 Propose Influencers 頁面，點選右上方 Download，選擇所需格式（CSV, PPT, Excel, Google Slide 等）。
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>輸出彈性：</strong>下載後的資料包含粉絲輪廓、互動率等，業務可依需求自行修訂成所需提案格式。</li>
+                                    <li><strong>內容搜尋 (Influencers: Posts)：</strong>可利用 Posts 功能搜尋關鍵字，並批次下載相關貼文列表作為參考案例。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="campaign">4. 專案執行流程 (Engagement Campaign)</h2>
+                            <p><strong>功能內容：</strong>一站式管理從提案到結案報告的專案流程。</p>
+                            <!-- 修改：將 5. Report 的樣式從 tag-primary 改為 tag-secondary，使流程視覺一致 -->
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                                <span class="tag tag-secondary">1. Campaign Info</span>
+                                <span class="tag tag-secondary">2. Select Influencers</span>
+                                <span class="tag tag-secondary">3. Proposal</span>
+                                <span class="tag tag-secondary">4. Post Management</span>
+                                <span class="tag tag-secondary">5. Report</span>
+                            </div>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 6px;"><strong>Campaign Information：</strong>填寫專案詳細資訊（如 Advertiser, HubSpot Deal, PIC 等）。</li>
+                                <li style="margin-bottom: 6px;"><strong>Select Influencers：</strong>選擇並加入該專案的 KOL/KOC 人選。</li>
+                                <li style="margin-bottom: 6px;"><strong>Proposal：</strong>確認網紅的基本資訊、粉絲數與報價。</li>
+                                <li style="margin-bottom: 6px;"><strong>Post：</strong>管理網紅上線後的貼文內容、日期與連結。</li>
+                                <li><strong>Report：</strong>自動追蹤數據（Like, Share, Comment, ER%）。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>數據獲取門檻：</strong>若要系統自動抓取進階數據（如 Reach, Save），網紅必須在 AnyCreator 完成有效註冊與授權。</li>
+                                    <li><strong>手動上傳 (Manual Upload)：</strong>若網紅未註冊或隱藏讚數，需向網紅索取數據截圖後，手動上傳至系統以確保報告完整。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="analytics">5. 品牌分析與市場媒合 (Analytics & Marketplace)</h2>
+                            <p><strong>功能內容：</strong>品牌端自用的數據分析工具與半自動化的招募平台。</p>
+                            
+                            <h4 style="font-size: 16px; margin: 15px 0 10px; color: #334155;">品牌分析 (Analytics)</h4>
+                            <ul style="padding-left: 20px; margin-bottom: 15px;">
+                                <li>引導客戶於 AnyTag 官網免費註冊並連結品牌官方帳號。</li>
+                                <li>查看品牌帳號的成長趨勢、受眾來源、貼文洞察與留言內容。</li>
+                            </ul>
+
+                            <h4 style="font-size: 16px; margin: 15px 0 10px; color: #334155;">市場媒合 (Marketplace)</h4>
+                            <ul style="padding-left: 20px;">
+                                <li>發布活動供註冊網紅自主申請，適用於<strong>低門檻、標準化</strong>的專案活動。</li>
+                                <li>（台灣目前不適用）支援優惠碼 (Referral Code) 與專屬連結 (URL) 追蹤銷售數據。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>註冊限制：</strong>Marketplace 專案僅限在 AnyTag/AnyCreator 上已註冊的網紅才能看到並申請。</li>
+                                    <li><strong>進階功能限制：</strong>Analytics 的進階版本（含競品分析、UGC 管理）目前台灣尚未開放，如有需求需聯繫業務或 IM 主管確認。</li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -699,6 +906,19 @@
                     }
                 });
             }
+            
+            // 新增：處理文件目錄的點擊滾動
+            document.querySelectorAll('.doc-toc-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
             fetchBlogPosts();
             fetchStatsData(); // 新增：抓取 Stats 數據
             startNoticeCarousel();
