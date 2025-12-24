@@ -418,7 +418,20 @@
                 </div>
             </div>
 
-            <div class="nav-item" onclick="showPage('anycreator', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> AnyCreator 創作者</div>
+            <!-- 修改：AnyCreator 改為下拉選單結構 -->
+            <div class="nav-item" onclick="toggleSubmenu('anycreator-submenu', this)">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AnyCreator 創作者
+                <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
+            </div>
+            <div id="anycreator-submenu" class="submenu">
+                <div class="submenu-item" onclick="showPage('anycreator-invite', this)">
+                    <!-- 修改：移除「賣點」二字，簡化為「邀約註冊」 -->
+                    <i class="fa-solid fa-circle" style="font-size: 6px;"></i> 邀約註冊
+                </div>
+                <div class="submenu-item" onclick="showPage('anycreator-guide', this)">
+                    <i class="fa-solid fa-circle" style="font-size: 6px;"></i> 註冊與使用指南
+                </div>
+            </div>
         </div>
         <div class="nav-group">
             <div class="nav-title">SUPPORT & SALES</div>
@@ -870,7 +883,140 @@
             </div>
         </div>
 
-        <div id="anycreator" class="section"><div class="card"><h3>AnyCreator 指南建置中...</h3></div></div>
+        <!-- 新增頁面：AnyCreator 邀約註冊 -->
+        <div id="anycreator-invite" class="section">
+            <div class="blog-container">
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">價值主張</div>
+                        <!-- 修改：調整目錄順序，符合新的內容邏輯 -->
+                        <a href="#analytics-c" class="doc-toc-link">專業數據分析</a>
+                        <a href="#visibility" class="doc-toc-link">平台熱門版位</a>
+                        <a href="#tools" class="doc-toc-link">創作者工具</a>
+                        <a href="#match" class="doc-toc-link">商務媒合機會</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">AnyCreator 邀約註冊</h1>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Business Development (BD) / IM</div>
+                        </div>
+                        <div class="doc-body">
+                            <p>當邀請創作者加入時，建議優先強調<strong>「數據賦能」</strong>與<strong>「提升曝光」</strong>的立即性價值，建立其對專業工具的依賴度，進而帶動註冊意願。</p>
+
+                            <!-- 修改：將「專業社群數據分析」移至第一位，強調這是有助於他們經營的工具 -->
+                            <h2 id="analytics-c" style="margin-top: 0;">1. 專業社群數據分析 (Analytics)</h2>
+                            <p>免費提供深度的社交媒體健檢工具，這通常是創作者最想了解但難以取得的資訊：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>受眾輪廓透視：</strong>精準分析粉絲的年齡層、性別比例與地區分佈，協助創作者釐清「誰在看我的內容」。</li>
+                                <li style="margin-bottom: 8px;"><strong>成效優化：</strong>透過貼文互動表現分析，找出最受歡迎的內容類型與最佳發布時間。</li>
+                                <li><strong>成長趨勢：</strong>可視化的粉絲增長與流失曲線，即時掌握帳號健康度。</li>
+                            </ul>
+
+                            <!-- 修改：將「平台熱門版位」移至第二位，強調被動收入的潛力 -->
+                            <h2 id="visibility">2. 加入平台熱門版位</h2>
+                            <p>註冊並授權數據後，將直接提升在 AnyTag 資料庫中的能見度：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>優先推薦權重：</strong>我們的系統演算法會優先推薦「資料完整」的創作者給品牌客戶。</li>
+                                <li><strong>被動商務機會：</strong>即使當下沒有主動應徵，完整的 Profile 也能讓你在品牌搜尋時更容易被看見，增加獲得主動邀約 (Inbound) 的機率。</li>
+                            </ul>
+
+                            <!-- 修改：將「創作者工具」移至第三位，強調實用性 -->
+                            <h2 id="tools">3. 多功能創作者工具</h2>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 15px;">
+                                    <strong><i class="fa-solid fa-link" style="color: var(--brand-red); margin-right: 8px;"></i> Link in Bio (免費)</strong><br>
+                                    <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                        無需付費即可使用精美模板，快速建立個人的多連結頁面，將社群流量有效導引至不同平台、團購連結或作品集。
+                                    </span>
+                                </li>
+                                <li style="margin-bottom: 15px;">
+                                    <strong><i class="fa-solid fa-chart-pie" style="color: var(--brand-red); margin-right: 8px;"></i> 跨平台整合</strong><br>
+                                    <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                        一站式整合 Instagram, TikTok, YouTube 等所有社群帳號，在單一介面即可管理全通路的數據表現。
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <!-- 修改：將「商務媒合」移至最後，並軟化語氣，定位為「準備好自己」 -->
+                            <h2 id="match">4. 商務媒合機會</h2>
+                            <p>AnyCreator 是連結創作者與品牌的長期橋樑。雖然專案機會隨檔期浮動，但提早完成註冊與資料建置，能確保你在適合的品牌活動上線時，已經做好了接案的準備。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增頁面：創作者註冊與使用指南 -->
+        <div id="anycreator-guide" class="section">
+            <div class="blog-container">
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">操作步驟</div>
+                        <a href="#channels" class="doc-toc-link">註冊管道與限制</a>
+                        <a href="#profile-setup" class="doc-toc-link">個人資料與驗證</a>
+                        <a href="#connect" class="doc-toc-link">連結社群帳戶</a>
+                        <a href="#myjobs" class="doc-toc-link">專案管理 (My Jobs)</a>
+                        <a href="#linkbio" class="doc-toc-link">Link in Bio 設定</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">創作者註冊與使用指南</h1>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Creators / IM Guide</div>
+                        </div>
+                        <div class="doc-body">
+                            
+                            <h2 id="channels" style="margin-top: 0;">1. 註冊管道與平台限制</h2>
+                            <p>創作者可透過 Instagram、YouTube、Email 或其他社群平台（Facebook, TikTok, Twitter）進行註冊。</p>
+                            
+                            <div class="doc-alert" style="align-items: flex-start;">
+                                <i class="fa-brands fa-instagram" style="font-size: 18px; margin-top: 3px;"></i>
+                                <div>
+                                    <strong>Instagram 註冊必備條件</strong><br>
+                                    若使用 Instagram 註冊，帳戶必須先在手機 App 中轉為<strong>「專業/企業帳戶（商家）」</strong>，且必須與 <strong>Facebook 粉絲專頁</strong>進行串接，否則將無法獲取進階分析數據。
+                                </div>
+                            </div>
+
+                            <div class="doc-alert" style="background: #f0f9ff; border-color: #bae6fd; color: #0369a1; align-items: flex-start;">
+                                <i class="fa-brands fa-tiktok" style="font-size: 18px; margin-top: 3px;"></i>
+                                <div>
+                                    <strong>TikTok 註冊限制</strong><br>
+                                    該帳戶內必須至少有<strong>一篇公開貼文</strong>，否則系統將無法識別帳號有效性，導致無法完成註冊程序。
+                                </div>
+                            </div>
+
+                            <h2 id="profile-setup">2. 個人資料與 Email 驗證</h2>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>填寫輪廓：</strong>註冊時需選擇最符合個人風格的類別（最多 3 項），並填寫真實姓名、Email、生日與性別。</li>
+                                <li><strong>設定密碼：</strong>填寫完基本資料後，<span style="color: var(--brand-red); font-weight: 700;">務必前往信箱收取驗證信件</span>，點擊信中連結設定登入密碼，才算完成有效註冊。</li>
+                            </ul>
+
+                            <h2 id="connect">3. 連結社群帳戶</h2>
+                            <p>註冊成功後，強烈建議創作者在後台連接各個社群帳號（Link Social Accounts）。</p>
+                            <p style="font-size: 14px; color: #64748b;">雖然目前支持僅用 Email 申請部分 Marketplace 活動，但<strong>唯有連結帳號後，才能使用完整的數據分析功能</strong>，並提高被品牌選中的機率。</p>
+
+                            <h2 id="myjobs">4. 管理專案進度 (My Jobs)</h2>
+                            <p>創作者可透過 My Jobs 頁面一眼掌握所有接案進度，系統提供清晰的階段標籤，降低溝通成本：</p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                                <span class="tag tag-secondary">待審核</span>
+                                <span class="tag tag-primary">進行中</span>
+                                <span class="tag tag-secondary">已錄取</span>
+                                <span class="tag tag-secondary">交稿</span>
+                                <!-- 修改：將「驗收」改為「審稿中」 -->
+                                <span class="tag tag-secondary">審稿中</span>
+                                <span class="tag tag-secondary" style="background: #10b981; color: white;">結案</span>
+                            </div>
+
+                            <h2 id="linkbio">5. 設置 Link in Bio</h2>
+                            <p>創作者選擇喜歡的模板後即可編輯網址後綴與內容。</p>
+                            <div style="background: #fffbeb; padding: 12px; border-radius: 6px; font-size: 14px; color: #92400e; margin-top: 10px;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <strong>注意：</strong>模板樣式一旦選定後即<strong>無法更改</strong>（例如從風格 A 換成風格 B），僅能修改內部的文字與連結資訊。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="troubleshoot" class="section"><div class="card"><h3>疑難排解建置中...</h3></div></div>
         <div id="resources" class="section"><div class="card"><h3>資源中心建置中...</h3></div></div>
 
@@ -1538,7 +1684,10 @@
                 'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
                 'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
-                'anycreator': ['AnyCreator', '創作者端功能'],
+                'anytag-sales': ['AnyTag Guide', '業務重點功能說明'], // 新增標題映射
+                'anytag-ops': ['AnyTag Guide', '執行操作手冊'], // 新增標題映射
+                'anycreator-invite': ['AnyCreator Guide', '邀約註冊'], // 修改：更新標題映射為「邀約註冊」
+                'anycreator-guide': ['AnyCreator Guide', '註冊與使用指南'], // 新增
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
                 'resources': ['Resources', '資源中心']
             };
