@@ -242,7 +242,9 @@
 
         .changelog-header { margin-bottom: 15px; padding-right: 60px; /* 避開右上角標籤 */ }
         .changelog-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4; }
-        .changelog-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        
+        /* 修改：優化標籤容器排版 */
+        .changelog-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
         
         .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; border: 1px solid transparent; }
         .status-released { background: #ecfdf5; color: #059669; border-color: #a7f3d0; } 
@@ -263,6 +265,31 @@
         .changelog-content ul, .changelog-content ol { padding-left: 20px; margin-bottom: 15px; }
         .changelog-content li { margin-bottom: 5px; }
         .changelog-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; }
+        
+        /* 修改：標籤視覺優化 (Pill Shape Design) */
+        .tag-small { 
+            font-size: 12px; 
+            padding: 4px 12px; 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 20px; /* 膠囊圓角 */
+            color: #64748b; 
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03); /* 微陰影增加立體感 */
+            cursor: default;
+        }
+        
+        /* 增加 Hover 效果 */
+        .tag-small:hover {
+            background: #fff1f2; /* 淡淡的品牌紅背景 */
+            color: var(--brand-red);
+            border-color: #fecdd3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(225, 79, 75, 0.1);
+        }
 
         /* Filter Bar 樣式優化 */
         .filter-bar { 
@@ -1491,11 +1518,13 @@
                 const matchRole = currentRoleFilter === 'All' || postRole === 'All' || postRole === currentRoleFilter;
                 const matchStatus = currentStatusFilter === 'All' || postStatus === currentStatusFilter;
                 
-                // 新增：搜尋過濾
-                const matchSearch = searchQuery === '' || 
-                                    post.title.toLowerCase().includes(searchQuery) || 
-                                    post.content.toLowerCase().includes(searchQuery) ||
-                                    (post.tags && String(post.tags).toLowerCase().includes(searchQuery));
+                // 新增：搜尋過濾 (邏輯：標題 OR 內容 OR 標籤，只要沾上邊就顯示)
+                // 強制將 tags 轉為字串再搜尋，避免漏網之魚
+                const searchStr = searchQuery.trim();
+                const matchSearch = searchStr === '' || 
+                                    post.title.toLowerCase().includes(searchStr) || 
+                                    post.content.toLowerCase().includes(searchStr) ||
+                                    (post.tags && String(post.tags).toLowerCase().includes(searchStr));
 
                 return matchRole && matchStatus && matchSearch;
             });
@@ -1552,8 +1581,9 @@
                 if(post.role === 'BD') { roleClass = 'role-bd'; roleText = 'Business'; }
                 if(post.role === 'IM') { roleClass = 'role-im'; roleText = 'Operation'; }
 
-                // 標籤處理
-                const tagsHtml = (post.tags && typeof post.tags === 'string') ? post.tags.split(',').map(t => `<span class="tag-small">#${t.trim()}</span>`).join('') : '';
+                // 標籤處理 (修正：強制轉字串，避免格式錯誤導致標籤消失)
+                const tagsRaw = post.tags ? String(post.tags) : '';
+                const tagsHtml = tagsRaw ? tagsRaw.split(',').map(t => `<span class="tag-small">#${t.trim()}</span>`).join('') : '';
 
                 // 內容處理 (過長折疊)
                 const uniqueId = `content-${index}`;
