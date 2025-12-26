@@ -688,6 +688,12 @@
                     </div>
 
                     <div class="filter-group" style="margin-left: auto;">
+                        <!-- 新增：月份篩選器 -->
+                        <select id="monthFilter" class="filter-select" onchange="filterBlogMonth(this.value)">
+                            <option value="All">📅 所有月份</option>
+                            <!-- 選項將由 JS 自動生成 -->
+                        </select>
+
                          <select id="statusFilter" class="filter-select" onchange="filterBlogStatus(this.value)">
                             <option value="All">全部狀態</option>
                             <option value="Released">🟢 已釋出</option>
@@ -1135,10 +1141,11 @@
         let filteredPosts = [];
         let currentRoleFilter = 'All';
         let currentStatusFilter = 'All';
+        let currentMonthFilter = 'All'; // 新增：月份篩選狀態
         let currentSortOrder = 'desc';
         let currentPage = 1;
         const postsPerPage = 5;
-        let searchQuery = ''; // 新增：搜尋關鍵字
+        let searchQuery = ''; 
 
         // 新增：儲存圖表實例的全域變數，用於銷毀舊圖表
         let growthChartInstance = null;
@@ -1391,11 +1398,36 @@
                 const response = await fetch(BLOG_SCRIPT_URL + "?t=" + new Date().getTime());
                 const posts = await response.json();
                 allBlogPosts = posts; 
+                populateMonthFilter(); // 新增：資料載入後，生成月份選項
                 applyFilters(); 
                 renderDashboardStats(); 
             } catch (error) {
                 console.error("Fetch Blog Failed:", error);
             }
+        }
+
+        // 新增：自動從日誌資料中提取月份並生成下拉選單
+        function populateMonthFilter() {
+            const monthSet = new Set();
+            allBlogPosts.forEach(post => {
+                const d = new Date(post.date);
+                if (!isNaN(d.getTime())) {
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    monthSet.add(`${y}-${m}`);
+                }
+            });
+            
+            // 排序月份 (由新到舊)
+            const sortedMonths = Array.from(monthSet).sort().reverse();
+            
+            const select = document.getElementById('monthFilter');
+            // 保留第一個 "所有月份" 選項，清除其餘
+            select.innerHTML = '<option value="All">📅 所有月份</option>';
+            
+            sortedMonths.forEach(month => {
+                select.innerHTML += `<option value="${month}">${month}</option>`;
+            });
         }
 
         // 修改後的 renderDashboardStats (只顯示產品更新部分，網紅數據由 renderInfluencerStats 處理)
@@ -1501,6 +1533,12 @@
             applyFilters();
         }
 
+        // 新增：月份篩選函式
+        function filterBlogMonth(month) {
+            currentMonthFilter = month;
+            applyFilters();
+        }
+
         function filterBlogSearch() {
             searchQuery = document.getElementById('updateSearchInput').value.toLowerCase();
             applyFilters();
@@ -1518,6 +1556,20 @@
                 const matchRole = currentRoleFilter === 'All' || postRole === 'All' || postRole === currentRoleFilter;
                 const matchStatus = currentStatusFilter === 'All' || postStatus === currentStatusFilter;
                 
+                // 新增：月份篩選邏輯
+                let matchMonth = true;
+                if (currentMonthFilter !== 'All') {
+                    const d = new Date(post.date);
+                    if (!isNaN(d.getTime())) {
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const postMonth = `${y}-${m}`;
+                        matchMonth = postMonth === currentMonthFilter;
+                    } else {
+                        matchMonth = false;
+                    }
+                }
+
                 // 新增：搜尋過濾 (邏輯：標題 OR 內容 OR 標籤，只要沾上邊就顯示)
                 // 強制將 tags 轉為字串再搜尋，避免漏網之魚
                 const searchStr = searchQuery.trim();
@@ -1526,7 +1578,7 @@
                                     post.content.toLowerCase().includes(searchStr) ||
                                     (post.tags && String(post.tags).toLowerCase().includes(searchStr));
 
-                return matchRole && matchStatus && matchSearch;
+                return matchRole && matchStatus && matchSearch && matchMonth;
             });
             
             // 預設降序排列 (最新在前)
@@ -1689,17 +1741,69 @@
         }
 
         const knowledgeBase = [
-            { id: "001", title: "網紅搜尋 SOP", desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", tag: "User Guide", tagClass: "tag-primary", icon: "fa-solid fa-magnifying-glass-location", btnText: "前往教學", btnLink: "#", btnStyle: "btn", riskLevel: "low", category: "AnyTag", roles: ['IM'] },
-            { id: "002", title: "數據沒更新？", desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", tag: "FAQ", tagClass: "tag-secondary", icon: "fa-regular fa-circle-question", btnText: "查看解決方案", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "AnyTag", roles: ['BD', 'IM'] },
+            { 
+                id: "001", 
+                title: "網紅搜尋 SOP", 
+                desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", 
+                tag: "User Guide", 
+                tagClass: "tag-primary", 
+                icon: "fa-solid fa-magnifying-glass-location", 
+                // 修改：使用自定義 HTML 進行內部跳轉 (跳至 anytag-ops 頁面的 influencers 章節)
+                customHtml: `<button class="btn" onclick="navigateTo('anytag-ops', 'influencers'); logDecision('001', '網紅搜尋 SOP')">前往教學</button>`,
+                riskLevel: "low", 
+                category: "AnyTag", 
+                roles: ['IM'] 
+            },
+            { 
+                id: "002", 
+                title: "數據沒更新？", 
+                desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", 
+                tag: "FAQ", 
+                tagClass: "tag-secondary", 
+                icon: "fa-regular fa-circle-question", 
+                // 修改：使用自定義 HTML 跳轉至疑難排解頁面
+                customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); logDecision('002', '數據沒更新？')">查看解決方案</button>`,
+                riskLevel: "low", 
+                category: "AnyTag", 
+                roles: ['BD', 'IM'] 
+            },
             { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1l2B4IXrtivcZlb_lBjhlaq_coBKE01SoVBGvg_92zmc/edit?gid=0#gid=0" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
             { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="window.scrollTo(0,0); showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看日誌</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] }, 
             { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
-            { id: "006", title: "結案報告範本", desc: "標準結案報告 PPT 模板與數據填寫說明。", tag: "Template", tagClass: "tag-secondary", icon: "fa-solid fa-file-powerpoint", btnText: "下載 PPT", btnLink: "#", btnStyle: "btn-outline", riskLevel: "low", category: "IM", roles: ['IM'] },
+            { 
+                id: "006", 
+                title: "結案報告範本", 
+                desc: "標準結案報告 PPT 模板與數據填寫說明。", 
+                tag: "Template", 
+                tagClass: "tag-secondary", 
+                icon: "fa-solid fa-file-powerpoint", 
+                btnText: "下載 PPT", 
+                // 修改：更新外部連結為指定的 Google Slides
+                btnLink: "https://docs.google.com/presentation/d/1_nyANFW05Pao8LXp4c5B5Yaquc8lHzhn42VKjscLFE4/edit?slide=id.p27#slide=id.p27", 
+                btnStyle: "btn-outline", 
+                riskLevel: "low", 
+                category: "IM", 
+                roles: ['IM'] 
+            },
             { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
         ];
 
         let currentRole = 'All';
         let searchDebounce = null; 
+
+        // 新增：處理內部跳轉與錨點滾動的輔助函式
+        function navigateTo(pageId, anchorId) {
+            showPage(pageId); // 切換頁面
+            if (anchorId) {
+                // 給一點時間讓頁面渲染完成後再滾動
+                setTimeout(() => {
+                    const element = document.getElementById(anchorId);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            }
+        }
 
         function filterRole(role) {
             currentRole = role;
@@ -1862,7 +1966,25 @@
             if (targetSection) {
                 targetSection.classList.add('active');
             }
-            if(navElement) navElement.classList.add('active');
+            
+            // 修改：自動高亮對應的側邊選單
+            if (navElement) {
+                navElement.classList.add('active');
+            } else {
+                // 如果是透過內部連結跳轉，嘗試自動找到對應的選單項目並點亮
+                const matchedNav = document.querySelector(`.nav-item[onclick*="'${pageId}'"]`) || 
+                                   document.querySelector(`.submenu-item[onclick*="'${pageId}'"]`);
+                if (matchedNav) {
+                    matchedNav.classList.add('active');
+                    // 如果是子選單，順便展開父選單
+                    const parentSubmenu = matchedNav.closest('.submenu');
+                    if (parentSubmenu) {
+                        parentSubmenu.classList.add('open');
+                        const parentNav = parentSubmenu.previousElementSibling;
+                        if (parentNav) parentNav.classList.add('expanded');
+                    }
+                }
+            }
             
             const map = {
                 'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
