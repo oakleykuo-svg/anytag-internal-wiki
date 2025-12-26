@@ -206,33 +206,79 @@
         .close-modal:hover { color: #000; background: #fff; }
         iframe.gform-frame { width: 100%; flex: 1; border: none; }
 
-        /* --- Blog & Editor CSS --- */
-        .blog-container { max-width: 800px; margin: 0 auto; }
+        /* --- Blog & Editor CSS (大幅優化) --- */
+        .blog-container { max-width: 900px; margin: 0 auto; }
         .blog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .blog-timeline { position: relative; padding-left: 20px; border-left: 2px solid #e2e8f0; min-height: 200px;}
-        .blog-post { position: relative; background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 30px; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.05); }
-        .blog-post::before { content: ''; position: absolute; left: -27px; top: 24px; width: 12px; height: 12px; background: var(--brand-red); border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 3px #e2e8f0; }
-        .post-meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .post-info { display: flex; flex-direction: column; gap: 5px; }
-        .post-date { font-weight: 700; color: #64748b; font-size: 14px; }
-        .post-version { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 12px; color: #475569; display: inline-block; width: fit-content;}
-        .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 700; color: #fff; display: inline-block; }
-        .status-released { background: #10b981; } 
-        .status-beta { background: #3b82f6; }
-        .status-progress { background: #f59e0b; }
-        .status-planning { background: #8b5cf6; }
-        .status-hold { background: #94a3b8; }
-        .post-content h4 { font-size: 20px; margin-bottom: 12px; color: #1e293b; }
-        .post-content p { color: #475569; line-height: 1.7; margin-bottom: 15px; }
         
-        /* 修正：清單縮排與對齊 */
-        .post-content ul, .post-content ol { padding-left: 25px; margin-left: 5px; color: #475569; margin-bottom: 15px; }
-        .post-content li { margin-bottom: 8px; }
+        /* 移除舊的時間軸樣式，改用 Changelog 清單樣式 */
+        .updates-feed { display: flex; flex-direction: column; gap: 24px; }
         
-        .post-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .post-tags { display: flex; gap: 8px; }
-        .tag-small { font-size: 11px; padding: 3px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; }
-        .loading-state { padding: 40px; text-align: center; color: #64748b; }
+        .changelog-item { display: flex; gap: 20px; position: relative; }
+        @media (max-width: 768px) { .changelog-item { flex-direction: column; gap: 10px; } }
+
+        .changelog-meta { 
+            width: 140px; flex-shrink: 0; text-align: right; padding-top: 10px; 
+            position: sticky; top: 20px; height: fit-content;
+        }
+        @media (max-width: 768px) { 
+            .changelog-meta { width: 100%; text-align: left; padding-top: 0; position: static; display: flex; align-items: center; gap: 10px; } 
+        }
+
+        .changelog-date { font-weight: 800; font-size: 18px; color: #1e293b; letter-spacing: -0.5px; }
+        .changelog-version { font-family: monospace; font-size: 12px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #64748b; margin-top: 4px; display: inline-block; }
+
+        .changelog-card { 
+            flex: 1; background: #fff; border-radius: 12px; padding: 24px; 
+            box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.05); 
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .changelog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(0,0,0,0.1); }
+        
+        /* 角色標籤樣式 - 視覺分流 */
+        .role-badge { position: absolute; top: 0; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 700; border-bottom-left-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .role-bd { background: #eff6ff; color: #2563eb; } /* 藍色系 for BD */
+        .role-im { background: #fff7ed; color: #ea580c; } /* 橘色系 for IM */
+        .role-all { background: #f1f5f9; color: #475569; }
+
+        .changelog-header { margin-bottom: 15px; padding-right: 60px; /* 避開右上角標籤 */ }
+        .changelog-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4; }
+        .changelog-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        
+        .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; border: 1px solid transparent; }
+        .status-released { background: #ecfdf5; color: #059669; border-color: #a7f3d0; } 
+        .status-beta { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+        .status-planning { background: #f5f3ff; color: #7c3aed; border-color: #ddd6fe; }
+
+        .changelog-content { color: #475569; line-height: 1.7; font-size: 15px; }
+        .changelog-content.collapsed { max-height: 100px; overflow: hidden; mask-image: linear-gradient(180deg, #000 60%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); }
+        
+        .read-more-btn { 
+            display: none; width: 100%; text-align: center; margin-top: 10px; 
+            padding: 8px; background: #f8fafc; border-radius: 6px; 
+            color: var(--brand-red); font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0;
+        }
+        .read-more-btn:hover { background: #fff; }
+
+        .changelog-content h4 { font-size: 16px; margin: 15px 0 10px; color: #334155; }
+        .changelog-content ul, .changelog-content ol { padding-left: 20px; margin-bottom: 15px; }
+        .changelog-content li { margin-bottom: 5px; }
+        .changelog-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; }
+
+        /* Filter Bar 樣式優化 */
+        .filter-bar { 
+            background: #fff; padding: 15px; border-radius: 12px; box-shadow: var(--shadow-sm); 
+            display: flex; gap: 15px; align-items: center; margin-bottom: 30px; flex-wrap: wrap;
+        }
+        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-label { font-size: 13px; font-weight: 600; color: #64748b; }
+        .update-search { 
+            flex: 1; min-width: 200px; position: relative; 
+        }
+        .update-search input { 
+            width: 100%; padding: 10px 15px 10px 35px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; 
+        }
+        .update-search i { position: absolute; left: 12px; top: 13px; color: #94a3b8; font-size: 14px; }
+
         .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 30px; padding-bottom: 30px; }
         .pagination-btn { background: #fff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px; cursor: pointer; color: #475569; font-size: 14px; transition: all 0.2s; }
         .pagination-btn:hover:not(:disabled) { background: #f8fafc; color: var(--brand-red); border-color: var(--brand-red); }
@@ -246,6 +292,17 @@
         .editor-label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: #64748b; }
         .editor-input, .editor-select, .editor-textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
         .editor-textarea { min-height: 120px; resize: vertical; }
+
+        .rich-editor-toolbar { background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+        .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
+        .toolbar-btn:hover { background: #e2e8f0; color: #000; }
+        .rich-editor-content { width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; background: #fff; outline: none; line-height: 1.6; color: #333; }
+        /* 編輯器內的清單也同步修正 */
+        .rich-editor-content ul, .rich-editor-content ol { padding-left: 20px; margin-bottom: 10px; }
+        .rich-editor-content p { margin-bottom: 10px; }
+        .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
+        .rich-editor-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; }
+        .toolbar-color-input { width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle; }
 
         .doc-layout { display: flex; gap: 40px; position: relative; } /* 修改：加入 relative */
         .doc-sidebar { 
@@ -401,7 +458,19 @@
         <div class="brand"><span>●</span> TAIWAN<br>AnyTag/AnyCreator<br>Support Hub</div>
         <div class="nav-group">
             <div class="nav-title">MAIN MENU</div>
-            <div class="nav-item active" onclick="showPage('dashboard', this)"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
+            <!-- 修改：Dashboard 改為下拉選單結構，包含總覽與產品更新 -->
+            <div class="nav-item active" onclick="toggleSubmenu('dashboard-submenu', this)">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+                <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
+            </div>
+            <div id="dashboard-submenu" class="submenu">
+                <div class="submenu-item" onclick="showPage('dashboard', this)">
+                    <i class="fa-solid fa-table-columns"></i> 總覽 (Overview)
+                </div>
+                <div class="submenu-item" onclick="showPage('updates', this); fetchBlogPosts();">
+                    <i class="fa-solid fa-newspaper"></i> 產品更新動態
+                </div>
+            </div>
             
             <!-- 修改：AnyTag 平台指南 (可展開) -->
             <div class="nav-item" onclick="toggleSubmenu('anytag-submenu', this)">
@@ -566,40 +635,44 @@
             </div>
         </div>
 
-        <!-- 產品更新日誌頁面 -->
+        <!-- 產品更新日誌頁面 (完全重構) -->
         <div id="updates" class="section">
             <div class="blog-container">
                 <div class="blog-header">
-                    <!-- 修正：加入 scrollTo(0,0) -->
-                    <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回儀表板</button>
+                    <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回總覽</button>
                     <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
                 </div>
                 
-                <!-- 日誌篩選器 -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                    <div class="tabs-container" style="margin-bottom: 0;">
-                        <button class="tab-btn active" onclick="filterBlogRole('All')">全部更新</button>
-                        <button class="tab-btn" onclick="filterBlogRole('BD')">業務重點 (BD)</button>
-                        <button class="tab-btn" onclick="filterBlogRole('IM')">功能操作 (IM)</button>
+                <!-- 新增：優化後的篩選與搜尋列 -->
+                <div class="filter-bar">
+                    <div class="update-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="updateSearchInput" placeholder="搜尋功能關鍵字..." onkeyup="filterBlogSearch()">
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    
+                    <div class="filter-group">
+                        <span class="filter-label">受眾：</span>
+                        <div class="tabs-container" style="margin-bottom: 0; gap: 5px;">
+                            <button class="tab-btn active" onclick="filterBlogRole('All')">全部</button>
+                            <button class="tab-btn" onclick="filterBlogRole('BD')">業務</button>
+                            <button class="tab-btn" onclick="filterBlogRole('IM')">執行</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-group" style="margin-left: auto;">
                          <select id="statusFilter" class="filter-select" onchange="filterBlogStatus(this.value)">
                             <option value="All">全部狀態</option>
                             <option value="Released">🟢 已釋出</option>
                             <option value="Testing">🔵 測試中</option>
                             <option value="In Progress">🟡 開發中</option>
                             <option value="Planning">🟣 待討論</option>
-                            <option value="Hold">⚪️ 已暫停</option>
-                        </select>
-                        <select id="sortFilter" class="filter-select" onchange="sortBlog(this.value)">
-                            <option value="desc">最新優先</option>
-                            <option value="asc">最舊優先</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="blog-timeline" id="blog-container">
+                <!-- 內容呈現區塊：改為 Updates Feed 樣式 -->
+                <div class="updates-feed" id="blog-container">
                     <div class="loading-state"><i class="fa-solid fa-circle-notch fa-spin"></i> 正在載入更新日誌...</div>
                 </div>
                 
@@ -1038,6 +1111,11 @@
         let currentSortOrder = 'desc';
         let currentPage = 1;
         const postsPerPage = 5;
+        let searchQuery = ''; // 新增：搜尋關鍵字
+
+        // 新增：儲存圖表實例的全域變數，用於銷毀舊圖表
+        let growthChartInstance = null;
+        let updateChartInstance = null;
 
         // 自動執行
         window.onload = function() {
@@ -1228,7 +1306,13 @@
             }
             
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
-            new Chart(ctx, {
+            
+            // 修正：檢查並銷毀舊的圖表實例
+            if (growthChartInstance) {
+                growthChartInstance.destroy();
+            }
+
+            growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
@@ -1309,7 +1393,13 @@
                 }
             });
             const ctx = document.getElementById('updateChart').getContext('2d');
-            new Chart(ctx, {
+            
+            // 修正：檢查並銷毀舊的圖表實例
+            if (updateChartInstance) {
+                updateChartInstance.destroy();
+            }
+
+            updateChartInstance = new Chart(ctx, {
                 type: 'line', // 修改：改為波浪狀折線圖
                 data: {
                     labels: months,
@@ -1370,16 +1460,22 @@
 
         function filterBlogRole(role) {
             currentRoleFilter = role;
+            // 更新按鈕狀態
             const buttons = document.querySelectorAll('#updates .tab-btn');
             buttons.forEach(btn => {
                 btn.classList.remove('active');
-                if(btn.innerText.includes(role === 'All' ? '全部' : role)) btn.classList.add('active');
+                if(btn.innerText.includes(role === 'All' ? '全部' : (role === 'BD' ? '業務' : '執行'))) btn.classList.add('active');
             });
             applyFilters();
         }
 
         function filterBlogStatus(status) {
             currentStatusFilter = status;
+            applyFilters();
+        }
+
+        function filterBlogSearch() {
+            searchQuery = document.getElementById('updateSearchInput').value.toLowerCase();
             applyFilters();
         }
 
@@ -1394,12 +1490,21 @@
                 const postStatus = post.status || 'Unknown';
                 const matchRole = currentRoleFilter === 'All' || postRole === 'All' || postRole === currentRoleFilter;
                 const matchStatus = currentStatusFilter === 'All' || postStatus === currentStatusFilter;
-                return matchRole && matchStatus;
+                
+                // 新增：搜尋過濾
+                const matchSearch = searchQuery === '' || 
+                                    post.title.toLowerCase().includes(searchQuery) || 
+                                    post.content.toLowerCase().includes(searchQuery) ||
+                                    (post.tags && String(post.tags).toLowerCase().includes(searchQuery));
+
+                return matchRole && matchStatus && matchSearch;
             });
+            
+            // 預設降序排列 (最新在前)
             filteredPosts.sort((a, b) => {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
-                return currentSortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+                return dateB - dateA;
             });
             currentPage = 1;
             renderBlogPage();
@@ -1423,25 +1528,74 @@
             const start = (currentPage - 1) * postsPerPage;
             const end = start + postsPerPage;
             const pageData = filteredPosts.slice(start, end);
-            pageData.forEach(post => {
-                let displayDate = post.date;
+            
+            pageData.forEach((post, index) => {
+                // 日期處理
+                let dateDay = '';
+                let dateMonthYear = '';
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
-                    const y = dateObj.getFullYear();
-                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-                    const d = String(dateObj.getDate()).padStart(2, '0');
-                    displayDate = `${y}-${m}-${d}`;
+                    dateDay = String(dateObj.getDate()).padStart(2, '0');
+                    dateMonthYear = `${dateObj.getFullYear()} ${dateObj.toLocaleString('en-US', { month: 'short' })}`;
                 }
-                let statusClass = 'status-hold';
+
+                // 狀態樣式
+                let statusClass = 'status-planning';
                 let statusText = post.status || 'Unknown';
-                if(statusText.includes('Released')) statusClass = 'status-released';
-                else if(statusText.includes('Testing')) statusClass = 'status-beta';
-                else if(statusText.includes('In Progress')) statusClass = 'status-progress';
-                else if(statusText.includes('Planning')) statusClass = 'status-planning';
-                const statusHtml = `<span class="status-badge ${statusClass}">${statusText}</span>`;
-                const tagsHtml = post.tags.map(t => `<span class="tag-small">#${t}</span>`).join('');
-                const html = `<div class="blog-post"><div class="post-meta"><div class="post-info"><div class="post-date">${displayDate}</div><span class="post-version">${post.version}</span></div>${statusHtml}</div><div class="post-content"><h4>${post.title}</h4>${post.content}</div><div class="post-tags">${tagsHtml}</div></div>`;
+                if(statusText.includes('Released')) { statusClass = 'status-released'; statusText = '已釋出'; }
+                else if(statusText.includes('Testing')) { statusClass = 'status-beta'; statusText = '測試中'; }
+                else if(statusText.includes('In Progress')) { statusClass = 'status-beta'; statusText = '開發中'; }
+                
+                // 角色樣式
+                let roleClass = 'role-all';
+                let roleText = 'General';
+                if(post.role === 'BD') { roleClass = 'role-bd'; roleText = 'Business'; }
+                if(post.role === 'IM') { roleClass = 'role-im'; roleText = 'Operation'; }
+
+                // 標籤處理
+                const tagsHtml = (post.tags && typeof post.tags === 'string') ? post.tags.split(',').map(t => `<span class="tag-small">#${t.trim()}</span>`).join('') : '';
+
+                // 內容處理 (過長折疊)
+                const uniqueId = `content-${index}`;
+                // 簡單判斷長度，若字數過多則加入折疊邏輯 (這裡用 CSS class 控制)
+                const isLongContent = post.content.length > 300; 
+                const contentHtml = `
+                    <div class="changelog-content ${isLongContent ? 'collapsed' : ''}" id="${uniqueId}">
+                        ${post.content}
+                    </div>
+                    ${isLongContent ? `<div class="read-more-btn" onclick="document.getElementById('${uniqueId}').classList.remove('collapsed'); this.style.display='none';">閱讀完整內容 <i class="fa-solid fa-chevron-down"></i></div>` : ''}
+                `;
+
+                // 組合 HTML
+                const html = `
+                    <div class="changelog-item">
+                        <div class="changelog-meta">
+                            <div class="changelog-date">${dateDay}</div>
+                            <div style="font-size: 13px; color: #94a3b8; font-weight: 500;">${dateMonthYear}</div>
+                            <span class="changelog-version">${post.version || 'v1.0'}</span>
+                        </div>
+                        <div class="changelog-card">
+                            <span class="role-badge ${roleClass}">${roleText}</span>
+                            <div class="changelog-header">
+                                <div class="changelog-title">${post.title}</div>
+                                <div class="changelog-tags">
+                                    <span class="status-pill ${statusClass}">${statusText}</span>
+                                    ${tagsHtml}
+                                </div>
+                            </div>
+                            ${contentHtml}
+                        </div>
+                    </div>
+                `;
                 container.innerHTML += html;
+                
+                // 如果有長內容，顯示按鈕 (需要等 DOM 渲染後)
+                if(isLongContent) {
+                    setTimeout(() => {
+                        const btn = document.getElementById(uniqueId).nextElementSibling;
+                        if(btn) btn.style.display = 'block';
+                    }, 0);
+                }
             });
             document.getElementById('pagination').style.display = 'flex';
             document.getElementById('pageInfo').innerText = `第 ${currentPage} / ${totalPages} 頁`;
