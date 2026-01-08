@@ -530,8 +530,10 @@
             </div>
         </div>
         <div class="nav-group">
-            <div class="nav-title">SUPPORT & SALES</div>
-            <div class="nav-item" onclick="showPage('troubleshoot', this)"><i class="fa-solid fa-screwdriver-wrench"></i> 疑難排解 (Trouble)</div>
+            <!-- 修改：將 SUPPORT & SALES 改為 SUPPORT & RESOURCES -->
+            <div class="nav-title">SUPPORT & RESOURCES</div>
+            <!-- 修改：將 (Trouble) 改為 (FAQ) -->
+            <div class="nav-item" onclick="showPage('troubleshoot', this)"><i class="fa-solid fa-circle-question"></i> 疑難排解 (FAQ)</div>
             <div class="nav-item" onclick="showPage('resources', this)"><i class="fa-solid fa-folder-open"></i> 資源中心 (Resources)</div>
         </div>
         
@@ -1123,7 +1125,37 @@
             </div>
         </div>
 
-        <div id="troubleshoot" class="section"><div class="card"><h3>疑難排解建置中...</h3></div></div>
+        <!-- 疑難排解頁面 (全新建置) -->
+        <div id="troubleshoot" class="section">
+            <div class="blog-container" style="max-width: 1000px;">
+                <div class="blog-header">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #1e293b;">💡 常見問題與疑難排解 (FAQ)</h1>
+                </div>
+
+                <!-- FAQ 搜尋與篩選 -->
+                <div class="filter-bar" style="margin-bottom: 25px;">
+                    <div class="update-search" style="flex: 1;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="faqSearchInput" placeholder="輸入關鍵字搜尋問題... (例如：IG連結失敗、數據沒更新)" onkeyup="filterFaq()">
+                    </div>
+                </div>
+
+                <div class="tabs-container" id="faq-categories" style="margin-bottom: 30px; gap: 8px;">
+                    <button class="tab-btn active" onclick="filterFaqCategory('All')">全部</button>
+                    <button class="tab-btn" onclick="filterFaqCategory('Data')">數據與資料</button>
+                    <button class="tab-btn" onclick="filterFaqCategory('Search')">搜尋與提案</button>
+                    <button class="tab-btn" onclick="filterFaqCategory('Creator')">AnyCreator 相關</button>
+                    <button class="tab-btn" onclick="filterFaqCategory('System')">系統操作與限制</button>
+                    <button class="tab-btn" onclick="filterFaqCategory('MKP')">Marketplace</button>
+                </div>
+
+                <!-- FAQ 列表容器 -->
+                <div id="faq-container" style="display: flex; flex-direction: column; gap: 15px;">
+                    <!-- FAQ 項目將由 JS 生成 -->
+                </div>
+            </div>
+        </div>
+
         <div id="resources" class="section"><div class="card"><h3>資源中心建置中...</h3></div></div>
 
     </main>
@@ -1761,8 +1793,8 @@
                 tag: "FAQ", 
                 tagClass: "tag-secondary", 
                 icon: "fa-regular fa-circle-question", 
-                // 修改：使用自定義 HTML 跳轉至疑難排解頁面
-                customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); logDecision('002', '數據沒更新？')">查看解決方案</button>`,
+                // 修改：使用自定義 HTML 跳轉至疑難排解頁面，並帶入 Data 分類
+                customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); filterFaqCategory('Data'); logDecision('002', '數據沒更新？')">查看解決方案</button>`,
                 riskLevel: "low", 
                 category: "AnyTag", 
                 roles: ['BD', 'IM'] 
@@ -1787,6 +1819,127 @@
             },
             { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
         ];
+
+        // --- FAQ 資料庫 ---
+        const faqData = [
+            // 一、數據更新與資料準確性 (Data)
+            { category: 'Data', q: '網紅數據（如粉絲數、互動率、地區）沒有更新怎麼辦？', a: '請先確認網紅帳號（username）是否有更換。平台常規更新頻率為 7 天一次。若未更新，請點擊 Profile 右上角的 <strong>「Refresh profile」</strong> 強制抓取，或使用擴充功能協助。若無效請聯繫 PO。' },
+            { category: 'Data', q: '為什麼某些網紅數據標註為「Estimated (預估值)」，且看不到受眾輪廓？', a: '因為該網紅為「未註冊網紅」，數據是透過 LLM 預測模型估算。若要精確數據，需邀請網紅註冊 AnyCreator 並完成授權。' },
+            { category: 'Data', q: '原本數據正常，突然所有貼文與互動數據都抓不到了？', a: '1. 確認 IG 帳號是否更換 Username。<br>2. 檢查網紅是否將 IG 從「公開」設為**「私人 (Private)」**，這會導致系統無法抓取。' },
+            { category: 'Data', q: '新增網紅後，為什麼 Profile 頁面是一片空白沒有數據？', a: '系統計算輪廓資料需要時間，通常需等待約 <strong>2 個工作天</strong>。若長時間仍無數據，需通知平台營運人員 (PO)。' },
+            { category: 'Data', q: 'IG 有什麼獨有指標是其他平台沒有的？', a: '<strong>Est. Reach (預估觸及人數)</strong> 是 IG 平台在 AnyTag 上的獨有數據指標。' },
+
+            // 二、搜尋與查找效率 (Search)
+            { category: 'Search', q: '想找具備「特定產品經驗」或「小眾主題」的網紅？', a: '建議使用 <strong>「Influencers: Posts」</strong> 功能，直接輸入關鍵字搜尋網紅過往發布過的貼文內容，比篩選類別更精準。' },
+            { category: 'Search', q: '如何知道「某個特定網紅」是否有業配過競品？', a: '進入該網紅 Profile Page -> Feed 貼文區塊 -> 點擊右下角 More -> 利用關鍵字搜尋。' },
+            { category: 'Search', q: '如何一次下載 50 位網紅的詳細數據？', a: '將網紅加入 <strong>「Propose Influencers」</strong> 或 <strong>「Packages」</strong> 名單，即可使用一鍵打包功能匯出 PPT 或 Excel。' },
+            { category: 'Search', q: '想看網紅的「漲粉能力」？', a: '前往 <strong>「Trends」</strong> 功能區塊，可觀察特定期間內的漲粉率趨勢。' },
+            { category: 'Search', q: '為什麼 AI 搜尋結果不精準？', a: '受文字指令精確度與圖片視覺風格影響。建議清楚說明查找範圍（粉絲數、地區）並提供風格強烈的圖片。目前僅支援 IG, TikTok, YT。' },
+            { category: 'Search', q: '如何分辨 Facebook 的「個人檔案」與「粉絲專頁」以免匯入錯誤？', a: '請查看 FB 頁面的 <strong>「簡介 (Intro)」</strong> 區塊分辨。匯入時 Username 若是一串數字 (id=1000...) 亦可搜尋。' },
+
+            // 四、創作者端 (Creator)
+            { category: 'Creator', q: '網紅無法成功連結 Instagram 帳號到 AnyCreator？', a: '1. IG 必須轉為<strong>「商業帳號 (Business)」</strong>（不可選創作者）。<br>2. 必須連結到一個 <strong>Facebook 粉絲專頁</strong>。' },
+            { category: 'Creator', q: 'AnyCreator 有中文介面嗎？', a: '有。APP版：右下角 My Page → 帳戶 → 顯示語言。網頁版：左方欄位 My Page → 帳戶 → 顯示語言。' },
+            { category: 'Creator', q: '加入後，平台會有帳號操控權限嗎？', a: '<strong>完全沒有。</strong>授權僅用於讀取數據（洞察報告），我們無法發布內容、回覆留言或管理帳號。' },
+            { category: 'Creator', q: '註冊需要費用嗎？會直接有合作機會嗎？', a: '<strong>完全免費</strong>。註冊後會列入熱門版位提升被搜尋機率，但實際合作仍依專案媒合而定。無需預先簽約。' },
+            { category: 'Creator', q: '網紅找不到 Marketplace 招募活動入口？', a: '必須先<strong>註冊 AnyCreator</strong> 才看得到活動。部分專案可能有特定的授權門檻限制。' },
+            { category: 'Creator', q: 'Link in Bio 可以隨意更換風格嗎？', a: '不行。模板一旦選定即無法更改樣式，僅能修改文字與連結。目前僅限手機版操作。' },
+
+            // 六、平台技術與系統 (System)
+            { category: 'System', q: '為什麼看不到過去一個月的粉絲成長趨勢？', a: '若網紅在<strong>過去 30 天內沒有發布任何新貼文</strong>，系統將無法產出該月份的趨勢圖。' },
+            { category: 'System', q: '對於「未註冊網紅」，能看到真實受眾數據嗎？', a: '不能。未註冊網紅數據皆為 LLM 模型推估的「預估值」。' },
+            { category: 'System', q: '可以手動修改「平均互動率」或「貼文報價」嗎？', a: '<strong>不可以</strong>。數據由系統計算；報價欄位受內部規範保護，不應自行更動。' },
+            { category: 'System', q: '發現同一個網紅有兩筆重複資料？', a: '請回報給平台營運人員 (PO/Oakley) 進行資料合併，不可置之不理。' },
+            { category: 'System', q: '品牌分析 (Analytics) 免費版能看競品數據嗎？', a: '不行。免費版僅能分析<strong>自身品牌帳號</strong>。競品分析屬於進階付費功能（台灣尚未開放）。' },
+
+            // 十一、Marketplace (MKP)
+            { category: 'MKP', q: 'MKP 活動可以「指定特定網紅」嗎？', a: '不支援。MKP 為公開報名制。若需指定，建議採 <strong>Hybrid 模式</strong>（MKP 海選 + 人力邀請）。' },
+            { category: 'MKP', q: 'MKP 支援系統內「議價」嗎？', a: '<strong>不支援</strong>。品牌需預設固定報酬，網紅只能選擇接受或不接受。' },
+            { category: 'MKP', q: 'MKP 如何追蹤「銷售轉換」？', a: '可利用「優惠碼」或「專屬連結」。前提是品牌官網必須埋設 <strong>AnyTag Tracking Code</strong>。' },
+            { category: 'MKP', q: 'MKP 在台灣的普及程度？', a: '目前尚未普及至所有活動類型，Engagement Campaign (專案制) 仍是台灣主流模式。' }
+        ];
+
+        let currentFaqCategory = 'All';
+
+        function renderFaq() {
+            const container = document.getElementById('faq-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            const keyword = document.getElementById('faqSearchInput').value.toLowerCase();
+
+            const filtered = faqData.filter(item => {
+                const matchCat = currentFaqCategory === 'All' || item.category === currentFaqCategory;
+                const matchSearch = item.q.toLowerCase().includes(keyword) || item.a.toLowerCase().includes(keyword);
+                return matchCat && matchSearch;
+            });
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8;">沒有找到相關問題，請嘗試其他關鍵字或分類。</div>`;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                // 產生分類標籤 UI
+                let catBadge = '';
+                if(item.category === 'Data') catBadge = '<span class="tag-small" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">數據</span>';
+                if(item.category === 'Search') catBadge = '<span class="tag-small" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;">搜尋</span>';
+                if(item.category === 'Creator') catBadge = '<span class="tag-small" style="background:#fdf4ff; color:#86198f; border-color:#f0abfc;">AnyCreator</span>';
+                if(item.category === 'System') catBadge = '<span class="tag-small" style="background:#f8fafc; color:#475569; border-color:#e2e8f0;">系統</span>';
+                if(item.category === 'MKP') catBadge = '<span class="tag-small" style="background:#fff7ed; color:#c2410c; border-color:#fed7aa;">MKP</span>';
+
+                const html = `
+                    <div class="faq-item" style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; transition:all 0.2s;">
+                        <div class="faq-question" onclick="toggleFaq(${index})" style="padding:15px 20px; cursor:pointer; font-weight:700; color:#334155; display:flex; justify-content:space-between; align-items:center; background:#fff;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                ${catBadge}
+                                <span>${item.q}</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down" id="faq-icon-${index}" style="color:#cbd5e1; transition:transform 0.3s;"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-ans-${index}" style="display:none; padding:0 20px 20px; color:#475569; line-height:1.6; border-top:1px solid #f1f5f9; background:#fcfcfc;">
+                            <div style="padding-top:15px;">${item.a}</div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function toggleFaq(index) {
+            const ans = document.getElementById(`faq-ans-${index}`);
+            const icon = document.getElementById(`faq-icon-${index}`);
+            if(ans.style.display === 'none') {
+                ans.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+                // Highlight header
+                ans.previousElementSibling.style.background = '#f8fafc';
+            } else {
+                ans.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+                ans.previousElementSibling.style.background = '#fff';
+            }
+        }
+
+        function filterFaqCategory(cat) {
+            currentFaqCategory = cat;
+            // 更新 Tab 樣式
+            const tabs = document.querySelectorAll('#faq-categories .tab-btn');
+            tabs.forEach(btn => {
+                if(btn.innerText.includes('全部') && cat === 'All') btn.classList.add('active');
+                else if(btn.innerText.includes('數據') && cat === 'Data') btn.classList.add('active');
+                else if(btn.innerText.includes('搜尋') && cat === 'Search') btn.classList.add('active');
+                else if(btn.innerText.includes('AnyCreator') && cat === 'Creator') btn.classList.add('active');
+                else if(btn.innerText.includes('系統') && cat === 'System') btn.classList.add('active');
+                else if(btn.innerText.includes('Marketplace') && cat === 'MKP') btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderFaq();
+        }
+
+        function filterFaq() {
+            renderFaq();
+        }
 
         let currentRole = 'All';
         let searchDebounce = null; 
@@ -1976,27 +2129,28 @@
                                    document.querySelector(`.submenu-item[onclick*="'${pageId}'"]`);
                 if (matchedNav) {
                     matchedNav.classList.add('active');
-                    // 如果是子選單，順便展開父選單
-                    const parentSubmenu = matchedNav.closest('.submenu');
-                    if (parentSubmenu) {
-                        parentSubmenu.classList.add('open');
-                        const parentNav = parentSubmenu.previousElementSibling;
-                        if (parentNav) parentNav.classList.add('expanded');
-                    }
-                }
-            }
+        // 自動執行
+        window.onload = function() {
+            renderCards(); 
+            // ... (Editor code) ...
             
-            const map = {
-                'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
-                'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
-                'anytag': ['AnyTag Guide', '平台核心功能說明'],
-                'anytag-sales': ['AnyTag Guide', '業務重點功能說明'], // 新增標題映射
-                'anytag-ops': ['AnyTag Guide', '執行操作手冊'], // 新增標題映射
-                'anycreator-invite': ['AnyCreator Guide', '邀約註冊'], // 修改：更新標題映射為「邀約註冊」
-                'anycreator-guide': ['AnyCreator Guide', '註冊與使用指南'], // 新增
-                'troubleshoot': ['Troubleshooting', '常見問題排解'],
-                'resources': ['Resources', '資源中心']
-            };
+            // 新增：處理文件目錄的點擊滾動
+            document.querySelectorAll('.doc-toc-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            fetchBlogPosts();
+            fetchStatsData(); 
+            startNoticeCarousel();
+            renderFaq(); // 初始化 FAQ
+        };
             if(map[pageId]) {
                 document.getElementById('header-title').innerText = map[pageId][0];
                 document.getElementById('header-desc').innerText = map[pageId][1];
