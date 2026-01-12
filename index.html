@@ -1,5 +1,3 @@
---- START OF FILE index.html ---
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -7,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAIWAN AnyTag & AnyCreator Support Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6.5.1 -->
+    <!-- 更新 Font Awesome 版本至 6.5.1 以支援 Threads 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -153,36 +151,36 @@
         .tag-secondary { background: #f0f0f0; color: #666; }
         .tag-high-risk { background: #fee2e2; color: #ef4444; }
 
-        /* --- 戰情室數據樣式 --- */
+        /* --- 戰情室數據樣式 (New) - 修改：更加緊湊 --- */
         .data-war-room {
-            display: grid; grid-template-columns: 3.5fr 5fr; gap: 20px; margin-bottom: 20px; 
+            display: grid; grid-template-columns: 3.5fr 5fr; gap: 20px; margin-bottom: 20px; /* 修改：調整比例與間距 */
         }
         @media (max-width: 1000px) { .data-war-room { grid-template-columns: 1fr; } }
 
         .stat-hero-card {
             background: linear-gradient(135deg, #1e293b, #0f172a);
-            color: #fff; padding: 20px; border-radius: 16px; 
+            color: #fff; padding: 20px; border-radius: 16px; /* 修改：padding 30->20 */
             display: flex; flex-direction: column; justify-content: center;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;
         }
         .stat-hero-card::after {
-            content: ''; position: absolute; right: -20px; bottom: -20px; width: 120px; height: 120px; 
+            content: ''; position: absolute; right: -20px; bottom: -20px; width: 120px; height: 120px; /* 修改：圓圈縮小 */
             background: rgba(255,255,255,0.05); border-radius: 50%;
         }
-        .stat-hero-title { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-hero-value { font-size: 32px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; } 
-        .stat-hero-trend { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+        .stat-hero-title { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; } /* 修改：字體縮小 */
+        .stat-hero-value { font-size: 32px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; } /* 修改：字體縮小 */
+        .stat-hero-trend { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; } /* 修改：字體縮小 */
         .trend-up { color: #4ade80; } .trend-down { color: #f87171; }
         
-        .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .plat-card { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 10px; }
-        .plat-icon { font-size: 18px; width: 24px; text-align: center; }
-        .plat-info div:first-child { font-size: 11px; color: #cbd5e1; }
-        .plat-info div:last-child { font-size: 15px; font-weight: 700; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;}
+        .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; } /* 修改：間距縮小 */
+        .plat-card { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 10px; } /* 修改：padding縮小 */
+        .plat-icon { font-size: 18px; width: 24px; text-align: center; } /* 修改：icon縮小 */
+        .plat-info div:first-child { font-size: 11px; color: #cbd5e1; } /* 修改：標籤縮小 */
+        .plat-info div:last-child { font-size: 15px; font-weight: 700; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;} /* 修改：數值縮小 */
 
-        .chart-section { background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 280px; display: flex; flex-direction: column;}
+        .chart-section { background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 280px; display: flex; flex-direction: column;} /* 修改：高度與padding縮小 */
 
-        /* --- 原有 Dashboard 樣式 --- */
+        /* --- 原有 Dashboard 樣式調整 --- */
         .dashboard-stats { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
         @media (max-width: 900px) { .dashboard-stats { grid-template-columns: 1fr; } }
         
@@ -208,10 +206,11 @@
         .close-modal:hover { color: #000; background: #fff; }
         iframe.gform-frame { width: 100%; flex: 1; border: none; }
 
-        /* --- Blog & Editor CSS --- */
+        /* --- Blog & Editor CSS (大幅優化) --- */
         .blog-container { max-width: 900px; margin: 0 auto; }
         .blog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         
+        /* 移除舊的時間軸樣式，改用 Changelog 清單樣式 */
         .updates-feed { display: flex; flex-direction: column; gap: 24px; }
         
         .changelog-item { display: flex; gap: 20px; position: relative; }
@@ -235,14 +234,16 @@
         }
         .changelog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(0,0,0,0.1); }
         
+        /* 角色標籤樣式 - 視覺分流 */
         .role-badge { position: absolute; top: 0; right: 0; padding: 4px 12px; font-size: 11px; font-weight: 700; border-bottom-left-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .role-bd { background: #eff6ff; color: #2563eb; } 
-        .role-im { background: #fff7ed; color: #ea580c; } 
+        .role-bd { background: #eff6ff; color: #2563eb; } /* 藍色系 for BD */
+        .role-im { background: #fff7ed; color: #ea580c; } /* 橘色系 for IM */
         .role-all { background: #f1f5f9; color: #475569; }
 
-        .changelog-header { margin-bottom: 15px; padding-right: 60px; }
+        .changelog-header { margin-bottom: 15px; padding-right: 60px; /* 避開右上角標籤 */ }
         .changelog-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4; }
         
+        /* 修改：優化標籤容器排版 */
         .changelog-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
         
         .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; border: 1px solid transparent; }
@@ -265,29 +266,32 @@
         .changelog-content li { margin-bottom: 5px; }
         .changelog-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; }
         
+        /* 修改：標籤視覺優化 (Pill Shape Design) */
         .tag-small { 
             font-size: 12px; 
             padding: 4px 12px; 
             background: #ffffff; 
             border: 1px solid #e2e8f0; 
-            border-radius: 20px; 
+            border-radius: 20px; /* 膠囊圓角 */
             color: #64748b; 
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03); 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03); /* 微陰影增加立體感 */
             cursor: default;
         }
         
+        /* 增加 Hover 效果 */
         .tag-small:hover {
-            background: #fff1f2; 
+            background: #fff1f2; /* 淡淡的品牌紅背景 */
             color: var(--brand-red);
             border-color: #fecdd3;
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(225, 79, 75, 0.1);
         }
 
+        /* Filter Bar 樣式優化 */
         .filter-bar { 
             background: #fff; padding: 15px; border-radius: 12px; box-shadow: var(--shadow-sm); 
             display: flex; gap: 15px; align-items: center; margin-bottom: 30px; flex-wrap: wrap;
@@ -320,18 +324,20 @@
         .toolbar-btn { background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 5px 10px; cursor: pointer; color: #475569; transition: all 0.2s; }
         .toolbar-btn:hover { background: #e2e8f0; color: #000; }
         .rich-editor-content { width: 100%; padding: 15px; border: 1px solid #e2e8f0; border-radius: 0 0 8px 8px; min-height: 200px; font-family: inherit; resize: vertical; overflow-y: auto; background: #fff; outline: none; line-height: 1.6; color: #333; }
+        /* 編輯器內的清單也同步修正 */
         .rich-editor-content ul, .rich-editor-content ol { padding-left: 20px; margin-bottom: 10px; }
         .rich-editor-content p { margin-bottom: 10px; }
         .rich-editor-content b, .rich-editor-content strong { font-weight: 700; }
         .rich-editor-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 5px 0; }
         .toolbar-color-input { width: 24px; height: 24px; padding: 0; border: none; background: transparent; cursor: pointer; vertical-align: middle; }
 
-        .doc-layout { display: flex; gap: 40px; position: relative; } 
+        .doc-layout { display: flex; gap: 40px; position: relative; } /* 修改：加入 relative */
         .doc-sidebar { 
             width: 200px; 
             border-right: 1px solid #e2e8f0; 
             padding-right: 20px; 
             flex-shrink: 0; 
+            /* 修改：加入 Sticky 屬性讓目錄固定 */
             position: sticky;
             top: 0;
             align-self: start;
@@ -351,45 +357,11 @@
         .doc-body p { margin-bottom: 15px; }
         .doc-body ul { padding-left: 20px; margin-bottom: 20px; }
         .doc-alert { background: #fff1f2; border: 1px solid #fda4af; padding: 15px; border-radius: 8px; color: #9f1239; margin: 20px 0; font-size: 14px; display: flex; gap: 10px; align-items: start; }
-
-        /* --- 新增：FAQ (疑難排解) 樣式 --- */
-        .faq-container { max-width: 900px; margin: 0 auto; }
-        .faq-categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; scrollbar-width: none; }
-        .faq-categories::-webkit-scrollbar { display: none; }
-        
-        .faq-category-btn {
-            white-space: nowrap; padding: 8px 16px; border-radius: 20px; 
-            background: #fff; border: 1px solid #e2e8f0; color: #64748b; font-size: 14px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-        }
-        .faq-category-btn:hover { background: #f8fafc; border-color: var(--brand-red); color: var(--brand-red); }
-        .faq-category-btn.active { background: var(--brand-red); color: #fff; border-color: var(--brand-red); box-shadow: 0 4px 10px rgba(225, 79, 75, 0.2); }
-
-        .faq-list { display: flex; flex-direction: column; gap: 15px; }
-        .faq-item { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; transition: all 0.3s; }
-        .faq-item:hover { border-color: #cbd5e1; box-shadow: var(--shadow-sm); }
-        .faq-item.open { border-color: var(--brand-red); box-shadow: var(--shadow-md); }
-        
-        .faq-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; color: #334155; }
-        .faq-header i { color: #94a3b8; transition: transform 0.3s; }
-        .faq-item.open .faq-header i { transform: rotate(180deg); color: var(--brand-red); }
-        .faq-item.open .faq-header { color: #000; }
-
-        .faq-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fdfdfd; }
-        .faq-content { padding: 0 20px 20px; color: #475569; font-size: 14px; line-height: 1.7; border-top: 1px solid #f1f5f9; padding-top: 15px; }
-        .faq-content ol, .faq-content ul { padding-left: 20px; margin-top: 10px; }
-        .faq-content li { margin-bottom: 5px; }
-        
-        /* 讓搜尋框在 FAQ 頁面更顯眼 */
-        .faq-search-wrapper { position: relative; margin-bottom: 20px; }
-        .faq-search-wrapper input { width: 100%; padding: 15px 20px 15px 45px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 15px; box-shadow: var(--shadow-sm); }
-        .faq-search-wrapper i { position: absolute; left: 18px; top: 18px; color: #94a3b8; }
-
     </style>
 </head>
 <body>
 
-    <!-- 許願池 Modal -->
+    <!-- 許願池 Modal (新版：自定義表單 - 已移除 Email) -->
     <div id="bugModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close-modal" onclick="closeModal('bugModal')">&times;</span>
@@ -400,6 +372,7 @@
                 </div>
 
                 <div class="editor-field">
+                    <!-- 修改：提示改為 Slack ID -->
                     <label class="editor-label">姓名 (Slack ID) *</label>
                     <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex (alex_chen)">
                 </div>
@@ -492,7 +465,9 @@
                             <button class="toolbar-btn" onmousedown="saveSelection()" onclick="restoreSelection(); formatDoc('insertOrderedList')" title="數字列表"><i class="fa-solid fa-list-ol"></i></button>
                             <span style="border-right: 1px solid #cbd5e1; margin: 0 5px;"></span>
                             <button class="toolbar-btn" onclick="addLink()" title="插入連結"><i class="fa-solid fa-link"></i></button>
-                            <button class="toolbar-btn" onclick="addImage()" title="插入圖片"><i class="fa-regular fa-image"></i></button>
+                            <!-- 智慧圖片按鈕 -->
+                            <button class="toolbar-btn" onclick="addImage()" title="插入圖片 (支援 Google Drive 分享連結)"><i class="fa-regular fa-image"></i></button>
+                            
                             <button class="toolbar-btn" onclick="formatDoc('removeFormat')" title="清除格式"><i class="fa-solid fa-eraser"></i></button>
                         </div>
                         <div id="richEditor" class="rich-editor-content" contenteditable="true">
@@ -510,6 +485,7 @@
         <div class="brand"><span>●</span> TAIWAN<br>AnyTag/AnyCreator<br>Support Hub</div>
         <div class="nav-group">
             <div class="nav-title">MAIN MENU</div>
+            <!-- 修改：Dashboard 改為下拉選單結構，包含總覽與產品更新 -->
             <div class="nav-item active" onclick="toggleSubmenu('dashboard-submenu', this)">
                 <i class="fa-solid fa-chart-line"></i> Dashboard
                 <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
@@ -523,10 +499,12 @@
                 </div>
             </div>
             
+            <!-- 修改：AnyTag 平台指南 (可展開) -->
             <div class="nav-item" onclick="toggleSubmenu('anytag-submenu', this)">
                 <i class="fa-solid fa-bullseye"></i> AnyTag 平台指南
                 <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
             </div>
+            <!-- 子選單 -->
             <div id="anytag-submenu" class="submenu">
                 <div class="submenu-item" onclick="showPage('anytag-sales', this)">
                     <i class="fa-solid fa-circle" style="font-size: 6px;"></i> 業務重點功能說明
@@ -536,12 +514,14 @@
                 </div>
             </div>
 
+            <!-- 修改：AnyCreator 改為下拉選單結構 -->
             <div class="nav-item" onclick="toggleSubmenu('anycreator-submenu', this)">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> AnyCreator 創作者
                 <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
             </div>
             <div id="anycreator-submenu" class="submenu">
                 <div class="submenu-item" onclick="showPage('anycreator-invite', this)">
+                    <!-- 修改：移除「賣點」二字，簡化為「邀約註冊」 -->
                     <i class="fa-solid fa-circle" style="font-size: 6px;"></i> 邀約註冊
                 </div>
                 <div class="submenu-item" onclick="showPage('anycreator-guide', this)">
@@ -549,16 +529,15 @@
                 </div>
             </div>
         </div>
-        <!-- 修改：群組名稱改為 HELPDESK，並更新常見問答名稱 -->
         <div class="nav-group">
-            <div class="nav-title">HELPDESK</div>
-            <div class="nav-item" onclick="showPage('troubleshoot', this)"><i class="fa-solid fa-circle-question"></i> 常見問答 (FAQ)</div>
+            <div class="nav-title">SUPPORT & SALES</div>
+            <div class="nav-item" onclick="showPage('troubleshoot', this)"><i class="fa-solid fa-screwdriver-wrench"></i> 疑難排解 (Trouble)</div>
             <div class="nav-item" onclick="showPage('resources', this)"><i class="fa-solid fa-folder-open"></i> 資源中心 (Resources)</div>
         </div>
         
         <div style="margin-top: auto; font-size: 11px; color: #6d7f96; padding-left: 12px; line-height: 1.5;">
             AnyMind Group © 2025<br>Internal Use Only<br>
-            <span style="color: var(--brand-red);">v.0.0.2 (Beta)</span>
+            <span style="color: var(--brand-red);">v.0.0.1 (Beta)</span>
         </div>
     </nav>
 
@@ -577,6 +556,7 @@
         <div id="dashboard" class="section active">
             <!-- 數據戰情區塊 (New) -->
             <div class="data-war-room">
+                <!-- 左側：核心指標與平台分佈 -->
                 <div style="display:flex; flex-direction:column; gap:20px;">
                     <div class="stat-hero-card">
                         <div class="stat-hero-title">TOTAL UNIQUE INFLUENCERS</div>
@@ -587,6 +567,7 @@
                     </div>
                     
                     <div class="platform-grid">
+                        <!-- IG -->
                         <div class="plat-card">
                             <div class="plat-icon" style="color:#E1306C"><i class="fa-brands fa-instagram"></i></div>
                             <div class="plat-info">
@@ -594,6 +575,7 @@
                                 <div id="stat-ig">0</div>
                             </div>
                         </div>
+                        <!-- FB -->
                         <div class="plat-card">
                             <div class="plat-icon" style="color:#1877F2"><i class="fa-brands fa-facebook"></i></div>
                             <div class="plat-info">
@@ -601,6 +583,7 @@
                                 <div id="stat-fb">0</div>
                             </div>
                         </div>
+                        <!-- YT -->
                         <div class="plat-card">
                             <div class="plat-icon" style="color:#FF0000"><i class="fa-brands fa-youtube"></i></div>
                             <div class="plat-info">
@@ -608,6 +591,7 @@
                                 <div id="stat-yt">0</div>
                             </div>
                         </div>
+                        <!-- TikTok -->
                         <div class="plat-card">
                             <div class="plat-icon" style="color:#000000"><i class="fa-brands fa-tiktok"></i></div>
                             <div class="plat-info">
@@ -615,6 +599,7 @@
                                 <div id="stat-tiktok">0</div>
                             </div>
                         </div>
+                          <!-- Threads -->
                         <div class="plat-card">
                             <div class="plat-icon" style="color:#000000"><i class="fa-brands fa-threads"></i></div>
                             <div class="plat-info">
@@ -625,6 +610,7 @@
                     </div>
                 </div>
 
+                <!-- 右側：成長趨勢圖 -->
                 <div class="chart-section">
                     <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 每週網紅新增數 (Weekly Growth)</div>
                     <div style="flex:1; position:relative;">
@@ -633,6 +619,7 @@
                 </div>
             </div>
 
+            <!-- 下方：舊有的產品更新趨勢與 Roadmap -->
             <div class="dashboard-stats">
                 <div class="chart-card" style="flex: 2;">
                     <div class="chart-title">
@@ -675,13 +662,16 @@
             </div>
         </div>
 
+        <!-- 產品更新日誌頁面 (完全重構) -->
         <div id="updates" class="section">
             <div class="blog-container">
                 <div class="blog-header">
                     <button class="btn-outline" style="width: auto;" onclick="window.scrollTo(0,0); showPage('dashboard')"><i class="fa-solid fa-arrow-left"></i> 返回總覽</button>
+                    <!-- 新增日誌按鈕 -->
                     <button class="btn" style="width: auto;" onclick="openEditor()">📝 新增日誌 (Admin)</button>
                 </div>
                 
+                <!-- 新增：優化後的篩選與搜尋列 -->
                 <div class="filter-bar">
                     <div class="update-search">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -698,8 +688,10 @@
                     </div>
 
                     <div class="filter-group" style="margin-left: auto;">
+                        <!-- 新增：月份篩選器 -->
                         <select id="monthFilter" class="filter-select" onchange="filterBlogMonth(this.value)">
                             <option value="All">📅 所有月份</option>
+                            <!-- 選項將由 JS 自動生成 -->
                         </select>
 
                          <select id="statusFilter" class="filter-select" onchange="filterBlogStatus(this.value)">
@@ -712,6 +704,7 @@
                     </div>
                 </div>
 
+                <!-- 內容呈現區塊：改為 Updates Feed 樣式 -->
                 <div class="updates-feed" id="blog-container">
                     <div class="loading-state"><i class="fa-solid fa-circle-notch fa-spin"></i> 正在載入更新日誌...</div>
                 </div>
@@ -724,67 +717,413 @@
             </div>
         </div>
 
-        <!-- AnyTag / AnyCreator Guide 內容區塊保持不變，直接略過中間重複的 HTML 以節省篇幅 -->
+        <!-- 新增頁面：業務重點功能說明 -->
         <div id="anytag-sales" class="section">
-             <!-- ... (內容維持不變) ... -->
-             <div class="blog-container">
+            <div class="blog-container">
                  <div class="doc-layout">
                      <div class="doc-sidebar">
                          <div class="doc-toc-title">ON THIS PAGE</div>
+                         <!-- 修改：移除 一站式管理 連結 -->
                          <a href="#discovery" class="doc-toc-link">精準網紅開發</a>
                          <a href="#efficiency" class="doc-toc-link">提升提案效率</a>
                          <a href="#automation" class="doc-toc-link">自動化與數據洞察</a>
                          <a href="#mkp" class="doc-toc-link">Marketplace (MKP)</a>
                      </div>
                      <div class="doc-content">
-                         <!-- 內容省略 (請保持原有程式碼) -->
-                         <div class="doc-header"><h1 class="doc-title">業務重點功能說明</h1></div>
-                         <div class="doc-body"><p>請參考原有檔案內容...</p></div>
+                         <div class="doc-header">
+                             <h1 class="doc-title">業務重點功能說明</h1>
+                             <div class="doc-meta">最後更新：2025-12-23 | 對象：Business Development (BD)</div>
+                         </div>
+                         <div class="doc-body">
+                             
+                             <!-- 修改：移除 一站式管理 區塊，並重新編號 -->
+                             
+                             <h2 id="discovery" style="margin-top: 0;">1. 精準網紅開發</h2>
+                             <ul style="list-style: none; padding-left: 0;">
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-share-nodes" style="color: var(--brand-red); margin-right: 8px;"></i> 平台覆蓋廣度</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         除了 IG、FB、TikTok 與 YouTube，我們更支援 <strong>Threads、抖音與小紅書</strong> 的數據資料，滿足客戶跨平台的需求！
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-robot" style="color: var(--brand-red); margin-right: 8px;"></i> LLM 預測粉絲輪廓 (AI)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         針對未註冊的網紅，系統利用大型語言模型 (LLM) 分析貼文留言與互動內容，預測其粉絲的性別、年齡與地區，幫業務精準排除「粉絲受眾不對」的人選。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-calendar-check" style="color: var(--brand-red); margin-right: 8px;"></i> 近 30 天活躍度分析</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         系統自動分析網紅近 30 天內的貼文互動狀況，確認其近期表現是否依然活躍且成效優良，有效篩除久未更新的「沈睡帳號」，確保提案名單的品質。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-fire" style="color: var(--brand-red); margin-right: 8px;"></i> 熱門網紅捕捉</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         透過系統顯示的漲粉趨勢數據，協助觀察近期漲粉快速的網紅，挑選正處於話題中心、具有高潛力的 KOL。
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-id-badge" style="color: var(--brand-red); margin-right: 8px;"></i> 已註冊網紅 (Registered Influencer)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         可獲取網紅社群後台的真實第一方數據，準確性與數據維度遠高於一般預估值。
+                                     </span>
+                                 </li>
+                             </ul>
+
+                             <h2 id="efficiency">2. 提升提案效率</h2>
+                             <ul style="list-style: none; padding-left: 0;">
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-brands fa-searchengin" style="color: var(--brand-red); margin-right: 8px;"></i> 貼文/留言抓取器 (Post/comment Fetcher)</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         突破 AnyTag 內部資料庫限制，可指定關鍵字和時間，搜集市場上最新的公開貼文。這讓你在提案時能加入最新的社群趨勢分析，大幅提升內容競爭力！
+                                     </span>
+                                 </li>
+                                 <li style="margin-bottom: 15px;">
+                                     <strong><i class="fa-solid fa-file-export" style="color: var(--brand-red); margin-right: 8px;"></i> 一鍵輸出多筆資料</strong><br>
+                                     <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                         可在「提案名單」中批次下載多位網紅的輪廓資料與數據，縮短 PPT 製作時間。
+                                     </span>
+                                 </li>
+                             </ul>
+
+                             <h2 id="automation">3. 自動化與數據洞察</h2>
+                             <ul style="padding-left: 20px; margin-bottom: 20px;">
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>發文習慣與熱力圖 (Posting Habits)：</strong><br>
+                                     系統分析網紅過去貼文成效產出「紅格子熱力圖」，顏色越深代表互動率越高。這能引導品牌選擇在最佳時間點發布內容，極大化觸及效益。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>Engagement 報告自動生成：</strong><br>
+                                     自動追蹤各社群平台的公開互動數據，並支持 AI OCR 讀取限動截圖，自動產出結案報告。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>Threads 數據抓取：</strong><br>
+                                     追蹤 Threads 的轉發、分享與串文瀏覽數。
+                                 </li>
+                                 <li style="margin-bottom: 10px;">
+                                     <strong>品牌帳號分析 (Analytics)：</strong><br>
+                                     品牌客戶可免費註冊，深度分析自身官方社群帳號的受眾輪廓、貼文洞察及粉絲增長趨勢。
+                                 </li>
+                             </ul>
+
+                             <h2 id="mkp">4. 靈活的 Marketplace (MKP)</h2>
+                             <p>專為<strong>「低門檻、標準化」</strong>的任務型專案設計。此模式鎖定高黏著度且配合度高的「有效註冊網紅」，並能獲取真實後台數據。</p>
+                             
+                             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--brand-red); margin: 15px 0;">
+                                 <strong style="color: var(--brand-red);">什麼是「低門檻」活動？</strong>
+                                 <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+                                     <li style="margin-bottom: 6px;"><strong>篩選條件寬鬆：</strong>客戶不指定特定人選或風格，接受符合基本門檻（如粉絲數、類別）的 KOC 自行報名。</li>
+                                     <li><strong>執行規則簡單：</strong>合作條件明確且單純，不涉及複雜的腳本審核與多次修改。
+                                         <br><em style="color: #94a3b8; font-size: 13px;">（例如：發佈一篇貼文固定稿酬 $1,200，或互動率達標即發放獎金。）</em>
+                                     </li>
+                                 </ul>
+                             </div>
+                             
+                             <div class="doc-alert" style="margin-top: 20px;">
+                                 <i class="fa-solid fa-star" style="margin-top: 3px;"></i>
+                                 <div>
+                                     <strong>獨家策略：Hybrid (混合) 模式</strong><br>
+                                     我們建議採用混合模式：利用 MKP 進行公開招募大量的 KOC 進行廣泛擴散（低門檻任務），而複雜的專案內容溝通與頭部網紅執行，則由 AnyMind 專業顧問團隊負責。
+                                 </div>
+                             </div>
+                         </div>
                      </div>
                  </div>
             </div>
         </div>
+
+        <!-- 新增頁面：執行操作手冊 -->
         <div id="anytag-ops" class="section">
-            <!-- ... (內容維持不變) ... -->
-             <div class="card"><h3>Content Hidden for Part 1 Length Limit</h3></div>
-        </div>
-        <div id="anycreator-invite" class="section">
-            <!-- ... (內容維持不變) ... -->
-             <div class="card"><h3>Content Hidden for Part 1 Length Limit</h3></div>
-        </div>
-        <div id="anycreator-guide" class="section">
-            <!-- ... (內容維持不變) ... -->
-             <div class="card"><h3>Content Hidden for Part 1 Length Limit</h3></div>
-        </div>
-
-        <!-- 修改：全新建置的 FAQ (疑難排解) 頁面 -->
-        <div id="troubleshoot" class="section">
             <div class="blog-container">
-                <div class="faq-container">
-                    <div class="blog-header" style="margin-bottom: 10px;">
-                        <h2 style="font-size: 24px; font-weight: 800;">💡 常見問答 & 疑難排解</h2>
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">操作目錄</div>
+                        <a href="#influencers" class="doc-toc-link">網紅搜尋與資料庫 (Influencers)</a>
+                        <a href="#profile" class="doc-toc-link">網紅輪廓分析 (Profile)</a>
+                        <a href="#propose" class="doc-toc-link">高效提案管理 (Propose & Packages)</a>
+                        <a href="#campaign" class="doc-toc-link">專案執行流程 (Engagement Campaign)</a>
+                        <a href="#analytics" class="doc-toc-link">品牌分析與媒合 (Analytics & Marketplace)</a>
                     </div>
-                    <p style="margin-bottom: 25px; color: #64748b;">這裡彙整了 AnyTag 數據更新、搜尋技巧以及 AnyCreator 串接的常見痛點。點擊分類以快速查找。</p>
-                    
-                    <!-- FAQ 內部搜尋 -->
-                    <div class="faq-search-wrapper">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="faqSearch" placeholder="搜尋問題關鍵字 (如：數據、IG 連結、漲粉)..." onkeyup="filterFAQ()">
-                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">執行操作手冊 (SOP)</h1>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Influencer Marketing (IM)</div>
+                        </div>
+                        <div class="doc-body">
+                            
+                            <h2 id="influencers" style="margin-top: 0;">1. 網紅搜尋與資料庫管理 (Influencers)</h2>
+                            <p><strong>功能定義：</strong>AnyTag 的核心網紅資料庫，收錄全球超過 300 萬筆資料，其中台灣約有 10 萬多筆。</p>
+                            
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-magnifying-glass" style="color: var(--brand-red); margin-right: 8px;"></i> 一般/精確搜尋</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        利用搜尋欄位輸入網紅名稱或關鍵字。若要精準定位，建議直接輸入該網紅的 <strong>Username (ID)</strong>。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-filter" style="color: var(--brand-red); margin-right: 8px;"></i> 進階篩選 (More Filter)</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        可透過性別、國家、粉絲數、互動率、貼文價格等維度進行細部過濾。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--brand-red); margin-right: 8px;"></i> AI 智慧搜尋 (AI Search)</strong>
+                                    <ul style="margin-top: 4px; padding-left: 24px; font-size: 14px; color: #475569; margin-bottom: 0;">
+                                        <li><strong>文字指令：</strong>輸入具體需求（如：尋找互動率 > 3% 且常提及咖啡的飲食類網紅）。</li>
+                                        <li><strong>圖片搜尋：</strong>上傳特定風格的形象照，尋找視覺特色相似的網紅。</li>
+                                    </ul>
+                                </li>
+                            </ul>
 
-                    <!-- FAQ 分類按鈕 -->
-                    <div class="faq-categories" id="faq-categories">
-                        <!-- JS 動態生成按鈕 -->
-                    </div>
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>資料產出時間：</strong>網紅 Profile 內的數據（如互動率、受眾輪廓）在新增後，系統約需 <strong>2 個工作天</strong> 收集與計算。</li>
+                                    <li><strong>AI 搜尋限制：</strong>目前 AI 搜尋功能僅支援 Instagram、TikTok、YouTube 三大平台。</li>
+                                </ul>
+                            </div>
 
-                    <!-- FAQ 列表 -->
-                    <div class="faq-list" id="faq-list">
-                        <!-- JS 動態生成問答 -->
+                            <h2 id="profile">2. 網紅輪廓分析與數據判讀 (Profile)</h2>
+                            <p><strong>功能內容：</strong>查看網紅的詳細社群表現與受眾組成。</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>數據監測：</strong>觀察近 30 天的粉絲成長曲線、平均互動數及互動率。系統約一週更新一次整體數據。</li>
+                                <li style="margin-bottom: 8px;"><strong>受眾洞察 (Estimated Audience)：</strong>系統串接 LLM 分析受眾的年齡分佈、性別比以及地區分佈（如台北、新北等）。</li>
+                                <li style="margin-bottom: 8px;"><strong>內容習慣分析：</strong>參考「貼文發布時段 (Posting Habits)」熱力圖，顏色越深代表該時段互動率越高。</li>
+                                <li><strong>關鍵字雲 (Tag Cloud)：</strong>了解該網紅社群帳號中常用的標籤與內容關鍵字。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>欄位更動限制：</strong>Profile 頁面中的 Tags、Post Price、Internal Memo 均由內部規範管理，<strong>請勿自行增加或修改</strong>。</li>
+                                    <li style="margin-bottom: 4px;"><strong>註冊身分差異：</strong>
+                                        <ul style="margin-top: 2px; margin-bottom: 2px;">
+                                            <li>已註冊網紅：抓取授權的第一方真實數據，準確性高。</li>
+                                            <li>非註冊網紅：數據來源為系統 AI 預測模型，顯示為「預估值」。</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>IG 專屬數據：</strong>Est. Reach (預估觸及人數) 目前僅在 Instagram 平台提供。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="propose">3. 高效提案與名單管理 (Propose & Packages)</h2>
+                            <p><strong>功能內容：</strong>批次管理網紅名單，並一鍵產出客戶提案資料。</p>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-folder-plus" style="color: var(--brand-red); margin-right: 8px;"></i> 建立 Package 與加入名單</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        在 Packages 功能中按 Add Package 建立名單；在搜尋結果頁面點選左側「+」號即可將網紅加入。
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 12px;">
+                                    <strong><i class="fa-solid fa-file-export" style="color: var(--brand-red); margin-right: 8px;"></i> 一鍵輸出資料 (Propose Influencers)</strong><br>
+                                    <div style="padding-left: 24px; font-size: 14px; color: #475569; margin-top: 4px;">
+                                        進入 Propose Influencers 頁面，點選右上方 Download，選擇所需格式（CSV, PPT, Excel, Google Slide 等）。
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>輸出彈性：</strong>下載後的資料包含粉絲輪廓、互動率等，業務可依需求自行修訂成所需提案格式。</li>
+                                    <li><strong>內容搜尋 (Influencers: Posts)：</strong>可利用 Posts 功能搜尋關鍵字，並批次下載相關貼文列表作為參考案例。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="campaign">4. 專案執行流程 (Engagement Campaign)</h2>
+                            <p><strong>功能內容：</strong>一站式管理從提案到結案報告的專案流程。</p>
+                            <!-- 修改：將 5. Report 的樣式從 tag-primary 改為 tag-secondary，使流程視覺一致 -->
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                                <span class="tag tag-secondary">1. Campaign Info</span>
+                                <span class="tag tag-secondary">2. Select Influencers</span>
+                                <span class="tag tag-secondary">3. Proposal</span>
+                                <span class="tag tag-secondary">4. Post Management</span>
+                                <span class="tag tag-secondary">5. Report</span>
+                            </div>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 6px;"><strong>Campaign Information：</strong>填寫專案詳細資訊（如 Advertiser, HubSpot Deal, PIC 等）。</li>
+                                <li style="margin-bottom: 6px;"><strong>Select Influencers：</strong>選擇並加入該專案的 KOL/KOC 人選。</li>
+                                <li style="margin-bottom: 6px;"><strong>Proposal：</strong>確認網紅的基本資訊、粉絲數與報價。</li>
+                                <li style="margin-bottom: 6px;"><strong>Post：</strong>管理網紅上線後的貼文內容、日期與連結。</li>
+                                <li><strong>Report：</strong>自動追蹤數據（Like, Share, Comment, ER%）。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>數據獲取門檻：</strong>若要系統自動抓取進階數據（如 Reach, Save），網紅必須在 AnyCreator 完成有效註冊與授權。</li>
+                                    <li><strong>手動上傳 (Manual Upload)：</strong>若網紅未註冊或隱藏讚數，需向網紅索取數據截圖後，手動上傳至系統以確保報告完整。</li>
+                                </ul>
+                            </div>
+
+                            <h2 id="analytics">5. 品牌分析與市場媒合 (Analytics & Marketplace)</h2>
+                            <p><strong>功能內容：</strong>品牌端自用的數據分析工具與半自動化的招募平台。</p>
+                            
+                            <h4 style="font-size: 16px; margin: 15px 0 10px; color: #334155;">品牌分析 (Analytics)</h4>
+                            <ul style="padding-left: 20px; margin-bottom: 15px;">
+                                <li>引導客戶於 AnyTag 官網免費註冊並連結品牌官方帳號。</li>
+                                <li>查看品牌帳號的成長趨勢、受眾來源、貼文洞察與留言內容。</li>
+                            </ul>
+
+                            <h4 style="font-size: 16px; margin: 15px 0 10px; color: #334155;">市場媒合 (Marketplace)</h4>
+                            <ul style="padding-left: 20px;">
+                                <li>發布活動供註冊網紅自主申請，適用於<strong>低門檻、標準化</strong>的專案活動。</li>
+                                <li>（台灣目前不適用）支援優惠碼 (Referral Code) 與專屬連結 (URL) 追蹤銷售數據。</li>
+                            </ul>
+
+                            <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fcd34d; margin-top: 15px;">
+                                <strong style="color: #b45309;"><i class="fa-regular fa-lightbulb"></i> 注意事項</strong>
+                                <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px; font-size: 14px; color: #78350f;">
+                                    <li style="margin-bottom: 4px;"><strong>註冊限制：</strong>Marketplace 專案僅限在 AnyTag/AnyCreator 上已註冊的網紅才能看到並申請。</li>
+                                    <li><strong>進階功能限制：</strong>Analytics 的進階版本（含競品分析、UGC 管理）目前台灣尚未開放，如有需求需聯繫業務或 IM 主管確認。</li>
+                                </ul>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- 新增頁面：AnyCreator 邀約註冊 -->
+        <div id="anycreator-invite" class="section">
+            <div class="blog-container">
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">價值主張</div>
+                        <!-- 修改：調整目錄順序，符合新的內容邏輯 -->
+                        <a href="#analytics-c" class="doc-toc-link">專業數據分析</a>
+                        <a href="#visibility" class="doc-toc-link">平台熱門版位</a>
+                        <a href="#tools" class="doc-toc-link">創作者工具</a>
+                        <a href="#match" class="doc-toc-link">商務媒合機會</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">AnyCreator 邀約註冊</h1>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Business Development (BD) / IM</div>
+                        </div>
+                        <div class="doc-body">
+                            <p>當邀請創作者加入時，建議優先強調<strong>「數據賦能」</strong>與<strong>「提升曝光」</strong>的立即性價值，建立其對專業工具的依賴度，進而帶動註冊意願。</p>
+
+                            <!-- 修改：將「專業社群數據分析」移至第一位，強調這是有助於他們經營的工具 -->
+                            <h2 id="analytics-c" style="margin-top: 0;">1. 專業社群數據分析 (Analytics)</h2>
+                            <p>免費提供深度的社交媒體健檢工具，這通常是創作者最想了解但難以取得的資訊：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>受眾輪廓透視：</strong>精準分析粉絲的年齡層、性別比例與地區分佈，協助創作者釐清「誰在看我的內容」。</li>
+                                <li style="margin-bottom: 8px;"><strong>成效優化：</strong>透過貼文互動表現分析，找出最受歡迎的內容類型與最佳發布時間。</li>
+                                <li><strong>成長趨勢：</strong>可視化的粉絲增長與流失曲線，即時掌握帳號健康度。</li>
+                            </ul>
+
+                            <!-- 修改：將「平台熱門版位」移至第二位，強調被動收入的潛力 -->
+                            <h2 id="visibility">2. 加入平台熱門版位</h2>
+                            <p>註冊並授權數據後，將直接提升在 AnyTag 資料庫中的能見度：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>優先推薦權重：</strong>我們的系統演算法會優先推薦「資料完整」的創作者給品牌客戶。</li>
+                                <li><strong>被動商務機會：</strong>即使當下沒有主動應徵，完整的 Profile 也能讓你在品牌搜尋時更容易被看見，增加獲得主動邀約 (Inbound) 的機率。</li>
+                            </ul>
+
+                            <!-- 修改：將「創作者工具」移至第三位，強調實用性 -->
+                            <h2 id="tools">3. 多功能創作者工具</h2>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 15px;">
+                                    <strong><i class="fa-solid fa-link" style="color: var(--brand-red); margin-right: 8px;"></i> Link in Bio (免費)</strong><br>
+                                    <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                        無需付費即可使用精美模板，快速建立個人的多連結頁面，將社群流量有效導引至不同平台、團購連結或作品集。
+                                    </span>
+                                </li>
+                                <li style="margin-bottom: 15px;">
+                                    <strong><i class="fa-solid fa-chart-pie" style="color: var(--brand-red); margin-right: 8px;"></i> 跨平台整合</strong><br>
+                                    <span style="color: #64748b; font-size: 14px; display: block; margin-top: 4px; margin-left: 24px;">
+                                        一站式整合 Instagram, TikTok, YouTube 等所有社群帳號，在單一介面即可管理全通路的數據表現。
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <!-- 修改：將「商務媒合」移至最後，並軟化語氣，定位為「準備好自己」 -->
+                            <h2 id="match">4. 商務媒合機會</h2>
+                            <p>AnyCreator 是連結創作者與品牌的長期橋樑。雖然專案機會隨檔期浮動，但提早完成註冊與資料建置，能確保你在適合的品牌活動上線時，已經做好了接案的準備。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增頁面：創作者註冊與使用指南 -->
+        <div id="anycreator-guide" class="section">
+            <div class="blog-container">
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">操作步驟</div>
+                        <a href="#channels" class="doc-toc-link">註冊管道與限制</a>
+                        <a href="#profile-setup" class="doc-toc-link">個人資料與驗證</a>
+                        <a href="#connect" class="doc-toc-link">連結社群帳戶</a>
+                        <a href="#myjobs" class="doc-toc-link">專案管理 (My Jobs)</a>
+                        <a href="#linkbio" class="doc-toc-link">Link in Bio 設定</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">創作者註冊與使用指南</h1>
+                            <div class="doc-meta">最後更新：2025-12-23 | 對象：Creators / IM Guide</div>
+                        </div>
+                        <div class="doc-body">
+                            
+                            <h2 id="channels" style="margin-top: 0;">1. 註冊管道與平台限制</h2>
+                            <p>創作者可透過 Instagram、YouTube、Email 或其他社群平台（Facebook, TikTok, Twitter）進行註冊。</p>
+                            
+                            <div class="doc-alert" style="align-items: flex-start;">
+                                <i class="fa-brands fa-instagram" style="font-size: 18px; margin-top: 3px;"></i>
+                                <div>
+                                    <strong>Instagram 註冊必備條件</strong><br>
+                                    若使用 Instagram 註冊，帳戶必須先在手機 App 中轉為<strong>「專業/企業帳戶（商家）」</strong>，且必須與 <strong>Facebook 粉絲專頁</strong>進行串接，否則將無法獲取進階分析數據。
+                                </div>
+                            </div>
+
+                            <div class="doc-alert" style="background: #f0f9ff; border-color: #bae6fd; color: #0369a1; align-items: flex-start;">
+                                <i class="fa-brands fa-tiktok" style="font-size: 18px; margin-top: 3px;"></i>
+                                <div>
+                                    <strong>TikTok 註冊限制</strong><br>
+                                    該帳戶內必須至少有<strong>一篇公開貼文</strong>，否則系統將無法識別帳號有效性，導致無法完成註冊程序。
+                                </div>
+                            </div>
+
+                            <h2 id="profile-setup">2. 個人資料與 Email 驗證</h2>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>填寫輪廓：</strong>註冊時需選擇最符合個人風格的類別（最多 3 項），並填寫真實姓名、Email、生日與性別。</li>
+                                <li><strong>設定密碼：</strong>填寫完基本資料後，<span style="color: var(--brand-red); font-weight: 700;">務必前往信箱收取驗證信件</span>，點擊信中連結設定登入密碼，才算完成有效註冊。</li>
+                            </ul>
+
+                            <h2 id="connect">3. 連結社群帳戶</h2>
+                            <p>註冊成功後，強烈建議創作者在後台連接各個社群帳號（Link Social Accounts）。</p>
+                            <p style="font-size: 14px; color: #64748b;">雖然目前支持僅用 Email 申請部分 Marketplace 活動，但<strong>唯有連結帳號後，才能使用完整的數據分析功能</strong>，並提高被品牌選中的機率。</p>
+
+                            <h2 id="myjobs">4. 管理專案進度 (My Jobs)</h2>
+                            <p>創作者可透過 My Jobs 頁面一眼掌握所有接案進度，系統提供清晰的階段標籤，降低溝通成本：</p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                                <span class="tag tag-secondary">待審核</span>
+                                <span class="tag tag-primary">進行中</span>
+                                <span class="tag tag-secondary">已錄取</span>
+                                <span class="tag tag-secondary">交稿</span>
+                                <!-- 修改：將「驗收」改為「審稿中」 -->
+                                <span class="tag tag-secondary">審稿中</span>
+                                <span class="tag tag-secondary" style="background: #10b981; color: white;">結案</span>
+                            </div>
+
+                            <h2 id="linkbio">5. 設置 Link in Bio</h2>
+                            <p>創作者選擇喜歡的模板後即可編輯網址後綴與內容。</p>
+                            <div style="background: #fffbeb; padding: 12px; border-radius: 6px; font-size: 14px; color: #92400e; margin-top: 10px;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> <strong>注意：</strong>模板樣式一旦選定後即<strong>無法更改</strong>（例如從風格 A 換成風格 B），僅能修改內部的文字與連結資訊。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="troubleshoot" class="section"><div class="card"><h3>疑難排解建置中...</h3></div></div>
         <div id="resources" class="section"><div class="card"><h3>資源中心建置中...</h3></div></div>
 
     </main>
@@ -792,27 +1131,29 @@
     <script>
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
+        // ⚠️ 許願池 (Bug Report) 的 Apps Script URL (新)
         const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
+        
+        // ⚠️ 新增：Stats 數據的 Apps Script URL (已更新)
         const STATS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBYe9GkHGiba9t0IG4LTM7Sl7D_uArUDRwoKl4QhdLpvVOl8uYm6wEqLakaxRbUGY0CQ/exec"; 
 
         let allBlogPosts = [];
         let filteredPosts = [];
         let currentRoleFilter = 'All';
         let currentStatusFilter = 'All';
-        let currentMonthFilter = 'All'; 
+        let currentMonthFilter = 'All'; // 新增：月份篩選狀態
         let currentSortOrder = 'desc';
         let currentPage = 1;
         const postsPerPage = 5;
         let searchQuery = ''; 
 
+        // 新增：儲存圖表實例的全域變數，用於銷毀舊圖表
         let growthChartInstance = null;
         let updateChartInstance = null;
 
+        // 自動執行
         window.onload = function() {
             renderCards(); 
-            // 初始化 FAQ
-            initFAQ();
-            
             const editor = document.getElementById('richEditor');
             if (editor) {
                 editor.addEventListener('keydown', function(e) {
@@ -824,6 +1165,7 @@
                 });
             }
             
+            // 新增：處理文件目錄的點擊滾動
             document.querySelectorAll('.doc-toc-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -836,266 +1178,11 @@
             });
 
             fetchBlogPosts();
-            fetchStatsData(); 
+            fetchStatsData(); // 新增：抓取 Stats 數據
             startNoticeCarousel();
         };
 
-        // --- 新增：FAQ 資料結構與邏輯 (Part 1) ---
-        
-        // 定義 FAQ 資料 (將您的文字檔轉換為 Object)
-        const faqData = [
-            {
-                category: "數據與資料準確性",
-                icon: "fa-solid fa-chart-bar",
-                qa: [
-                    {
-                        q: "網紅數據（如粉絲數、互動率、地區）沒有更新怎麼辦？",
-                        a: `<ol>
-                                <li>請先確認網紅帳號（username）是否有更換，尤其是 Instagram。</li>
-                                <li>平台數據的常規更新頻率約為 7 天一次。若發現資料未更新，請優先點擊網紅個人頁面右上角的 <strong>「Refresh profile」</strong> 按鍵強制系統抓取最新資料。</li>
-                                <li>也可以利用 <a href="#">擴充功能</a> 協助爬取。若上述方法皆無效，請聯繫平台營運（PO/IM）尋求支援。</li>
-                            </ol>`
-                    },
-                    {
-                        q: "為什麼某些網紅的數據標註為「Estimated (預估值)」，且無法看到受眾輪廓？",
-                        a: `這是因為該網紅為<strong>「未註冊網紅」</strong>，其數據是透過 LLM 預測模型 估算而來。若要獲得最精確的第一方真實後台數據，必須邀請網紅註冊 AnyCreator 並完成社群帳號授權，成為「已註冊網紅」。`
-                    },
-                    {
-                        q: "網紅原本數據正常，突然間所有貼文與互動數據都抓不到了？",
-                        a: `<ol>
-                                <li>請先確認網紅帳號（username）是否有更換，尤其是 Instagram。</li>
-                                <li>請檢查該網紅是否將 Instagram 帳號從「公開」設為 <strong>「私人」</strong>，這會直接導致平台無法抓取其公開內容與數據。</li>
-                            </ol>`
-                    }
-                ]
-            },
-            {
-                category: "搜尋與查找效率",
-                icon: "fa-solid fa-magnifying-glass-location",
-                qa: [
-                    {
-                        q: "想找具備「特定產品經驗」或「小眾主題」（如：純素美妝、咖啡職人）的網紅，可以用什麼功能？",
-                        a: "建議使用 <strong>「Influencers: Posts」</strong> 功能，直接輸入特定關鍵字搜尋網紅過往發布過的貼文內容，這比單純在網紅名單中篩選類別更為精準。"
-                    },
-                    {
-                        q: "想知道「某個特定網紅」是否有業配過競品或某特定產品，可以去哪裡查看？",
-                        a: "可以進入該網紅的 Profile Page，滑動到 <strong>Feed (貼文區塊)</strong>，點擊右下角的 「More」，即可利用關鍵字搜尋該網紅的歷史貼文。"
-                    },
-                    {
-                        q: "品牌客戶要求一次看 50 位候選人的詳細數據，手動整理太慢，怎麼一次下載這些資料？",
-                        a: "先將感興趣的網紅點擊「+」號加入 <strong>「Propose Influencers」</strong> 或 <strong>「Packages」</strong> 名單中，即可使用一鍵打包功能，直接匯出包含網紅輪廓、粉絲年齡與性別比例的 PPT 或 Spreadsheet 檔案。"
-                    },
-                    {
-                        q: "如果客戶對網紅在特定期間的「漲粉能力」感興趣，應該去哪裡查看？",
-                        a: "前往 <strong>「Trends」</strong> 功能區塊，該區塊專門用於觀察特定期間內不同平台網紅的漲粉率趨勢。"
-                    },
-                    {
-                        q: "為什麼 AI 搜尋結果不精準？",
-                        a: "AI 搜尋的準確度會受到文字指令說明、上傳圖片的解析度、視覺風格明顯度及主題代表性影響。建議清楚說明查找範圍（如：粉絲數、地區、性別等）以及提供風格強烈、明顯的圖片。"
-                    }
-                ]
-            },
-            {
-                category: "AnyCreator 創作者端",
-                icon: "fa-solid fa-wand-magic-sparkles",
-                qa: [
-                    {
-                        q: "網紅表示無法成功連結 Instagram 帳號到 AnyCreator？",
-                        a: "請確認該網紅的 IG 是否已轉為 <strong>「商業帳號」</strong>，且必須連結到一個 <strong>Facebook 粉絲專頁</strong>，並且利用 Facebook 帳號登入，這是成功串接的必要條件。"
-                    },
-                    {
-                        q: "網紅說 AnyCreator 的界面是英文版本，請問是否有中文界面的選擇？",
-                        a: "有的。APP版：右下角 My Page → 帳戶 → 顯示語言。網頁版：左方欄位 My Page → 帳戶 → 顯示語言。"
-                    },
-                    {
-                        q: "加入 AnyCreator 平台後，網紅各個社交媒體帳號我們是否會在後台有操控權限？",
-                        a: "<strong>不會。</strong>全部都會由創作者自行管理。AnyTag 平台僅獲取「讀取」權限（如貼文數據、粉絲輪廓），不會有任何的管理、操控、接收或發布任何內容的權限。即使是「管理留言」的授權，也僅是用於抓取留言內容以進行數據分析。"
-                    },
-                    {
-                        q: "加入平台需要付費嗎？是否有合作條款要簽？",
-                        a: "<strong>完全免費。</strong>單純註冊與使用平台功能不需要先簽約。合作條款會在「進入具體合作專案」時，才需逐案確認並簽署。"
-                    },
-                    {
-                        q: "網紅想參加 Marketplace 招募活動，但找不到入口？",
-                        a: "網紅必須先<strong>註冊 AnyCreator</strong> 才看得到正在進行中的 Marketplace 活動。"
-                    }
-                ]
-            },
-            {
-                category: "平台技術與數據限制",
-                icon: "fa-solid fa-server",
-                qa: [
-                    {
-                        q: "為什麼有些網紅在 AnyTag 上完全看不到過去一個月的粉絲成長趨勢？",
-                        a: "若網紅在過去 30 天內沒有發布任何新的貼文或影音，系統將無法產出該月份的成長數據趨勢圖。"
-                    },
-                    {
-                        q: "對於「未註冊網紅」，我們能否看得到他們受眾的「真實」數據？",
-                        a: "不能。未註冊網紅的受眾輪廓數據是透過 LLM 預測模型產出的「預估值」，其準確性與已註冊網紅的「真實後台數據」不同。"
-                    },
-                    {
-                        q: "內部人員可以手動修改系統估算的「平均互動率」或「貼文報價」嗎？",
-                        a: "不可以。系統數據無法手動修改；貼文報價欄位則受內部規範保護，不應自行更動。"
-                    },
-                    {
-                        q: "對於 IG 平台，有什麼數據是其他平台所沒有的獨有指標？",
-                        a: "<strong>Est. Reach (預估觸及人數)</strong> 是 IG 平台在 AnyTag 上的獨有數據指標。"
-                    }
-                ]
-            },
-            {
-                category: "網紅資料匯入 (Sourcing)",
-                icon: "fa-solid fa-user-plus",
-                qa: [
-                    {
-                        q: "如何精準分辨 Facebook 的「個人檔案」與「粉絲專頁」以免匯入錯誤？",
-                        a: "應查看 Facebook 頁面的 <strong>「簡介 (Intro)」</strong> 區塊進行分辨。匯入時，FB Username 形式可能為自訂名稱或 `id=1000...`，兩者皆可。"
-                    },
-                    {
-                        q: "發現網紅在 AnyTag 內有部分社群資料但缺少其他平台時該如何處理？",
-                        a: "應先確認該網紅擁有的所有社群帳號，並將缺少的平台整合補齊在同一個 AnyTag 帳戶中。若發現重複資料，請回報給 PO 進行合併。"
-                    },
-                    {
-                        q: "新增網紅後，為什麼 Profile 頁面是一片空白沒有數據？",
-                        a: "系統計算輪廓資料需約 <strong>2 個工作天</strong>。若長時間仍無數據，需通知平台營運人員 (PO)。"
-                    }
-                ]
-            },
-            {
-                category: "Marketplace 實務",
-                icon: "fa-solid fa-shop",
-                qa: [
-                    {
-                        q: "如果品牌想指定特定網紅參與 MKP 活動，而不是公開招募，該怎麼辦？",
-                        a: "目前 MKP 不支援指定人選。建議改採 <strong>Hybrid (混合) 模式</strong>：先利用 MKP 公開招募，後續由人力 (IM) 手動篩選並加入特定人選執行。"
-                    },
-                    {
-                        q: "MKP 是否支援品牌與網紅在系統內「議價」？",
-                        a: "不支援。品牌必須事先設定好固定的分潤或報酬條件，網紅只能選擇接受或不接受。"
-                    },
-                    {
-                        q: "如何利用 MKP 追蹤「銷售轉換」？",
-                        a: "可利用「優惠碼活動」或「專屬連結活動」。前提是品牌端必須在官網埋設 <strong>AnyTag Tracking Code</strong>。"
-                    }
-                ]
-            }
-        ];
-
-        let currentFAQCategory = '全部';
-
-        // 初始化 FAQ 功能
-        function initFAQ() {
-            const catContainer = document.getElementById('faq-categories');
-            if (!catContainer) return;
-
-            // 生成分類按鈕
-            let html = `<button class="faq-category-btn active" onclick="filterFAQCategory('全部', this)"><i class="fa-solid fa-layer-group"></i> 全部</button>`;
-            faqData.forEach(item => {
-                html += `<button class="faq-category-btn" onclick="filterFAQCategory('${item.category}', this)"><i class="${item.icon}"></i> ${item.category}</button>`;
-            });
-            catContainer.innerHTML = html;
-
-            renderFAQ();
-        }
-
-        function filterFAQCategory(category, btnElement) {
-            currentFAQCategory = category;
-            
-            // 更新按鈕狀態
-            document.querySelectorAll('.faq-category-btn').forEach(btn => btn.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
-
-            // 清空搜尋框，因為切換分類通常代表想看該分類的全部
-            document.getElementById('faqSearch').value = ''; 
-            
-            renderFAQ();
-        }
-
-        function renderFAQ(searchKeyword = '') {
-            const listContainer = document.getElementById('faq-list');
-            listContainer.innerHTML = '';
-            
-            let foundCount = 0;
-
-            faqData.forEach(cat => {
-                // 如果目前選定特定分類，且不是該分類，則跳過
-                if (currentFAQCategory !== '全部' && cat.category !== currentFAQCategory) return;
-
-                // 篩選符合搜尋關鍵字的問題
-                const filteredQA = cat.qa.filter(item => {
-                    const matchQ = item.q.toLowerCase().includes(searchKeyword.toLowerCase());
-                    const matchA = item.a.toLowerCase().includes(searchKeyword.toLowerCase());
-                    return matchQ || matchA;
-                });
-
-                if (filteredQA.length > 0) {
-                    // 如果是「全部」模式，顯示分類標題
-                    if (currentFAQCategory === '全部' && !searchKeyword) {
-                        listContainer.innerHTML += `<div style="font-size:13px; font-weight:700; color:#94a3b8; margin: 15px 0 5px 5px; text-transform:uppercase; letter-spacing:1px;"><i class="${cat.icon}"></i> ${cat.category}</div>`;
-                    }
-
-                    filteredQA.forEach(qa => {
-                        const itemHtml = `
-                            <div class="faq-item">
-                                <div class="faq-header" onclick="toggleFAQ(this)">
-                                    ${qa.q}
-                                    <i class="fa-solid fa-chevron-down"></i>
-                                </div>
-                                <div class="faq-body">
-                                    <div class="faq-content">
-                                        ${qa.a}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        listContainer.innerHTML += itemHtml;
-                        foundCount++;
-                    });
-                }
-            });
-
-            if (foundCount === 0) {
-                listContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8;">找不到與「${searchKeyword}」相關的問題。<br>建議您縮短關鍵字或嘗試其他分類。</div>`;
-            }
-        }
-
-        function toggleFAQ(header) {
-            const item = header.parentElement;
-            const body = item.querySelector('.faq-body');
-            const isOpen = item.classList.contains('open');
-
-            // 手風琴效果：關閉其他已開啟的項目 (可選)
-            // document.querySelectorAll('.faq-item.open').forEach(el => {
-            //     if(el !== item) {
-            //         el.classList.remove('open');
-            //         el.querySelector('.faq-body').style.maxHeight = null;
-            //     }
-            // });
-
-            if (isOpen) {
-                item.classList.remove('open');
-                body.style.maxHeight = null;
-            } else {
-                item.classList.add('open');
-                body.style.maxHeight = body.scrollHeight + "px";
-            }
-        }
-
-        function filterFAQ() {
-            const keyword = document.getElementById('faqSearch').value;
-            // 如果開始搜尋，自動將分類切換為「全部」以搜尋全站 FAQ，除非使用者堅持在某分類下搜 (這裡設計為全站搜)
-            if (keyword.length > 0 && currentFAQCategory !== '全部') {
-                // 選項：保持在當前分類搜尋，或者切換到全部。這裡選擇保持在當前分類搜尋比較直覺。
-                // 若要全站搜，可解開下面註解
-                // currentFAQCategory = '全部';
-                // document.querySelectorAll('.faq-category-btn').forEach(btn => btn.classList.remove('active'));
-                // document.querySelector('.faq-category-btn:first-child').classList.add('active');
-            }
-            renderFAQ(keyword);
-        }
-
-
-        // --- 原有 Stats 數據函式 ---
+        // --- 新增：抓取 Stats 數據並繪圖 ---
         async function fetchStatsData() {
             if(!STATS_SCRIPT_URL.startsWith("http")) return;
             try {
@@ -1110,114 +1197,199 @@
         function renderInfluencerStats(data) {
             if (!data || data.length === 0) return;
 
+            // --- 日期格式化工具函式 (修正時區問題) ---
             const formatDate = (isoString) => {
                 if (!isoString) return '';
                 const date = new Date(isoString);
+                
+                // 修正：使用 Intl.DateTimeFormat 強制以「台北時間」解析日期
                 try {
                     const formatter = new Intl.DateTimeFormat('zh-TW', {
                         timeZone: 'Asia/Taipei',
-                        year: 'numeric', month: '2-digit', day: '2-digit'
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
                     });
+                    
                     const parts = formatter.formatToParts(date);
                     const y = parts.find(p => p.type === 'year').value;
                     const m = parts.find(p => p.type === 'month').value;
                     const d = parts.find(p => p.type === 'day').value;
                     return `${y}-${m}-${d}`;
                 } catch (e) {
-                    return isoString.substring(0, 10);
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, '0');
+                    const d = String(date.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
                 }
             };
 
+            // 1. 處理最新數據 (Hero Card & Platform Grid)
             const latest = data[data.length - 1];
             
+            // Helper: 尋找指定天數前的資料
             const findDataDaysAgo = (dataset, days) => {
                 const targetDate = new Date(latest.date);
                 targetDate.setDate(targetDate.getDate() - days);
+                
                 let bestMatch = dataset[0];
                 let minDiff = Infinity;
+                
                 for(let i = 0; i < dataset.length; i++) {
                      const d = new Date(dataset[i].date);
                      const diff = Math.abs(d - targetDate);
-                     if (diff < minDiff) { minDiff = diff; bestMatch = dataset[i]; }
+                     if (diff < minDiff) {
+                         minDiff = diff;
+                         bestMatch = dataset[i];
+                     }
                 }
                 return bestMatch;
             };
 
+            // 抓取 7 天前的資料來計算本週成長
             const weekAgoData = findDataDaysAgo(data, 7);
 
+            // 渲染各平台數據與增長量
             const renderPlatStat = (id, current, past) => {
                 const diff = current - past;
-                let color = '#94a3b8'; 
+                let color = '#94a3b8'; // 預設灰
                 let icon = '';
                 let diffStr = '0';
                 
                 if (diff > 0) {
-                    color = '#10b981'; icon = '<i class="fa-solid fa-caret-up"></i>'; diffStr = '+' + Number(diff).toLocaleString();
+                    color = '#10b981'; // 綠色
+                    icon = '<i class="fa-solid fa-caret-up"></i>';
+                    diffStr = '+' + Number(diff).toLocaleString();
                 } else if (diff < 0) {
-                    color = '#ef4444'; icon = '<i class="fa-solid fa-caret-down"></i>'; diffStr = Number(diff).toLocaleString();
+                    color = '#ef4444'; // 紅色
+                    icon = '<i class="fa-solid fa-caret-down"></i>';
+                    diffStr = Number(diff).toLocaleString();
                 }
-                document.getElementById(id).innerHTML = `${Number(current).toLocaleString()} <span style="font-size:12px; color:${color}; font-weight:600;">${icon} ${diffStr}</span>`;
+
+                document.getElementById(id).innerHTML = `
+                    ${Number(current).toLocaleString()} 
+                    <span style="font-size:12px; color:${color}; font-weight:600;">${icon} ${diffStr}</span>
+                `;
             };
 
             document.getElementById('hero-total').innerText = Number(latest.total).toLocaleString();
+            
+            // 更新各平台數據顯示
             renderPlatStat('stat-ig', latest.ig, weekAgoData.ig);
             renderPlatStat('stat-fb', latest.fb, weekAgoData.fb);
             renderPlatStat('stat-yt', latest.yt, weekAgoData.yt);
             renderPlatStat('stat-tiktok', latest.tiktok, weekAgoData.tiktok);
             renderPlatStat('stat-threads', latest.threads, weekAgoData.threads);
 
+
+            // 計算 Hero Card MoM (月環比 - 維持不變)
             const monthAgoData = findDataDaysAgo(data, 30);
             if (monthAgoData && monthAgoData.total > 0) {
                 const growth = ((latest.total - monthAgoData.total) / monthAgoData.total) * 100;
                 const trendEl = document.getElementById('hero-trend');
-                if (growth >= 0) trendEl.innerHTML = `<span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +${growth.toFixed(1)}% (MoM)</span>`;
-                else trendEl.innerHTML = `<span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> ${growth.toFixed(1)}% (MoM)</span>`;
+                if (growth >= 0) {
+                    trendEl.innerHTML = `<span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +${growth.toFixed(1)}% (MoM)</span>`;
+                } else {
+                    trendEl.innerHTML = `<span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> ${growth.toFixed(1)}% (MoM)</span>`;
+                }
             }
 
+            // 2. 繪製趨勢圖 (每週淨成長量)
+            // 邏輯：從最新日期往回推，每7天取樣一次，計算該週的增長量
             const weeklySnapshots = [];
             let currentRef = data[data.length - 1];
             weeklySnapshots.push(currentRef);
             
+            // 修改：取過去 8 週的數據點 (原為 6 週)
             for (let i = 0; i < 8; i++) {
                 const targetDate = new Date(currentRef.date);
                 targetDate.setDate(targetDate.getDate() - 7);
-                let closest = null; let minDiff = Infinity;
+                
+                let closest = null;
+                let minDiff = Infinity;
+                // 優化：從 currentRef 的位置往前找
                 let currentIndex = data.indexOf(currentRef);
+                
                 for(let j = currentIndex - 1; j >= 0; j--) {
                      const d = new Date(data[j].date);
                      const diff = Math.abs(d - targetDate);
-                     if(diff < minDiff) { minDiff = diff; closest = data[j]; }
+                     if(diff < minDiff) {
+                         minDiff = diff;
+                         closest = data[j];
+                     }
                 }
-                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { weeklySnapshots.unshift(closest); currentRef = closest; } else { break; }
+                
+                // 寬容度設為3天，若找不到接近7天前的資料就停止
+                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { 
+                     weeklySnapshots.unshift(closest); 
+                     currentRef = closest;
+                } else {
+                     break; 
+                }
             }
             
+            // 計算每週增長量 (Delta)
             const chartLabels = [];
             const chartData = [];
+            
+            // 因為 weeklySnapshots 是 [Week1, Week2, Week3...] (時間由舊到新)
+            // 所以增長量計算是 Week[i] - Week[i-1]
             for(let i = 1; i < weeklySnapshots.length; i++) {
-                 chartLabels.push(formatDate(weeklySnapshots[i].date)); 
+                 chartLabels.push(formatDate(weeklySnapshots[i].date)); // 使用當週日期作為 Label
                  chartData.push(weeklySnapshots[i].total - weeklySnapshots[i-1].total);
             }
             
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
-            if (growthChartInstance) growthChartInstance.destroy();
+            
+            // 修正：檢查並銷毀舊的圖表實例
+            if (growthChartInstance) {
+                growthChartInstance.destroy();
+            }
 
             growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Weekly New Influencers',
+                        label: 'Weekly New Influencers', // 每週新增數
                         data: chartData,
-                        borderColor: '#E14F4B', backgroundColor: 'rgba(225, 79, 75, 0.1)',
-                        borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#E14F4B', pointRadius: 5, fill: true, tension: 0.3
+                        borderColor: '#E14F4B',
+                        backgroundColor: 'rgba(225, 79, 75, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#E14F4B',
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { borderDash: [2, 4] } }, x: { grid: { display: false } } }
+                    scales: {
+                        y: { 
+                            beginAtZero: true, // 增長量通常從0開始看比較清楚
+                            grid: { borderDash: [2, 4] }
+                        },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
+        }
+
+        // --- 側邊欄縮放功能 ---
+        function toggleSubmenu(menuId, element) {
+            const submenu = document.getElementById(menuId);
+            const isActive = submenu.classList.contains('open');
+            
+            if (!isActive) {
+                submenu.classList.add('open');
+                element.classList.add('expanded');
+            } else {
+                submenu.classList.remove('open');
+                element.classList.remove('expanded');
+            }
         }
 
         async function fetchBlogPosts() {
@@ -1226,7 +1398,7 @@
                 const response = await fetch(BLOG_SCRIPT_URL + "?t=" + new Date().getTime());
                 const posts = await response.json();
                 allBlogPosts = posts; 
-                populateMonthFilter(); 
+                populateMonthFilter(); // 新增：資料載入後，生成月份選項
                 applyFilters(); 
                 renderDashboardStats(); 
             } catch (error) {
@@ -1234,6 +1406,7 @@
             }
         }
 
+        // 新增：自動從日誌資料中提取月份並生成下拉選單
         function populateMonthFilter() {
             const monthSet = new Set();
             allBlogPosts.forEach(post => {
@@ -1244,21 +1417,32 @@
                     monthSet.add(`${y}-${m}`);
                 }
             });
+            
+            // 排序月份 (由新到舊)
             const sortedMonths = Array.from(monthSet).sort().reverse();
+            
             const select = document.getElementById('monthFilter');
+            // 保留第一個 "所有月份" 選項，清除其餘
             select.innerHTML = '<option value="All">📅 所有月份</option>';
-            sortedMonths.forEach(month => { select.innerHTML += `<option value="${month}">${month}</option>`; });
+            
+            sortedMonths.forEach(month => {
+                select.innerHTML += `<option value="${month}">${month}</option>`;
+            });
         }
 
+        // 修改後的 renderDashboardStats (只顯示產品更新部分，網紅數據由 renderInfluencerStats 處理)
         function renderDashboardStats() {
             if(allBlogPosts.length === 0) return;
+            // 這裡原本是畫圖，現在改為只畫 "Product Velocity" (3個月)
             const monthCounts = {};
             const months = [];
             const today = new Date();
+            // 改為 3 個月 (i=2)
             for(let i=2; i>=0; i--) {
                 const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
                 const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-                monthCounts[key] = 0; months.push(key);
+                monthCounts[key] = 0;
+                months.push(key);
             }
             allBlogPosts.forEach(post => {
                 const dateObj = new Date(post.date);
@@ -1268,34 +1452,57 @@
                 }
             });
             const ctx = document.getElementById('updateChart').getContext('2d');
-            if (updateChartInstance) updateChartInstance.destroy();
+            
+            // 修正：檢查並銷毀舊的圖表實例
+            if (updateChartInstance) {
+                updateChartInstance.destroy();
+            }
 
             updateChartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'line', // 修改：改為波浪狀折線圖
                 data: {
                     labels: months,
                     datasets: [{
-                        label: '功能更新數', data: months.map(m => monthCounts[m]),
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)', borderColor: '#3b82f6',
-                        borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#3b82f6', pointRadius: 5, fill: true, tension: 0.4
+                        label: '功能更新數',
+                        data: months.map(m => monthCounts[m]),
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // 修改：半透明填充色
+                        borderColor: '#3b82f6', // 修改：線條顏色
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3b82f6',
+                        pointRadius: 5,
+                        fill: true, // 修改：啟用填充效果
+                        tension: 0.4 // 修改：設定波浪曲線張力
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [2, 4] } }, x: { grid: { display: false } } }
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { stepSize: 1 },
+                            grid: { borderDash: [2, 4] }
+                        },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
             
+            // Roadmap 渲染
             const roadmapList = document.getElementById('mini-roadmap-list');
             roadmapList.innerHTML = '';
             const sortedPosts = allBlogPosts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
             const latestPosts = sortedPosts.slice(0, 4); 
+            
             latestPosts.forEach(post => {
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
-                    const y = dateObj.getFullYear(); const m = String(dateObj.getMonth() + 1).padStart(2, '0'); const d = String(dateObj.getDate()).padStart(2, '0');
+                    const y = dateObj.getFullYear();
+                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(dateObj.getDate()).padStart(2, '0');
                     displayDate = `${y}-${m}-${d}`;
                 }
                 let statusClass = 'status-hold';
@@ -1303,6 +1510,7 @@
                 if(statusText.includes('Released')) statusClass = 'status-released';
                 else if(statusText.includes('Testing')) statusClass = 'status-beta';
                 else if(statusText.includes('In Progress')) statusClass = 'status-progress';
+                
                 const li = document.createElement('li');
                 li.innerHTML = `<div class="roadmap-info"><div class="roadmap-title">${post.title}</div><div class="roadmap-date">${displayDate}</div></div><span class="status-badge ${statusClass}" style="font-size:10px; padding:2px 6px;">${statusText}</span>`;
                 roadmapList.appendChild(li);
@@ -1311,6 +1519,7 @@
 
         function filterBlogRole(role) {
             currentRoleFilter = role;
+            // 更新按鈕狀態
             const buttons = document.querySelectorAll('#updates .tab-btn');
             buttons.forEach(btn => {
                 btn.classList.remove('active');
@@ -1319,9 +1528,26 @@
             applyFilters();
         }
 
-        function filterBlogStatus(status) { currentStatusFilter = status; applyFilters(); }
-        function filterBlogMonth(month) { currentMonthFilter = month; applyFilters(); }
-        function filterBlogSearch() { searchQuery = document.getElementById('updateSearchInput').value.toLowerCase(); applyFilters(); }
+        function filterBlogStatus(status) {
+            currentStatusFilter = status;
+            applyFilters();
+        }
+
+        // 新增：月份篩選函式
+        function filterBlogMonth(month) {
+            currentMonthFilter = month;
+            applyFilters();
+        }
+
+        function filterBlogSearch() {
+            searchQuery = document.getElementById('updateSearchInput').value.toLowerCase();
+            applyFilters();
+        }
+
+        function sortBlog(order) {
+            currentSortOrder = order;
+            applyFilters();
+        }
 
         function applyFilters() {
             filteredPosts = allBlogPosts.filter(post => {
@@ -1330,24 +1556,44 @@
                 const matchRole = currentRoleFilter === 'All' || postRole === 'All' || postRole === currentRoleFilter;
                 const matchStatus = currentStatusFilter === 'All' || postStatus === currentStatusFilter;
                 
+                // 新增：月份篩選邏輯
                 let matchMonth = true;
                 if (currentMonthFilter !== 'All') {
                     const d = new Date(post.date);
                     if (!isNaN(d.getTime())) {
-                        const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0');
-                        matchMonth = `${y}-${m}` === currentMonthFilter;
-                    } else { matchMonth = false; }
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const postMonth = `${y}-${m}`;
+                        matchMonth = postMonth === currentMonthFilter;
+                    } else {
+                        matchMonth = false;
+                    }
                 }
+
+                // 新增：搜尋過濾 (邏輯：標題 OR 內容 OR 標籤，只要沾上邊就顯示)
+                // 強制將 tags 轉為字串再搜尋，避免漏網之魚
                 const searchStr = searchQuery.trim();
-                const matchSearch = searchStr === '' || post.title.toLowerCase().includes(searchStr) || post.content.toLowerCase().includes(searchStr) || (post.tags && String(post.tags).toLowerCase().includes(searchStr));
+                const matchSearch = searchStr === '' || 
+                                    post.title.toLowerCase().includes(searchStr) || 
+                                    post.content.toLowerCase().includes(searchStr) ||
+                                    (post.tags && String(post.tags).toLowerCase().includes(searchStr));
+
                 return matchRole && matchStatus && matchSearch && matchMonth;
             });
-            filteredPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
-            currentPage = 1; renderBlogPage();
+            
+            // 預設降序排列 (最新在前)
+            filteredPosts.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateB - dateA;
+            });
+            currentPage = 1;
+            renderBlogPage();
         }
 
         function changePage(direction) {
-            currentPage += direction; renderBlogPage();
+            currentPage += direction;
+            renderBlogPage();
             document.querySelector('.blog-container').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1356,7 +1602,8 @@
             container.innerHTML = ''; 
             if(filteredPosts.length === 0) {
                 container.innerHTML = `<div class="loading-state">沒有符合條件的紀錄。</div>`;
-                document.getElementById('pagination').style.display = 'none'; return;
+                document.getElementById('pagination').style.display = 'none';
+                return;
             }
             const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
             const start = (currentPage - 1) * postsPerPage;
@@ -1364,28 +1611,73 @@
             const pageData = filteredPosts.slice(start, end);
             
             pageData.forEach((post, index) => {
-                let dateDay = ''; let dateMonthYear = '';
+                // 日期處理
+                let dateDay = '';
+                let dateMonthYear = '';
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
                     dateDay = String(dateObj.getDate()).padStart(2, '0');
                     dateMonthYear = `${dateObj.getFullYear()} ${dateObj.toLocaleString('en-US', { month: 'short' })}`;
                 }
-                let statusClass = 'status-planning'; let statusText = post.status || 'Unknown';
+
+                // 狀態樣式
+                let statusClass = 'status-planning';
+                let statusText = post.status || 'Unknown';
                 if(statusText.includes('Released')) { statusClass = 'status-released'; statusText = '已釋出'; }
                 else if(statusText.includes('Testing')) { statusClass = 'status-beta'; statusText = '測試中'; }
                 else if(statusText.includes('In Progress')) { statusClass = 'status-beta'; statusText = '開發中'; }
-                let roleClass = 'role-all'; let roleText = 'General';
+                
+                // 角色樣式
+                let roleClass = 'role-all';
+                let roleText = 'General';
                 if(post.role === 'BD') { roleClass = 'role-bd'; roleText = 'Business'; }
                 if(post.role === 'IM') { roleClass = 'role-im'; roleText = 'Operation'; }
+
+                // 標籤處理 (修正：強制轉字串，避免格式錯誤導致標籤消失)
                 const tagsRaw = post.tags ? String(post.tags) : '';
                 const tagsHtml = tagsRaw ? tagsRaw.split(',').map(t => `<span class="tag-small">#${t.trim()}</span>`).join('') : '';
-                const uniqueId = `content-${index}`;
-                const isLongContent = post.content.length > 300; 
-                const contentHtml = `<div class="changelog-content ${isLongContent ? 'collapsed' : ''}" id="${uniqueId}">${post.content}</div>${isLongContent ? `<div class="read-more-btn" onclick="document.getElementById('${uniqueId}').classList.remove('collapsed'); this.style.display='none';">閱讀完整內容 <i class="fa-solid fa-chevron-down"></i></div>` : ''}`;
 
-                const html = `<div class="changelog-item"><div class="changelog-meta"><div class="changelog-date">${dateDay}</div><div style="font-size: 13px; color: #94a3b8; font-weight: 500;">${dateMonthYear}</div><span class="changelog-version">${post.version || 'v1.0'}</span></div><div class="changelog-card"><span class="role-badge ${roleClass}">${roleText}</span><div class="changelog-header"><div class="changelog-title">${post.title}</div><div class="changelog-tags"><span class="status-pill ${statusClass}">${statusText}</span>${tagsHtml}</div></div>${contentHtml}</div></div>`;
+                // 內容處理 (過長折疊)
+                const uniqueId = `content-${index}`;
+                // 簡單判斷長度，若字數過多則加入折疊邏輯 (這裡用 CSS class 控制)
+                const isLongContent = post.content.length > 300; 
+                const contentHtml = `
+                    <div class="changelog-content ${isLongContent ? 'collapsed' : ''}" id="${uniqueId}">
+                        ${post.content}
+                    </div>
+                    ${isLongContent ? `<div class="read-more-btn" onclick="document.getElementById('${uniqueId}').classList.remove('collapsed'); this.style.display='none';">閱讀完整內容 <i class="fa-solid fa-chevron-down"></i></div>` : ''}
+                `;
+
+                // 組合 HTML
+                const html = `
+                    <div class="changelog-item">
+                        <div class="changelog-meta">
+                            <div class="changelog-date">${dateDay}</div>
+                            <div style="font-size: 13px; color: #94a3b8; font-weight: 500;">${dateMonthYear}</div>
+                            <span class="changelog-version">${post.version || 'v1.0'}</span>
+                        </div>
+                        <div class="changelog-card">
+                            <span class="role-badge ${roleClass}">${roleText}</span>
+                            <div class="changelog-header">
+                                <div class="changelog-title">${post.title}</div>
+                                <div class="changelog-tags">
+                                    <span class="status-pill ${statusClass}">${statusText}</span>
+                                    ${tagsHtml}
+                                </div>
+                            </div>
+                            ${contentHtml}
+                        </div>
+                    </div>
+                `;
                 container.innerHTML += html;
-                if(isLongContent) { setTimeout(() => { const btn = document.getElementById(uniqueId).nextElementSibling; if(btn) btn.style.display = 'block'; }, 0); }
+                
+                // 如果有長內容，顯示按鈕 (需要等 DOM 渲染後)
+                if(isLongContent) {
+                    setTimeout(() => {
+                        const btn = document.getElementById(uniqueId).nextElementSibling;
+                        if(btn) btn.style.display = 'block';
+                    }, 0);
+                }
             });
             document.getElementById('pagination').style.display = 'flex';
             document.getElementById('pageInfo').innerText = `第 ${currentPage} / ${totalPages} 頁`;
@@ -1393,56 +1685,140 @@
             document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
         }
 
+        // 新增：許願池提交功能 (Headless Form) - 已更新 Script URL
         function submitBugReport() {
-            if(!BUG_REPORT_SCRIPT_URL.startsWith("http")) { alert("⚠️ 請先設定許願池的 Google Apps Script 網址！"); return; }
+            if(!BUG_REPORT_SCRIPT_URL.startsWith("http") || BUG_REPORT_SCRIPT_URL.includes("YOUR_BUG_REPORT")) {
+                alert("⚠️ 請先設定許願池的 Google Apps Script 網址！");
+                return;
+            }
+
             const name = document.getElementById('bugName').value;
             const type = document.getElementById('bugType').value;
             const content = document.getElementById('bugContent').value;
-            if (!name || !content) { alert("❌ 請填寫姓名與內容！"); return; }
+            // 修改：變數名稱 email 改為 slackId，以符合後端邏輯 (雖然送出的 payload 欄位名稱可以不改，但為了語意清晰)
+            // 這裡我們繼續用 email 這個 key 傳送，因為 Apps Script 那邊接收的是 data.email，
+            // 只要我們知道這欄位現在填的是 Slack ID 即可。
+            const slackId = document.getElementById('bugName').value; 
+
+            if (!name || !content) {
+                alert("❌ 請填寫姓名與內容！");
+                return;
+            }
+
+            // 發送按鈕變更狀態
             const btn = document.querySelector('#bugModal .btn');
-            const originalText = btn.innerText; btn.innerText = "傳送中..."; btn.disabled = true;
-            const payload = { name: name, type: type, content: content, email: "Slack: " + name };
+            const originalText = btn.innerText;
+            btn.innerText = "傳送中...";
+            btn.disabled = true;
+
+            // 準備資料 (注意 key 要跟 Apps Script 裡的 data.name, data.email 對應)
+            const payload = {
+                name: name,
+                type: type,
+                content: content,
+                // 因為我們移除了 Email 輸入框，這裡可以傳送 Slack ID 到 Email 欄位，或者傳送空字串
+                // 為了讓 Sheet 裡的 Email 欄位有東西，我們把 Slack ID 填進去 (或是標註一下)
+                email: "Slack: " + name 
+            };
 
             fetch(BUG_REPORT_SCRIPT_URL, {
-                method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload)
+                method: "POST",
+                mode: "no-cors", // 重要：跨網域設定
+                headers: { "Content-Type": "text/plain" }, // 使用 text/plain 避免 CORS preflight
+                body: JSON.stringify(payload)
             }).then(() => {
                 alert("✅ 留言已送出！感謝您的回饋。");
-                document.getElementById('bugName').value = ''; document.getElementById('bugContent').value = '';
+                document.getElementById('bugName').value = '';
+                document.getElementById('bugContent').value = '';
                 closeModal('bugModal');
-            }).catch(err => { alert("❌ 發送失敗，請稍後再試。"); console.error(err);
-            }).finally(() => { btn.innerText = originalText; btn.disabled = false; });
+            }).catch(err => {
+                alert("❌ 發送失敗，請稍後再試。");
+                console.error(err);
+            }).finally(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
         }
 
         const knowledgeBase = [
-            { id: "001", title: "網紅搜尋 SOP", desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", tag: "User Guide", tagClass: "tag-primary", icon: "fa-solid fa-magnifying-glass-location", customHtml: `<button class="btn" onclick="navigateTo('anytag-ops', 'influencers'); logDecision('001', '網紅搜尋 SOP')">前往教學</button>`, riskLevel: "low", category: "AnyTag", roles: ['IM'] },
-            { id: "002", title: "數據沒更新？", desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", tag: "FAQ", tagClass: "tag-secondary", icon: "fa-regular fa-circle-question", customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); logDecision('002', '數據沒更新？')">查看解決方案</button>`, riskLevel: "low", category: "AnyTag", roles: ['BD', 'IM'] },
+            { 
+                id: "001", 
+                title: "網紅搜尋 SOP", 
+                desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", 
+                tag: "User Guide", 
+                tagClass: "tag-primary", 
+                icon: "fa-solid fa-magnifying-glass-location", 
+                // 修改：使用自定義 HTML 進行內部跳轉 (跳至 anytag-ops 頁面的 influencers 章節)
+                customHtml: `<button class="btn" onclick="navigateTo('anytag-ops', 'influencers'); logDecision('001', '網紅搜尋 SOP')">前往教學</button>`,
+                riskLevel: "low", 
+                category: "AnyTag", 
+                roles: ['IM'] 
+            },
+            { 
+                id: "002", 
+                title: "數據沒更新？", 
+                desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", 
+                tag: "FAQ", 
+                tagClass: "tag-secondary", 
+                icon: "fa-regular fa-circle-question", 
+                // 修改：使用自定義 HTML 跳轉至疑難排解頁面
+                customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); logDecision('002', '數據沒更新？')">查看解決方案</button>`,
+                riskLevel: "low", 
+                category: "AnyTag", 
+                roles: ['BD', 'IM'] 
+            },
             { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1l2B4IXrtivcZlb_lBjhlaq_coBKE01SoVBGvg_92zmc/edit?gid=0#gid=0" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
             { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="window.scrollTo(0,0); showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看日誌</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] }, 
             { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
-            { id: "006", title: "結案報告範本", desc: "標準結案報告 PPT 模板與數據填寫說明。", tag: "Template", tagClass: "tag-secondary", icon: "fa-solid fa-file-powerpoint", btnText: "下載 PPT", btnLink: "https://docs.google.com/presentation/d/1_nyANFW05Pao8LXp4c5B5Yaquc8lHzhn42VKjscLFE4/edit?slide=id.p27#slide=id.p27", btnStyle: "btn-outline", riskLevel: "low", category: "IM", roles: ['IM'] },
+            { 
+                id: "006", 
+                title: "結案報告範本", 
+                desc: "標準結案報告 PPT 模板與數據填寫說明。", 
+                tag: "Template", 
+                tagClass: "tag-secondary", 
+                icon: "fa-solid fa-file-powerpoint", 
+                btnText: "下載 PPT", 
+                // 修改：更新外部連結為指定的 Google Slides
+                btnLink: "https://docs.google.com/presentation/d/1_nyANFW05Pao8LXp4c5B5Yaquc8lHzhn42VKjscLFE4/edit?slide=id.p27#slide=id.p27", 
+                btnStyle: "btn-outline", 
+                riskLevel: "low", 
+                category: "IM", 
+                roles: ['IM'] 
+            },
             { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
         ];
 
         let currentRole = 'All';
         let searchDebounce = null; 
 
+        // 新增：處理內部跳轉與錨點滾動的輔助函式
         function navigateTo(pageId, anchorId) {
-            showPage(pageId); 
+            showPage(pageId); // 切換頁面
             if (anchorId) {
+                // 給一點時間讓頁面渲染完成後再滾動
                 setTimeout(() => {
                     const element = document.getElementById(anchorId);
-                    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }, 100);
             }
         }
 
         function filterRole(role) {
             currentRole = role;
+            document.querySelectorAll('#quick-access-container + .grid-4, #dashboard .tab-btn').forEach(el => { 
+                if(el.classList.contains('tab-btn')) {
+                     el.classList.remove('active');
+                     if(el.innerText.includes(role === 'All' ? '全部' : role)) el.classList.add('active');
+                }
+            });
             document.querySelectorAll('#dashboard .tab-btn').forEach(btn => {
                  btn.classList.remove('active');
                  if(btn.innerText.includes(role === 'All' ? '全部' : role)) btn.classList.add('active');
             });
             renderCards();
+            sendToSheet("Switch_Tab", role, "User switched view");
         }
 
         function renderCards() {
@@ -1471,18 +1847,40 @@
         window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
 
         let savedRange = null;
-        function saveSelection() { const sel = window.getSelection(); if (sel.getRangeAt && sel.rangeCount) savedRange = sel.getRangeAt(0); }
-        function restoreSelection() { if (savedRange) { const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange); } }
-        function formatDoc(cmd, value=null) { document.execCommand(cmd, false, value); document.getElementById('richEditor').focus(); }
-        function addLink() { const url = prompt('請輸入連結網址：', 'https://'); if (url) formatDoc('createLink', url); }
+        function saveSelection() {
+            const sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) savedRange = sel.getRangeAt(0);
+        }
+        function restoreSelection() {
+            if (savedRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+            }
+        }
+        function formatDoc(cmd, value=null) {
+            document.execCommand(cmd, false, value);
+            const editor = document.getElementById('richEditor');
+            editor.focus();
+        }
+        function addLink() {
+            const url = prompt('請輸入連結網址：', 'https://');
+            if (url) formatDoc('createLink', url);
+        }
         
         function addImage() {
-            let url = prompt('請輸入圖片網址 (支援 Google Drive 分享連結)：', 'https://');
+            let url = prompt('請輸入圖片網址 (支援 Google Drive 分享連結，請直接複製分享連結貼上)：', 'https://');
             if (url) {
-                if (url.includes('drive-viewer')) { alert("⚠️ 請勿使用 drive-viewer 網址！請使用共用連結。"); return; }
+                if (url.includes('drive-viewer')) {
+                    alert("⚠️ 請勿使用 drive-viewer 網址！\n這只是預覽連結，無法公開顯示。\n\n請回到 Google Drive，對圖片按右鍵 -> 共用 -> 複製連結 (連結通常包含 /file/d/...)");
+                    return;
+                }
+                
                 if (url.includes('drive.google.com')) {
                     const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-                    if (idMatch) url = `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+                    if (idMatch) {
+                        url = `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+                    }
                 }
                 formatDoc('insertImage', url);
             }
@@ -1496,47 +1894,89 @@
             let content = document.getElementById('richEditor').innerHTML;
             const status = document.getElementById('postStatus').value;
             const role = document.getElementById('postRole').value;
-            if (!title.trim()) { alert("❌ 請填寫「標題」！"); return; }
+
+            if (!title.trim()) { alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。"); return; }
+
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
             const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}\t${status}\t${role}`;
-            navigator.clipboard.writeText(rowString).then(() => { alert("✅ 已複製整列資料！請至 Google Sheet 貼上。"); });
+
+            navigator.clipboard.writeText(rowString).then(() => {
+                alert("✅ 已複製整列資料！\n請直接去 Google Sheet 的 A 欄 (Date) 按下 Ctrl+V 貼上即可。");
+            });
         }
 
-        function logDecision(id, title) { console.log(`[Log] Clicked: ${title} (ID: ${id})`); }
+        function logDecision(id, title) {
+            const timestamp = new Date().toISOString();
+            console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
+            sendToSheet("Click", title, `ID: ${id}`);
+        }
+
+        function sendToSheet(action, label, detail) {
+             // 這裡保留空函式或您原本的實作，因為上方 script URL 是 placeholder
+             if(LOGGER_URL === "YOUR_PERSONAL_SCRIPT_URL_HERE") {
+                 console.log("Mock logging:", action, label, detail);
+                 return;
+             }
+             fetch(LOGGER_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action, label, detail, user: "Unknown" })
+            }).catch(e => console.error("Log failed", e));
+        }
 
         function smartSearch() {
             if (searchDebounce) clearTimeout(searchDebounce);
             let input = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('quick-access-container');
             container.innerHTML = ''; 
+            let hasResult = knowledgeBase.length > 0;
+            
             let foundCount = 0;
             knowledgeBase.forEach(item => {
                 if (item.title.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input) || item.tag.toLowerCase().includes(input) || (item.keywords && item.keywords.toLowerCase().includes(input))) {
                     foundCount++;
                     let alertHtml = item.riskLevel === 'high' ? `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>` : '';
+                    if (item.riskLevel === 'high') sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
                     let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
                     const cardHTML = `<div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span>${alertHtml}<h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
                     container.innerHTML += cardHTML;
                 }
             });
-            if (foundCount === 0) container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
+            
+            if (foundCount === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
+                if(input.length > 1) { searchDebounce = setTimeout(() => { sendToSheet("Search_Failed", input, "No Result Found"); }, 2000); }
+            }
         }
 
         function showPage(pageId, navElement) {
             window.scrollTo(0, 0);
+            
+            // 1. 清除所有區塊的 active
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            
+            // 2. 清除主選單的 active
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // 3. (新增修正) 清除子選單的 active，確保互斥效果
             document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
 
             const targetSection = document.getElementById(pageId);
-            if (targetSection) targetSection.classList.add('active');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
             
+            // 修改：自動高亮對應的側邊選單
             if (navElement) {
                 navElement.classList.add('active');
             } else {
-                const matchedNav = document.querySelector(`.nav-item[onclick*="'${pageId}'"]`) || document.querySelector(`.submenu-item[onclick*="'${pageId}'"]`);
+                // 如果是透過內部連結跳轉，嘗試自動找到對應的選單項目並點亮
+                const matchedNav = document.querySelector(`.nav-item[onclick*="'${pageId}'"]`) || 
+                                   document.querySelector(`.submenu-item[onclick*="'${pageId}'"]`);
                 if (matchedNav) {
                     matchedNav.classList.add('active');
+                    // 如果是子選單，順便展開父選單
                     const parentSubmenu = matchedNav.closest('.submenu');
                     if (parentSubmenu) {
                         parentSubmenu.classList.add('open');
@@ -1547,14 +1987,14 @@
             }
             
             const map = {
-                'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到 AnyTag/AnyCreator 的疑難雜症了嗎？我來幫你解決！'], 
+                'dashboard': ['AnyTag/AnyCreator Support Hub', 'Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！'], 
                 'updates': ['產品更新動態', 'AnyTag / AnyCreator 產品更新日誌'], 
                 'anytag': ['AnyTag Guide', '平台核心功能說明'],
-                'anytag-sales': ['AnyTag Guide', '業務重點功能說明'],
-                'anytag-ops': ['AnyTag Guide', '執行操作手冊'],
-                'anycreator-invite': ['AnyCreator Guide', '邀約註冊'],
-                'anycreator-guide': ['AnyCreator Guide', '註冊與使用指南'],
-                'troubleshoot': ['Helpdesk', '常見問答 (FAQ) & 疑難排解'], // 修改標題
+                'anytag-sales': ['AnyTag Guide', '業務重點功能說明'], // 新增標題映射
+                'anytag-ops': ['AnyTag Guide', '執行操作手冊'], // 新增標題映射
+                'anycreator-invite': ['AnyCreator Guide', '邀約註冊'], // 修改：更新標題映射為「邀約註冊」
+                'anycreator-guide': ['AnyCreator Guide', '註冊與使用指南'], // 新增
+                'troubleshoot': ['Troubleshooting', '常見問題排解'],
                 'resources': ['Resources', '資源中心']
             };
             if(map[pageId]) {
@@ -1566,15 +2006,45 @@
         function toggleSubmenu(menuId, element) {
             const submenu = document.getElementById(menuId);
             const isActive = submenu.classList.contains('open');
-            if (!isActive) { submenu.classList.add('open'); element.classList.add('expanded'); } else { submenu.classList.remove('open'); element.classList.remove('expanded'); }
+            
+            if (!isActive) {
+                submenu.classList.add('open');
+                element.classList.add('expanded');
+            } else {
+                submenu.classList.remove('open');
+                element.classList.remove('expanded');
+            }
         }
 
         function startNoticeCarousel() {
             let noticeIndex = 0;
             const noticeBox = document.getElementById('notice-box');
             if (!noticeBox) return; 
-            const notices = ["<span class='notice-date'>2025.11月</span> Threads擴充更新！", "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report。", "<span class='notice-date'>2025.11月</span> AnyCreator頁面更新。"];
-            // ... (省略 Carousel 實作細節，與 Part 1 相同) ...
+            
+            const notices = [
+                "<span class='notice-date'>2025.11月</span> Threads擴充更新！可抓取100篇貼文協助提案分析。",
+                "<span class='notice-date'>2025.11月</span> AnyTag更新：Engagement report automation。",
+                "<span class='notice-date'>2025.11月</span> AnyCreator創作者頁面更新，新增各案件狀態。"
+            ];
+            noticeBox.innerHTML = `<div class="notice-text notice-active">${notices[0]}</div>`;
+
+            function rotate() {
+                const current = noticeBox.querySelector('.notice-text');
+                if(current) {
+                    current.classList.remove('notice-active');
+                    current.classList.add('notice-hidden');
+                }
+                setTimeout(() => {
+                    noticeIndex = (noticeIndex + 1) % notices.length;
+                    noticeBox.innerHTML = `<div class="notice-text notice-hidden">${notices[noticeIndex]}</div>`;
+                    setTimeout(() => {
+                        const newText = noticeBox.querySelector('.notice-text');
+                        newText.classList.remove('notice-hidden');
+                        newText.classList.add('notice-active');
+                    }, 50);
+                }, 500);
+            }
+            setInterval(rotate, 4000);
         }
     </script>
 </body>
