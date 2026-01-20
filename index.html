@@ -242,11 +242,35 @@
 
         .chart-section { background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 280px; display: flex; flex-direction: column;} /* 修改：高度與padding縮小 */
 
-        /* --- 原有 Dashboard 樣式調整 --- */
-        .dashboard-stats { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
-        @media (max-width: 900px) { .dashboard-stats { grid-template-columns: 1fr; } }
-        
-        .chart-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; min-height: 300px; }
+        /* --- Dashboard 比例與 Roadmap UI 優化 --- */
+.dashboard-stats { 
+    display: grid; 
+    grid-template-columns: 1fr 2fr; /* 改為左窄右寬 (1:2) */
+    gap: 20px; 
+    margin-bottom: 30px; 
+}
+@media (max-width: 900px) { .dashboard-stats { grid-template-columns: 1fr; } }
+
+.chart-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; min-height: 300px; }
+
+/* 專屬 Roadmap 的動態卡片設計 */
+.mini-roadmap { list-style: none; padding: 10px 0; margin: 0; flex: 1; overflow-y: auto; position: relative; }
+.mini-roadmap::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #f1f5f9; }
+
+.roadmap-item {
+    position: relative; padding: 12px 12px 12px 50px; margin-bottom: 12px;
+    background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: space-between;
+}
+.roadmap-item:hover { transform: translateX(8px); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: var(--brand-red); }
+.roadmap-dot { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; background: #fff; border: 3px solid #cbd5e1; border-radius: 50%; z-index: 2; transition: all 0.3s; }
+.roadmap-item:hover .roadmap-dot { border-color: var(--brand-red); background: var(--brand-red); }
+.roadmap-content { display: flex; align-items: center; gap: 12px; }
+.roadmap-icon-wrapper { width: 36px; height: 36px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: var(--shadow-sm); color: #64748b; }
+.status-pill-mini { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+
+@keyframes status-pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+.status-pulse-active { animation: status-pulse 2s infinite ease-in-out; }
         .chart-title { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;}
         .mini-roadmap { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
         .mini-roadmap li { padding: 12px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; }
@@ -1699,7 +1723,7 @@
             });
         }
 
-        function renderDashboardStats() {
+function renderDashboardStats() {
             if(allBlogPosts.length === 0) return;
             const monthCounts = {};
             const months = [];
@@ -1718,11 +1742,7 @@
                 }
             });
             const ctx = document.getElementById('updateChart').getContext('2d');
-            
-            if (updateChartInstance) {
-                updateChartInstance.destroy();
-            }
-
+            if (updateChartInstance) { updateChartInstance.destroy(); }
             updateChartInstance = new Chart(ctx, {
                 type: 'line', 
                 data: {
@@ -1745,38 +1765,58 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            ticks: { stepSize: 1 },
-                            grid: { borderDash: [2, 4] }
-                        },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [2, 4] } },
                         x: { grid: { display: false } }
                     }
                 }
             });
             
+            // --- 新的 Roadmap 卡片渲染邏輯 ---
             const roadmapList = document.getElementById('mini-roadmap-list');
             roadmapList.innerHTML = '';
             const sortedPosts = allBlogPosts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-            const latestPosts = sortedPosts.slice(0, 4); 
+            const latestPosts = sortedPosts.slice(0, 5); 
             
             latestPosts.forEach(post => {
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
-                    const y = dateObj.getFullYear();
-                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-                    const d = String(dateObj.getDate()).padStart(2, '0');
-                    displayDate = `${y}-${m}-${d}`;
+                    displayDate = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
                 }
-                let statusClass = 'status-hold';
-                let statusText = post.status || 'Unknown';
-                if(statusText.includes('Released')) statusClass = 'status-released';
-                else if(statusText.includes('Testing')) statusClass = 'status-beta';
-                else if(statusText.includes('In Progress')) statusClass = 'status-progress';
-                
+
+                // 智能判斷圖示 (根據標題關鍵字)
+                let iconHtml = '<i class="fa-solid fa-cube"></i>';
+                const titleLower = post.title.toLowerCase();
+                if(titleLower.includes('anytag')) iconHtml = '<i class="fa-solid fa-bullseye" style="color:#E14F4B"></i>';
+                else if(titleLower.includes('anycreator')) iconHtml = '<i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b"></i>';
+                else if(titleLower.includes('ai') || titleLower.includes('llm')) iconHtml = '<i class="fa-solid fa-robot" style="color:#3b82f6"></i>';
+                else if(titleLower.includes('threads')) iconHtml = '<i class="fa-brands fa-threads"></i>';
+
+                // 判斷狀態顏色與呼吸效果
+                let statusStyle = 'background: #f1f5f9; color: #64748b;';
+                let statusText = post.status || 'Released';
+                let pulseClass = '';
+                if(statusText.includes('Released')) {
+                    statusStyle = 'background: #ecfdf5; color: #059669;';
+                    statusText = 'Released';
+                } else if(statusText.includes('Testing') || statusText.includes('In Progress')) {
+                    statusStyle = 'background: #eff6ff; color: #2563eb;';
+                    pulseClass = 'status-pulse-active';
+                }
+
                 const li = document.createElement('li');
-                li.innerHTML = `<div class="roadmap-info"><div class="roadmap-title">${post.title}</div><div class="roadmap-date">${displayDate}</div></div><span class="status-badge ${statusClass}" style="font-size:10px; padding:2px 6px;">${statusText}</span>`;
+                li.className = 'roadmap-item';
+                li.innerHTML = `
+                    <div class="roadmap-dot"></div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-icon-wrapper">${iconHtml}</div>
+                        <div class="roadmap-info">
+                            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">${post.title}</div>
+                            <div style="font-size: 12px; color: #94a3b8;">${displayDate}</div>
+                        </div>
+                    </div>
+                    <span class="status-pill-mini ${pulseClass}" style="${statusStyle}">${statusText}</span>
+                `;
                 roadmapList.appendChild(li);
             });
         }
