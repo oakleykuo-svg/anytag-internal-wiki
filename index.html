@@ -1830,19 +1830,11 @@ function renderDashboardStats() {
 
                 // 智能判斷圖示 (根據標題關鍵字)
                 let iconHtml = '<i class="fa-solid fa-cube"></i>';
-                const li = document.createElement('li');
-                li.className = 'roadmap-item';
-                li.innerHTML = `
-                    <div class="roadmap-content">
-                        <div class="roadmap-icon-wrapper">${iconHtml}</div>
-                        <div class="roadmap-info">
-                            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">${post.title}</div>
-                            <div style="font-size: 12px; color: #94a3b8;">${displayDate}</div>
-                        </div>
-                    </div>
-                    <span class="status-pill-mini ${pulseClass}" style="${statusStyle}">${statusText}</span>
-                `;
-                roadmapList.appendChild(li);
+                const titleLower = post.title.toLowerCase();
+                if(titleLower.includes('anytag')) iconHtml = '<i class="fa-solid fa-bullseye" style="color:#E14F4B"></i>';
+                else if(titleLower.includes('anycreator')) iconHtml = '<i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b"></i>';
+                else if(titleLower.includes('ai') || titleLower.includes('llm')) iconHtml = '<i class="fa-solid fa-robot" style="color:#3b82f6"></i>';
+                else if(titleLower.includes('threads')) iconHtml = '<i class="fa-brands fa-threads"></i>';
 
                 // 判斷狀態顏色與呼吸效果
                 let statusStyle = 'background: #f1f5f9; color: #64748b;';
