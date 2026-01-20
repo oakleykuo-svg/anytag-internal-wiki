@@ -253,48 +253,65 @@
 
 .chart-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; min-height: 300px; }
 
-/* 修正版：專屬 Roadmap 的動態卡片設計 */
-.mini-roadmap { list-style: none; padding: 10px 0; margin: 0; flex: 1; overflow-y: auto; position: relative; }
-
-/* 1. 這條是背景垂直線，我們把它往左移一點，並放在最底層 */
-.mini-roadmap::before { 
-    content: ''; position: absolute; left: 15px; top: 0; bottom: 0; 
-    width: 2px; background: #f1f5f9; z-index: 0; 
+/* 簡潔卡片版：移除時間軸與圓點，確保圖示不被遮擋 */
+.mini-roadmap { 
+    list-style: none; padding: 5px 0; margin: 0; flex: 1; overflow-y: auto; 
 }
 
 .roadmap-item {
     position: relative; 
-    /* 2. 這裡的左邊間距(padding-left)增加到 60px，把內容往右推，才不會被線擋住 */
-    padding: 12px 15px 12px 60px; 
+    padding: 15px; /* 回復正常間距 */
     margin-bottom: 12px;
-    background: #fbfcfd; border-radius: 12px; border: 1px solid #f1f5f9;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    display: flex; align-items: center; justify-content: space-between;
-    z-index: 1;
+    background: #fbfcfd; 
+    border-radius: 12px; 
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
 }
 
-.roadmap-item:hover { transform: translateX(8px); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: var(--brand-red); }
-
-/* 3. 小圓點的位置調整，確保它乖乖待在垂直線上 */
-.roadmap-dot { 
-    position: absolute; left: 9px; top: 50%; transform: translateY(-50%); 
-    width: 14px; height: 14px; background: #fff; border: 3px solid #cbd5e1; 
-    border-radius: 50%; z-index: 2; transition: all 0.3s; 
+/* 滑鼠移上去時，卡片往上浮動並變色 */
+.roadmap-item:hover { 
+    transform: translateY(-3px); 
+    background: #fff; 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+    border-color: var(--brand-red); 
 }
 
-.roadmap-item:hover .roadmap-dot { border-color: var(--brand-red); background: var(--brand-red); }
+.roadmap-content { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    flex: 1; 
+}
 
-.roadmap-content { display: flex; align-items: center; gap: 15px; flex: 1; }
-
-/* 4. 圖示方塊：確保它是正方形且裡面的 Icon 絕對置中 */
+/* 圖示方塊：加大一點點，並確保完全乾淨 */
 .roadmap-icon-wrapper { 
-    width: 40px; height: 40px; min-width: 40px; /* 固定寬度防止被擠壓 */
-    background: #fff; border-radius: 10px; 
-    display: flex; align-items: center; justify-content: center; 
-    font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #64748b; 
+    width: 44px; 
+    height: 44px; 
+    min-width: 44px; 
+    background: #f8fafc; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 20px; 
+    color: #64748b; 
 }
 
-.status-pill-mini { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.roadmap-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-pill-mini { 
+    padding: 4px 12px; 
+    border-radius: 20px; 
+    font-size: 11px; 
+    font-weight: 700; 
+    white-space: nowrap; 
+}
 
 @keyframes status-pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 .status-pulse-active { animation: status-pulse 2s infinite ease-in-out; }
