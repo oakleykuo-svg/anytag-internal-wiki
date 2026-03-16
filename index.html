@@ -1287,9 +1287,44 @@
 <!-- AnyAI Insight 頁面 -->
         <div id="anyai-insight" class="section">
             <div class="blog-container">
-                <div class="card">
-                    <h3><i class="fa-solid fa-robot"></i> AnyAI Insight 內容建置中...</h3>
-                    <p>此頁面將包含 AI-driven 提案流程、Master Doc 自動化與數據分析看板說明。</p>
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">核心功能</div>
+                        <a href="#ai-strategy" class="doc-toc-link">AI 驅動策略分析</a>
+                        <a href="#ai-automation" class="doc-toc-link">提案自動化流程</a>
+                        <a href="#ai-matching" class="doc-toc-link">智能網紅匹配</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">AnyAI Insight | AI 戰略提案系統</h1>
+                            <div class="doc-meta">對象：Business Development (BD) | 強調 AI-driven 提案競爭力</div>
+                        </div>
+                        <div class="doc-body">
+                            <p>AnyAI Insight 是專為業務開發設計的「策略產生器」，透過 AI 將海量社群數據轉化為可執行的提案洞察。</p>
+
+                            <h2 id="ai-strategy">1. AI 驅動策略分析</h2>
+                            <p>系統自動從社群平台（IG/FB）抓取 UGC 貼文與評論原始資料，並進行深度清洗與分類：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 10px;"><strong>消費者情境 (CEP)：</strong> 分析使用者在什麼場合會想到品牌。</li>
+                                <li style="margin-bottom: 10px;"><strong>任務/動機 (JtbD)：</strong> 挖掘使用者購買產品背後想達成的目標。</li>
+                                <li style="margin-bottom: 10px;"><strong>產品屬性 (Attribute)：</strong> 統計內容中提及的產品特性與好處。</li>
+                            </ul>
+                            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 4px solid #0369a1; margin: 15px 0; font-size: 14px;">
+                                <i class="fa-solid fa-lightbulb"></i> <strong>BD 賣點：</strong>這讓你的提案不再只是「憑感覺」，而是有科學數據支持的溝通方針。
+                            </div>
+
+                            <h2 id="ai-automation">2. 提案自動化 (Automation)</h2>
+                            <p>從 Master Doc 一鍵啟動，大幅縮短提案準備時間：</p>
+                            <ul style="padding-left: 20px;">
+                                <li><strong>自動生成簡報：</strong> 直接產出包含策略架構與內容模板的 Proposal Slides。</li>
+                                <li><strong>動態戰情室：</strong> 提供 Social Media UGC Dashboard 範例，供客戶即時查看市場趨勢。</li>
+                                <li><strong>Re-start 機制：</strong> Master Doc Add-on 內建重啟按鈕，可隨時重新跑動數據取得最新分析。</li>
+                            </ul>
+
+                            <h2 id="ai-matching">3. 智能網紅匹配</h2>
+                            <p>根據產出的內容策略（如：需要的高可信度、特定風格），系統自動對應 AnyTag 資料庫，篩選出最符合該專案邏輯的 KOL 名單，確保內容與人選的高度契合。</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1297,9 +1332,46 @@
         <!-- KOL Management & MCP 頁面 -->
         <div id="anytag-mcp" class="section">
             <div class="blog-container">
-                <div class="card">
-                    <h3><i class="fa-solid fa-gears"></i> KOL Management & MCP 內容建置中...</h3>
-                    <p>此頁面將包含 MCP 自動化工作流、Slack 串接 HubSpot 與 KOL Base List 更新機制說明。</p>
+                <div class="doc-layout">
+                    <div class="doc-sidebar">
+                        <div class="doc-toc-title">管理重點</div>
+                        <a href="#mcp-flow" class="doc-toc-link">一條龍自動化工作流</a>
+                        <a href="#mcp-data" class="doc-toc-link">數據自動抓取 (OCR)</a>
+                        <a href="#mcp-list" class="doc-toc-link">Base List 動態成長</a>
+                    </div>
+                    <div class="doc-content">
+                        <div class="doc-header">
+                            <h1 class="doc-title">KOL Management & MCP | 專案自動化流程</h1>
+                            <div class="doc-meta">對象：Influencer Marketing (IM) | 強調執行效率與數據資產化</div>
+                        </div>
+                        <div class="doc-body">
+                            <p>透過 AnyAI 與多系統串接，將 AnyTag Engagements 專案從建案到結案完全自動化，讓執行團隊專注於更有價值的溝通工作。</p>
+
+                            <h2 id="mcp-flow">1. 一條龍自動化工作流</h2>
+                            <p>整合企業常用工具，實現資訊即時同步：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>系統串接：</strong> 連結 Slack (建案)、HubSpot (合約/進度)、AnyTag (網紅管理)。</li>
+                                <li style="margin-bottom: 8px;"><strong>自動化流程：</strong> 從 Slack 啟動專案後，系統自動在各平台建立對應條目，減少手動重複輸入。</li>
+                            </ul>
+
+                            <h2 id="mcp-data">2. 數據自動抓取 (Fetcher & OCR)</h2>
+                            <p>利用技術手段取代人力收集數據：</p>
+                            <ul style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;"><strong>Post/Comment Fetcher：</strong> 自動爬取專案貼文與公開留言。</li>
+                                <li style="margin-bottom: 8px;"><strong>AI OCR 辨識：</strong> 自動讀取限動 (Stories) 截圖數據，並將成效自動回填至報告系統中。</li>
+                            </ul>
+
+                            <h2 id="mcp-list">3. Base List 動態成長 (資產化)</h2>
+                            <p>這是 IM 團隊的核心數據資產管理邏輯：</p>
+                            <div style="background: #fff1f2; padding: 20px; border-radius: 12px; border: 1px solid #fda4af; margin: 20px 0;">
+                                <h4 style="color: #9f1239; margin-bottom: 10px;"><i class="fa-solid fa-code-merge"></i> 實績回寫邏輯 (Performance Write-back)</h4>
+                                <p style="font-size: 14px; color: #475569; margin-bottom: 0;">
+                                    每次專案結束後，系統會將該專案錄用的網紅數據自動更新至 AnyTag DB 的「標準名單 (Base List)」。<br><br>
+                                    <strong>好處：</strong> 確保母名單永遠包含「近期有執行實績」、「配合度高」的人選，讓名單隨時間演進變得越來越精準。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
