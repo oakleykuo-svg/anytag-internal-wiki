@@ -242,16 +242,21 @@
 
         .chart-section { background: #fff; padding: 16px; border-radius: 16px; box-shadow: var(--shadow-sm); min-height: 280px; display: flex; flex-direction: column;} /* 修改：高度與padding縮小 */
 
-        /* --- Dashboard 比例與 Roadmap UI 優化 --- */
+/* --- Dashboard 佈局調整：移除圖表，讓 Roadmap 寬度 100% --- */
 .dashboard-stats { 
-    display: grid; 
-    grid-template-columns: 1fr 2fr; /* 改為左窄右寬 (1:2) */
-    gap: 20px; 
+    display: block; /* 取消網格，改為區塊佈局 */
     margin-bottom: 30px; 
 }
-@media (max-width: 900px) { .dashboard-stats { grid-template-columns: 1fr; } }
 
-.chart-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; min-height: 300px; }
+.chart-card { 
+    background: #fff; 
+    padding: 24px; /* 稍微增加內距，讓寬度 100% 時更協調 */
+    border-radius: 12px; 
+    box-shadow: var(--shadow-sm); 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 400px; /* 稍微增加高度，讓畫面更充實 */
+}
 
 /* 簡潔卡片版：移除時間軸與圓點，確保圖示不被遮擋 */
 .mini-roadmap { 
@@ -781,24 +786,16 @@
                 </div>
             </div>
 
-            <!-- 下方：舊有的產品更新趨勢與 Roadmap -->
+            <!-- 下方：近期更新 Roadmap (寬版佈局) -->
             <div class="dashboard-stats">
-                <div class="chart-card" style="flex: 2;">
-                    <div class="chart-title">
-                        <span>🛠️ 產品功能更新頻率 (Update Velocity)</span>
-                        <span style="font-size:12px; font-weight:400; color:#666;">近 3 個月</span>
-                    </div>
-                    <div style="flex: 1; position: relative;">
-                         <canvas id="updateChart"></canvas>
-                    </div>
-                </div>
-                
-                <div class="chart-card" style="flex: 1;">
+                <div class="chart-card"> <!-- 這裡建議把 style="flex: 1;" 拿掉，因為現在它是 100% 寬度 -->
                     <div class="chart-title">🚀 近期更新 (Roadmap)</div>
                     <ul class="mini-roadmap" id="mini-roadmap-list">
-                        <li style="text-align:center; color:#999; margin-top:20px;">載入中...</li>
+                        <!-- 增加一點 loading 時的內距 -->
+                        <li style="text-align:center; color:#999; padding:40px 0;">正在載入最新產品動態...</li>
                     </ul>
-                    <button class="btn-outline" style="margin-top:10px; width:100%; height:35px;" onclick="window.scrollTo(0,0); showPage('updates')">查看完整日誌</button>
+                    <!-- 寬版按鈕建議調高到 45px，在視覺上更平衡，點擊感更好 -->
+                    <button class="btn-outline" style="margin-top:20px; width:100%; height:45px; font-size: 14px;" onclick="window.scrollTo(0,0); showPage('updates')">查看完整日誌</button>
                 </div>
             </div>
 
@@ -1885,94 +1882,55 @@
         }
 
 function renderDashboardStats() {
+            // 如果沒資料就直接結束，不執行
             if(allBlogPosts.length === 0) return;
-            const monthCounts = {};
-            const months = [];
-            const today = new Date();
-            for(let i=2; i>=0; i--) {
-                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-                monthCounts[key] = 0;
-                months.push(key);
-            }
-            allBlogPosts.forEach(post => {
-                const dateObj = new Date(post.date);
-                if (!isNaN(dateObj.getTime())) {
-                    const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}`;
-                    if(monthCounts.hasOwnProperty(key)) monthCounts[key]++;
-                }
-            });
-            const ctx = document.getElementById('updateChart').getContext('2d');
-            if (updateChartInstance) { updateChartInstance.destroy(); }
-            updateChartInstance = new Chart(ctx, {
-                type: 'line', 
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: '功能更新數',
-                        data: months.map(m => monthCounts[m]),
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#3b82f6',
-                        pointRadius: 5,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [2, 4] } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
             
-            // --- 新的 Roadmap 卡片渲染邏輯 ---
+            // 找到 HTML 裡的清單容器
             const roadmapList = document.getElementById('mini-roadmap-list');
             roadmapList.innerHTML = '';
+            
+            // 排序：日期由新到舊
+            // 數量：因為現在是寬版，我們取最新的 6 筆，畫面會比較充實
             const sortedPosts = allBlogPosts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-            const latestPosts = sortedPosts.slice(0, 5); 
+            const latestPosts = sortedPosts.slice(0, 6); 
             
             latestPosts.forEach(post => {
+                // 格式化日期 (年-月-日)
                 let displayDate = post.date;
                 const dateObj = new Date(post.date);
                 if (!isNaN(dateObj.getTime())) {
                     displayDate = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
                 }
 
-                // 智能判斷圖示 (根據標題關鍵字)
+                // 根據標題關鍵字決定圖示
                 let iconHtml = '<i class="fa-solid fa-cube"></i>';
                 const titleLower = post.title.toLowerCase();
                 if(titleLower.includes('anytag')) iconHtml = '<i class="fa-solid fa-bullseye" style="color:#E14F4B"></i>';
                 else if(titleLower.includes('anycreator')) iconHtml = '<i class="fa-solid fa-wand-magic-sparkles" style="color:#f59e0b"></i>';
-                else if(titleLower.includes('ai') || titleLower.includes('llm')) iconHtml = '<i class="fa-solid fa-robot" style="color:#3b82f6"></i>';
+                else if(titleLower.includes('anyai') || titleLower.includes('ai') || titleLower.includes('llm')) iconHtml = '<i class="fa-solid fa-robot" style="color:#3b82f6"></i>';
                 else if(titleLower.includes('threads')) iconHtml = '<i class="fa-brands fa-threads"></i>';
 
-                // 判斷狀態顏色與呼吸效果
+                // 決定狀態顏色標籤
                 let statusStyle = 'background: #f1f5f9; color: #64748b;';
                 let statusText = post.status || 'Released';
-                let pulseClass = '';
+                let pulseClass = ''; // 用來放呼吸燈動畫的 class
+
                 if(statusText.includes('Released')) {
                     statusStyle = 'background: #ecfdf5; color: #059669;';
                     statusText = 'Released';
                 } else if(statusText.includes('Testing') || statusText.includes('In Progress')) {
                     statusStyle = 'background: #eff6ff; color: #2563eb;';
-                    pulseClass = 'status-pulse-active';
+                    pulseClass = 'status-pulse-active'; // 開發中或測試中會閃爍
                 }
 
+                // 產生 HTML 卡片結構
                 const li = document.createElement('li');
                 li.className = 'roadmap-item';
                 li.innerHTML = `
-                    <div class="roadmap-dot"></div>
                     <div class="roadmap-content">
                         <div class="roadmap-icon-wrapper">${iconHtml}</div>
                         <div class="roadmap-info">
-                            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">${post.title}</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #1e293b;">${post.title}</div>
                             <div style="font-size: 12px; color: #94a3b8;">${displayDate}</div>
                         </div>
                     </div>
