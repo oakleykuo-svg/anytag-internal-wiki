@@ -660,6 +660,32 @@
             </div>
         </div>
         <div class="nav-group">
+            <!-- 新增：AI 專案 & 自動化區塊 -->
+        <div class="nav-group">
+            <div class="nav-title">AI 專案 & 自動化</div>
+            
+            <!-- AnyAI Insight -->
+            <div class="nav-item" onclick="toggleSubmenu('anyai-submenu', this)">
+                <i class="fa-solid fa-robot"></i> AnyAI Insight
+                <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
+            </div>
+            <div id="anyai-submenu" class="submenu">
+                <div class="submenu-item" onclick="showPage('anyai-insight', this)">
+                    <i class="fa-solid fa-circle" style="font-size: 6px;"></i> AI 戰略提案 (for BD)
+                </div>
+            </div>
+
+            <!-- KOL Management & MCP -->
+            <div class="nav-item" onclick="toggleSubmenu('mcp-submenu', this)">
+                <i class="fa-solid fa-gears"></i> KOL Management & MCP
+                <i class="fa-solid fa-chevron-right nav-expand-icon"></i>
+            </div>
+            <div id="mcp-submenu" class="submenu">
+                <div class="submenu-item" onclick="showPage('anytag-mcp', this)">
+                    <i class="fa-solid fa-circle" style="font-size: 6px;"></i> 專案管理自動化 (for IM)
+                </div>
+            </div>
+        </div>
             <!-- 修改 1: 改名為 HELP CENTER -->
             <div class="nav-title">HELP CENTER</div>
             <!-- 修改 2: Trouble -> Troubleshooting (FAQ) -->
@@ -1258,7 +1284,26 @@
                 </div>
             </div>
         </div>
+<!-- AnyAI Insight 頁面 -->
+        <div id="anyai-insight" class="section">
+            <div class="blog-container">
+                <div class="card">
+                    <h3><i class="fa-solid fa-robot"></i> AnyAI Insight 內容建置中...</h3>
+                    <p>此頁面將包含 AI-driven 提案流程、Master Doc 自動化與數據分析看板說明。</p>
+                </div>
+            </div>
+        </div>
 
+        <!-- KOL Management & MCP 頁面 -->
+        <div id="anytag-mcp" class="section">
+            <div class="blog-container">
+                <div class="card">
+                    <h3><i class="fa-solid fa-gears"></i> KOL Management & MCP 內容建置中...</h3>
+                    <p>此頁面將包含 MCP 自動化工作流、Slack 串接 HubSpot 與 KOL Base List 更新機制說明。</p>
+                </div>
+            </div>
+        </div>
+        
         <div id="troubleshoot" class="section">
             <div class="blog-container"> <!-- 重用 blog-container 讓寬度一致 -->
                 <div class="doc-header" style="border-bottom: none; margin-bottom: 10px;">
@@ -2305,6 +2350,8 @@ function renderDashboardStats() {
                 'anytag-ops': ['AnyTag Guide', '執行操作手冊'],
                 'anycreator-invite': ['AnyCreator Guide', '邀約註冊'],
                 'anycreator-guide': ['AnyCreator Guide', '註冊與使用指南'],
+                'anyai-insight': ['AnyAI Insight', 'AI 戰略提案系統 (for BD)'],
+                'anytag-mcp': ['KOL Management & MCP', '專案管理自動化 (for IM)'],
                 'troubleshoot': ['Troubleshooting', '常見問題排解'],
                 'resources': ['Resources', '資源中心']
             };
