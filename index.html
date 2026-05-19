@@ -1510,11 +1510,15 @@
  
         <!-- 步驟 Accordion 區塊 -->
         <div style="background:#f8fafc;">
-            <!-- 提示文字 -->
-            <div style="padding:12px 24px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:8px;">
-                <i class="fa-solid fa-hand-point-down" style="color:var(--brand-red);font-size:13px;"></i>
-                <span style="font-size:12px;color:#64748b;font-weight:600;">點開各步驟查看詳細操作說明</span>
+            <!-- 提示文字（點擊展開/收起步驟） -->
+            <div onclick="toggleToolSteps('mail-steps')" style="padding:12px 24px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onmouseover="this.style.background='#eef2f7'" onmouseout="this.style.background=''">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <i class="fa-solid fa-hand-point-down" style="color:var(--brand-red);font-size:13px;"></i>
+                    <span style="font-size:12px;color:#64748b;font-weight:600;">點開各步驟查看詳細操作說明</span>
+                </div>
+                <i class="fa-solid fa-chevron-down" id="mail-steps-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;"></i>
             </div>
+            <div id="mail-steps" style="display:none;">
  
             <!-- ── Step 1：初始化設定 ── -->
             <div style="border-bottom:1px solid #eef0f3;">
@@ -1928,6 +1932,7 @@
                 </div><!-- /es-faq body -->
             </div><!-- /FAQ row -->
  
+        </div><!-- /mail-steps -->
         </div><!-- /accordion container -->
     </div><!-- /tool card -->
  
@@ -2984,7 +2989,15 @@ function renderDashboardStats() {
                 card.style.display = (cat === 'all' || card.dataset.category === cat) ? 'block' : 'none';
             });
         }
- 
+
+        function toggleToolSteps(id) {
+            var el   = document.getElementById(id);
+            var icon = document.getElementById(id + '-icon');
+            if (!el) return;
+            var isOpen = el.style.display !== 'none';
+            el.style.display = isOpen ? 'none' : 'block';
+            if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
         function expandStep(id) {
             var body = document.getElementById(id);
             var icon = document.getElementById(id + '-icon');
