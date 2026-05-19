@@ -2227,6 +2227,11 @@ function toggleResCard(id) {
             if (sessionStorage.getItem('hub_auth') === 'true') {
                 unlockSite();
             }
+            // 讀取網址 Hash，直接跳到對應頁面
+            const initHash = window.location.hash.replace('#', '');
+            if (initHash) {
+                showPage(initHash);
+            }
 
             // 初始化編輯器 Tab 功能
             const editor = document.getElementById('richEditor');
@@ -2937,6 +2942,7 @@ function renderDashboardStats() {
 
         function showPage(pageId, navElement) {
             window.scrollTo(0, 0);
+            window.location.hash = pageId;
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
