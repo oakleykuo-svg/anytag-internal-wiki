@@ -1982,12 +1982,40 @@ function toggleResCard(id) {
 
     </main>
 
+    <!-- FAQ Admin Modal -->
+    <div id="faqAdminModal" class="modal" style="display:none;">
+      <div class="modal-content" style="max-width:780px; width:95%; max-height:85vh; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h2 style="font-size:20px; font-weight:700;">📝 FAQ 管理</h2>
+          <button onclick="closeModal('faqAdminModal')" style="background:none; border:none; font-size:22px; cursor:pointer; color:#888;">✕</button>
+        </div>
+
+        <!-- 新增表單 -->
+        <div style="background:#f8fafc; border-radius:12px; padding:16px; margin-bottom:16px; border:1px solid #e2e8f0;">
+          <div style="font-weight:700; margin-bottom:12px; font-size:14px; color:#475569;">＋ 新增 FAQ</div>
+          <div style="display:grid; gap:8px;">
+            <input id="faq-new-category" type="text" placeholder="分類（例：AnyTag）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px;">
+            <input id="faq-new-question" type="text" placeholder="問題標題" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px;">
+            <textarea id="faq-new-answer" placeholder="答案（支援 HTML）" rows="3" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; resize:vertical;"></textarea>
+            <button onclick="faqAdminAdd()" class="btn" style="width:auto; align-self:flex-end; padding:0 20px;">新增</button>
+          </div>
+        </div>
+
+        <!-- 列表 -->
+        <div style="overflow-y:auto; flex:1;">
+          <div id="faq-admin-list" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="text-align:center; color:#999; padding:20px;">載入中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- Admin 浮動工具列 -->
     <button id="admin-lock-btn" onclick="verifyAdminPassword()" title="Admin 登入" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9998; width:44px; height:44px; border-radius:50%; background:#1e293b; color:#fff; border:none; cursor:pointer; font-size:18px; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);">🔑</button>
 
     <div id="admin-fab-container" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9999; flex-direction:column; align-items:flex-end; gap:10px;">
         <div id="admin-fab-menu" style="display:none; flex-direction:column; align-items:flex-end; gap:8px;">
-            <button class="admin-fab-item" onclick="openModal('faqAdminModal')"><span>📝 FAQ 管理</span></button>
+            <button class="admin-fab-item" onclick="toggleAdminMenu(); openFaqAdmin()"><span>📝 FAQ 管理</span></button>
             <button class="admin-fab-item" onclick="openModal('cardAdminModal')"><span>🃏 卡片管理</span></button>
             <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span>➕ 產品更新</span></button>
         </div>
@@ -2112,6 +2140,103 @@ function toggleResCard(id) {
         let updateChartInstance = null;
         let isAdminUnlocked = false;
 
+/* ===== FAQ Admin ===== */
+        let faqAdminData = [];
+
+        async function openFaqAdmin() {
+            openModal('faqAdminModal');
+            const res = await fetch(BLOG_SCRIPT_URL + '?type=faq&t=' + Date.now());
+            faqAdminData = await res.json();
+            renderFaqAdminList();
+        }
+
+        function renderFaqAdminList() {
+            const container = document.getElementById('faq-admin-list');
+            if (faqAdminData.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">目前沒有 FAQ</div>';
+                return;
+            }
+            container.innerHTML = faqAdminData.map((item, idx) => `
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                    <div style="flex:1;">
+                      <span style="font-size:11px; background:#f0f0f0; padding:2px 8px; border-radius:10px; color:#666;">${item.category}</span>
+                      <div id="faq-view-${idx}" style="margin-top:6px;">
+                        <div style="font-weight:600; font-size:14px; margin-bottom:4px;">${item.question}</div>
+                        <div style="font-size:13px; color:#64748b;">${item.answer}</div>
+                      </div>
+                      <div id="faq-edit-${idx}" style="display:none; margin-top:8px;">
+                        <input id="faq-edit-cat-${idx}" value="${item.category.replace(/"/g,'&quot;')}" style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px; margin-bottom:6px;">
+                        <input id="faq-edit-q-${idx}" value="${item.question.replace(/"/g,'&quot;')}" style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px; margin-bottom:6px;">
+                        <textarea id="faq-edit-a-${idx}" rows="3" style="width:100%; padding:6px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px; resize:vertical;">${item.answer}</textarea>
+                        <div style="display:flex; gap:8px; margin-top:6px;">
+                          <button onclick="faqAdminSave(${idx})" class="btn" style="padding:0 16px; height:34px; font-size:13px;">儲存</button>
+                          <button onclick="faqAdminCancelEdit(${idx})" style="padding:0 16px; height:34px; font-size:13px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer;">取消</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:6px; flex-shrink:0;">
+                      <button onclick="faqAdminEdit(${idx})" title="編輯" style="background:none; border:none; cursor:pointer; font-size:16px; padding:4px;">✏️</button>
+                      <button onclick="faqAdminDelete(${idx})" title="刪除" style="background:none; border:none; cursor:pointer; font-size:16px; padding:4px;">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+            `).join('');
+        }
+
+        function faqAdminEdit(idx) {
+            document.getElementById('faq-view-' + idx).style.display = 'none';
+            document.getElementById('faq-edit-' + idx).style.display = 'block';
+        }
+
+        function faqAdminCancelEdit(idx) {
+            document.getElementById('faq-view-' + idx).style.display = 'block';
+            document.getElementById('faq-edit-' + idx).style.display = 'none';
+        }
+
+        async function faqAdminSave(idx) {
+            const item = faqAdminData[idx];
+            const payload = {
+                type: 'faq', action: 'update',
+                data: {
+                    rowIndex: item.rowIndex,
+                    category: document.getElementById('faq-edit-cat-' + idx).value,
+                    question: document.getElementById('faq-edit-q-' + idx).value,
+                    answer:   document.getElementById('faq-edit-a-' + idx).value
+                }
+            };
+            await adminPost(payload);
+            await openFaqAdmin();
+        }
+
+        async function faqAdminDelete(idx) {
+            if (!confirm('確定刪除這筆 FAQ？')) return;
+            await adminPost({ type: 'faq', action: 'delete', data: { rowIndex: faqAdminData[idx].rowIndex } });
+            await openFaqAdmin();
+        }
+
+        async function faqAdminAdd() {
+            const category = document.getElementById('faq-new-category').value.trim();
+            const question = document.getElementById('faq-new-question').value.trim();
+            const answer   = document.getElementById('faq-new-answer').value.trim();
+            if (!category || !question) { alert('請填寫分類和問題標題！'); return; }
+            await adminPost({ type: 'faq', action: 'add', data: { category, question, answer } });
+            document.getElementById('faq-new-category').value = '';
+            document.getElementById('faq-new-question').value = '';
+            document.getElementById('faq-new-answer').value = '';
+            await openFaqAdmin();
+        }
+
+        async function adminPost(payload) {
+            const res = await fetch(BLOG_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+        }
+        /* ===== FAQ Admin 結束 ===== */
+        
         function verifyAdminPassword() {
             const input = prompt("請輸入 Admin 密碼：");
             if (input === null) return;
