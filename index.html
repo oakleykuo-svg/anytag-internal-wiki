@@ -1422,9 +1422,6 @@
                     </div>
                     <div class="faq-categories" id="faqCategoryContainer">
                         <button class="faq-cat-btn active" onclick="filterFAQCategory('All')">全部</button>
-                        <button class="faq-cat-btn" onclick="filterFAQCategory('AnyTag')">AnyTag 平台</button>
-                        <button class="faq-cat-btn" onclick="filterFAQCategory('AnyCreator')">AnyCreator (APP)</button>
-                        <button class="faq-cat-btn" onclick="filterFAQCategory('Marketplace')">Marketplace</button>
                     </div>
                 </div>
 
@@ -1981,131 +1978,7 @@ function toggleResCard(id) {
         const STATS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBYe9GkHGiba9t0IG4LTM7Sl7D_uArUDRwoKl4QhdLpvVOl8uYm6wEqLakaxRbUGY0CQ/exec"; 
 
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
-        const faqData = [
-            // 一、數據更新與資料準確性
-            {
-                category: "AnyTag",
-                q: "網紅數據（如粉絲數、互動率、地區）沒有更新怎麼辦？",
-                a: `<ol>
-                        <li>請先確認網紅帳號（username）是否有更換，尤其是 Instagram。</li>
-                        <li>平台數據的常規更新頻率約為 <strong>7 天一次</strong>。若發現資料未更新，請優先點擊網紅個人頁面右上角的 <strong>「Refresh profile」</strong> 按鍵強制系統抓取最新資料。</li>
-                        <li>此外，也可以利用 擴充功能 協助爬取。若上述方法皆無效，請聯繫平台營運（PO/IM）尋求支援。</li>
-                    </ol>`
-            },
-            {
-                category: "AnyTag",
-                q: "為什麼某些網紅的數據標註為「Estimated (預估值)」，且無法看到受眾輪廓？",
-                a: `這是因為該網紅為<strong>「未註冊網紅」</strong>，其數據是透過 LLM 預測模型估算而來。<br><br>若要獲得最精確的第一方真實後台數據，必須邀請網紅註冊 AnyCreator 並完成社群帳號授權，成為「已註冊網紅」。`
-            },
-            {
-                category: "AnyTag",
-                q: "網紅原本數據正常，突然間所有貼文與互動數據都抓不到了？",
-                a: `<ol>
-                        <li>請先確認網紅帳號（username是否有更換）。</li>
-                        <li>請檢查該網紅是否將 Instagram 帳號從「公開」設為 <strong>「私人 (Private)」</strong>，這會直接導致平台無法抓取其公開內容與數據。</li>
-                    </ol>`
-            },
-            {
-                category: "AnyTag",
-                q: "為什麼有些網紅在 AnyTag 上完全看不到過去一個月的粉絲成長趨勢？",
-                a: `若網紅在過去 30 天內<strong>沒有發布任何新的貼文或影音</strong>，系統將無法產出該月份的成長數據趨勢圖。`
-            },
-
-            // 二、搜尋與查找效率
-            {
-                category: "AnyTag",
-                q: "想找具備「特定產品經驗」或「小眾主題」（如：純素美妝、咖啡職人）的網紅，可以用什麼功能？",
-                a: `建議使用 <strong>「Influencers: Posts」</strong> 功能，直接輸入特定關鍵字搜尋網紅過往發布過的貼文內容，這比單純在網紅名單中篩選類別更為精準。`
-            },
-            {
-                category: "AnyTag",
-                q: "想知道「某個特定網紅」是否有業配過競品或某特定產品，可以去哪裡查看？",
-                a: `可以進入該網紅的 profile page 內，到 feed 貼文區塊、點擊右下角的 <strong>More</strong>，即可利用關鍵字搜尋是否有相關貼文。`
-            },
-            {
-                category: "AnyTag",
-                q: "品牌客戶要求一次看 50 位候選人的詳細數據，手動整理太慢，怎麼一次下載？",
-                a: `先將感興趣的網紅點擊「+」號加入 <strong>「Propose Influencers」</strong> 或 <strong>「Packages」</strong> 名單中，即可使用一鍵打包功能，直接匯出包含網紅輪廓、粉絲年齡與性別比例的 PPT 或 Spreadsheet 檔案。`
-            },
-            {
-                category: "AnyTag",
-                q: "如果客戶對網紅在特定期間的「漲粉能力」感興趣，應該去哪裡查看？",
-                a: `前往 <strong>「Trends」</strong> 功能區塊，該區塊專門用於觀察特定期間內不同平台網紅的漲粉率趨勢。`
-            },
-            {
-                category: "AnyTag",
-                q: "為什麼 AI 搜尋結果不精準？",
-                a: `AI 搜尋的準確度會受到：<strong>文字指令說明、上傳圖片的解析度、視覺風格明顯度及主題代表性</strong>影響。<br>建議清楚說明查找範圍（如：粉絲數、地區、性別等）以及提供風格強烈、明顯的圖片。`
-            },
-
-            // 四、創作者端 (AnyCreator)
-            {
-                category: "AnyCreator",
-                q: "網紅表示無法成功連結 Instagram 帳號到 AnyCreator。",
-                a: `請確認以下兩點：<br>1. 該網紅的 IG 是否已轉為 <strong>「商業帳號」</strong>。<br>2. 必須連結到一個 <strong>Facebook 粉絲專頁</strong>。<br>最後請利用 Facebook 帳號登入，這是成功串接的必要條件。`
-            },
-            {
-                category: "AnyCreator",
-                q: "AnyCreator 是否有中文界面的選擇？",
-                a: `有的，設定路徑如下：<br><strong>APP版：</strong>右下角 My Page → 帳戶 → 顯示語言：選擇常用語言<br><strong>網頁版：</strong>左方欄位 My Page → 帳戶 → 顯示語言：選擇常用語言`
-            },
-            {
-                category: "AnyCreator",
-                q: "加入平台後，AnyTag 是否會有操控權限？",
-                a: `<strong>全部都會由創作者自行管理。</strong><br>AnyTag 平台並不會有任何的管理、操控、接受或發布任何內容的權限。<br><br>授權僅讓我們獲取貼文的互動數據（按讚、分享、留言數）以整合報表，我們絕對不會擁有粉專或貼文的任何管理權限。`
-            },
-            {
-                category: "AnyCreator",
-                q: "加入 AnyCreator 需要付費嗎？",
-                a: `<strong>平台註冊與媒合過程皆不會收取任何費用。</strong><br><ul><li><strong>註冊後：</strong>開放使用功能並列入熱門版位，提高被品牌看到的機率。</li><li><strong>專案授權：</strong>只有進入具體合作專案時，才會簽署合作條款。單純註冊不需要簽約。</li></ul>`
-            },
-
-            // 五、資料管理
-            {
-                category: "AnyTag",
-                q: "發現同一個網紅在系統中有兩筆重複的資料，該如何處理？",
-                a: `可回報給平台營運人員 (PO) 進行資料整合與補齊，以確保數據的單一性與完整性。`
-            },
-            {
-                category: "AnyTag",
-                q: "如何精準分辨 Facebook 的「個人檔案」與「粉絲專頁」以免匯入錯誤？",
-                a: `應查看 Facebook 頁面的 <strong>「簡介 (Intro)」</strong> 區塊進行分辨。<br>💡 注意：匯入時，Facebook 的 Username 有兩種形式（自訂名稱或 id=1000...），兩者皆可用於精確搜尋。`
-            },
-
-            // 六、Marketplace
-            {
-                category: "Marketplace",
-                q: "網紅想參加 Marketplace 招募活動，但找不到入口。",
-                a: `網紅必須<strong>先註冊 AnyCreator</strong> 才看得到正在進行中的 Marketplace 活動。<br>注意：部分專案可能會有特定的註冊/授權門檻。`
-            },
-            {
-                category: "Marketplace",
-                q: "品牌想指定特定網紅參與 MKP 活動，而不是公開招募？",
-                a: `目前 MKP 不支援指定人選，它是開放報名制。<br>💡 <strong>替代方案：</strong>建議改採 Hybrid (混合) 模式，先利用 MKP 公開招募，後續由人力 (IM) 手動篩選並執行。`
-            },
-            {
-                category: "Marketplace",
-                q: "MKP 是否支援品牌與網紅在系統內「議價」？",
-                a: `<strong>不支援。</strong>品牌必須事先設定好固定的分潤或報酬條件，網紅只能選擇接受或不接受。`
-            },
-            {
-                category: "Marketplace",
-                q: "如何利用 MKP 追蹤「銷售轉換」？",
-                a: `可利用「優惠碼活動」或「專屬連結活動」。<br>💡 <strong>重要前提：</strong>品牌端必須在官網埋設 AnyTag 追蹤碼 (Tracking Code)，銷售數據才能自動回傳至平台報告中。`
-            },
-
-            // 七、其他
-            {
-                category: "AnyTag",
-                q: "品牌客戶使用免費版的「分析 (Analytics)」，能看見競爭對手的詳細數據？",
-                a: `<strong>不行。</strong>免費版僅能分析自身品牌帳號的表現。若要瀏覽競爭品牌分析或 UGC 管理，屬於進階版功能（目前台灣尚未開放販售）。`
-            },
-            {
-                category: "AnyTag",
-                q: "對於 IG 平台，有什麼數據是其他平台所沒有的獨有指標？",
-                a: `<strong>Est. Reach (預估觸及人數)</strong> 是 IG 平台在 AnyTag 上的獨有數據指標。`
-            }
-        ];
+        let faqData = [];
 
         let currentFAQCategory = 'All';
 
@@ -2167,6 +2040,35 @@ function toggleResCard(id) {
             renderFAQs();
         }
 
+        async function fetchFAQData() {
+            const container = document.getElementById('faqListContainer');
+            if(container) container.innerHTML = '<div class="loading-state">載入中...</div>';
+            try {
+                const res = await fetch(BLOG_SCRIPT_URL + '?type=faq&t=' + new Date().getTime());
+                const data = await res.json();
+                faqData = data.map(item => ({
+                    category: item.category,
+                    q: item.question,
+                    a: item.answer
+                }));
+                renderFAQCategories();
+                renderFAQs();
+            } catch(err) {
+                console.error('FAQ fetch failed:', err);
+                if(container) container.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;">資料載入失敗，請重新整理頁面。</div>';
+            }
+        }
+
+        function renderFAQCategories() {
+            const container = document.getElementById('faqCategoryContainer');
+            if(!container) return;
+            const categories = [...new Set(faqData.map(item => item.category))];
+            container.innerHTML = '<button class="faq-cat-btn active" onclick="filterFAQCategory(\'All\')">全部</button>';
+            categories.forEach(cat => {
+                container.innerHTML += `<button class="faq-cat-btn" onclick="filterFAQCategory('${cat}')">${cat}</button>`;
+            });
+        }
+
         function toggleFAQ(element) {
             const item = element.parentElement;
             item.classList.toggle('open');
@@ -2215,7 +2117,7 @@ function toggleResCard(id) {
             fetchBlogPosts();
             fetchStatsData();
             startNoticeCarousel();
-            renderFAQs();
+            fetchFAQData();
         }
 
         // --- 網頁初始化 (EntryPoint) ---
