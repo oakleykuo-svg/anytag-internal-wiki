@@ -2165,7 +2165,7 @@ function toggleResCard(id) {
         async function fetchStatsData() {
             if(!STATS_SCRIPT_URL.startsWith("http")) return;
             try {
-                const response = await fetch(STATS_SCRIPT_URL + "?t=" + new Date().getTime());
+                const response = await fetch(STATS_SCRIPT_URL + "&t=" + new Date().getTime());
                 const data = await response.json();
                 renderInfluencerStats(data);
             } catch (error) {
