@@ -2704,15 +2704,28 @@ function renderDashboardStats() {
             } catch(err) {
                 console.error('QuickAccess fetch failed:', err);
             }
-        } 
-                if (currentRole === 'All' || item.roles.includes(currentRole)) {
-                    let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
-                    const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
-                    container.innerHTML += cardHTML;
-                }
-            });
         }
 
+        function renderCards() {
+            const container = document.getElementById('quick-access-container');
+            container.innerHTML = '';
+            if (!knowledgeBase || knowledgeBase.length === 0) return;
+            knowledgeBase.forEach(item => {
+                if (item.visible === false) return;
+                const itemRole = item.role || 'All';
+                if (currentRole !== 'All' && itemRole !== 'All' && itemRole !== currentRole) return;
+                let actionHtml = '';
+                if (item.button_type === 'page') {
+                    actionHtml = `<button class="btn" onclick="showPage('${item.button_target}')">${item.button_text}</button>`;
+                } else if (item.button_type === 'modal') {
+                    actionHtml = `<button class="btn" onclick="openModal('${item.button_target}')">${item.button_text}</button>`;
+                } else {
+                    actionHtml = `<a href="${item.button_target}" target="_blank" class="btn">${item.button_text}</a>`;
+                }
+                const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag tag-primary">${item.tag}</span><h3>${item.title}</h3><p>${item.description}</p>${actionHtml}</div>`;
+                container.innerHTML += cardHTML;
+            });
+        }
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function openEditor() {
             const password = prompt("請輸入管理員密碼：");
