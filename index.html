@@ -2123,7 +2123,7 @@ function toggleResCard(id) {
         // --- 網頁初始化 (EntryPoint) ---
         window.onload = function() {
             // 初始化不具敏感性的 UI 卡片
-            renderCards(); 
+            fetchQuickAccessData(); 
             
             // 檢查 Session 是否已經登入過
             if (sessionStorage.getItem('hub_auth') === 'true') {
@@ -2638,50 +2638,7 @@ function renderDashboardStats() {
             });
         }
 
-        const knowledgeBase = [
-            { 
-                id: "001", 
-                title: "網紅搜尋 SOP", 
-                desc: "如何使用 AI Search 與 圖片搜尋找到精準網紅？", 
-                tag: "User Guide", 
-                tagClass: "tag-primary", 
-                icon: "fa-solid fa-magnifying-glass-location", 
-                customHtml: `<button class="btn" onclick="navigateTo('anytag-ops', 'influencers'); logDecision('001', '網紅搜尋 SOP')">前往教學</button>`,
-                riskLevel: "low", 
-                category: "AnyTag", 
-                roles: ['IM'] 
-            },
-            { 
-                id: "002", 
-                title: "數據沒更新？", 
-                desc: "遇到平台profile page數據跑不出來？先來這裡看解決步驟。", 
-                tag: "FAQ", 
-                tagClass: "tag-secondary", 
-                icon: "fa-regular fa-circle-question", 
-                customHtml: `<button class="btn-outline" onclick="navigateTo('troubleshoot'); logDecision('002', '數據沒更新？')">查看解決方案</button>`,
-                riskLevel: "low", 
-                category: "AnyTag", 
-                roles: ['BD', 'IM'] 
-            },
-            { id: "003", title: "許願池 / 問題回報", desc: "系統異常或有新需求？不需要填單，直接留言讓我們知道。", tag: "Wishlist", tagClass: "tag-primary", icon: "fa-solid fa-comments", keywords: "bug, 需求, 建議, issue, error, 錯誤", customHtml: `<div class="btn-group"><button class="btn" onclick="openModal('bugModal')">我要留言</button><a href="https://docs.google.com/spreadsheets/d/1l2B4IXrtivcZlb_lBjhlaq_coBKE01SoVBGvg_92zmc/edit?gid=0#gid=0" target="_blank" class="btn-outline">查看留言板</a></div>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] },
-            { id: "004", title: "產品動態更新", desc: "AnyTag / AnyCreator 最新功能發布與優化日誌。", tag: "Updates", tagClass: "tag-secondary", icon: "fa-solid fa-rocket", customHtml: `<button class="btn-outline" onclick="window.scrollTo(0,0); showPage('updates'); fetchBlogPosts(); logDecision('004', '產品動態更新')">查看日誌</button>`, riskLevel: "low", category: "System", roles: ['BD', 'IM'] }, 
-            { id: "005", title: "Marketplace 銷售門檻", desc: "網紅媒合功能(Marketplace)在台灣落地的門檻限制說明。", tag: "Sales Kit", tagClass: "tag-primary", icon: "fa-solid fa-shop", btnText: "查看規範表", btnLink: "https://docs.google.com/spreadsheets/d/1gHKGwOajXzjoXorGBgo9chxLAl0lH4SngOfdgsTDvP4/edit?gid=0#gid=0", btnStyle: "btn", riskLevel: "low", category: "Sales", roles: ['BD'] },
-            { 
-                id: "006", 
-                title: "結案報告範本", 
-                desc: "標準結案報告 PPT 模板與數據填寫說明。", 
-                tag: "Template", 
-                tagClass: "tag-secondary", 
-                icon: "fa-solid fa-file-powerpoint", 
-                btnText: "下載 PPT", 
-                btnLink: "https://docs.google.com/presentation/d/1_nyANFW05Pao8LXp4c5B5Yaquc8lHzhn42VKjscLFE4/edit?slide=id.p27#slide=id.p27", 
-                btnStyle: "btn-outline", 
-                riskLevel: "low", 
-                category: "IM", 
-                roles: ['IM'] 
-            },
-            { id: "999", title: "帳號封禁申訴", desc: "遇到創作者帳號被封鎖或金流問題？此為高風險項目。", tag: "High Risk", tagClass: "tag-high-risk", icon: "fa-solid fa-ban", btnText: "聯繫法務", btnLink: "mailto:legal@anymindgroup.com", btnStyle: "btn-outline", riskLevel: "high", category: "AnyCreator", roles: ['BD', 'IM'], hidden: true }
-        ];
+        let knowledgeBase = [];
 
         let currentRole = 'All';
         let searchDebounce = null; 
@@ -2716,9 +2673,38 @@ function renderDashboardStats() {
 
         function renderCards() {
             const container = document.getElementById('quick-access-container');
-            container.innerHTML = ''; 
+            container.innerHTML = '';
             knowledgeBase.forEach(item => {
-                if (item.hidden) return; 
+                const itemRoles = item.role ? item.role.split(',').map(r => r.trim()) : ['All'];
+                if (currentRole !== 'All' && item.role !== 'All' && !itemRoles.includes(currentRole)) return;
+
+                const secTags = ['FAQ', 'Template', 'Updates'];
+                const tagClass = secTags.includes(item.tag) ? 'tag-secondary' : 'tag-primary';
+
+                let actionHtml = '';
+                if (item.button_type === 'page') {
+                    actionHtml = `<button class="btn" onclick="navigateTo('${item.button_target}')">${item.button_text}</button>`;
+                } else if (item.button_type === 'external') {
+                    actionHtml = `<a href="${item.button_target}" target="_blank" class="btn-outline">${item.button_text}</a>`;
+                } else if (item.button_type === 'modal') {
+                    actionHtml = `<button class="btn" onclick="openModal('${item.button_target}')">${item.button_text}</button>`;
+                }
+
+                const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.description}</p>${actionHtml}</div>`;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        async function fetchQuickAccessData() {
+            try {
+                const res = await fetch(BLOG_SCRIPT_URL + '?type=quickaccess&t=' + new Date().getTime());
+                const data = await res.json();
+                knowledgeBase = data;
+                renderCards();
+            } catch(err) {
+                console.error('QuickAccess fetch failed:', err);
+            }
+        } 
                 if (currentRole === 'All' || item.roles.includes(currentRole)) {
                     let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
                     const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
