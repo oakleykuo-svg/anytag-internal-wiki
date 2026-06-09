@@ -237,6 +237,17 @@
         .tag-secondary { background: #f0f0f0; color: #666; }
         .tag-high-risk { background: #fee2e2; color: #ef4444; }
 
+        /* --- Admin FAB --- */
+        .admin-fab-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 20px;
+            background: #1e293b; color: #fff; border: none;
+            cursor: pointer; font-size: 13px; font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            white-space: nowrap; transition: background 0.2s;
+        }
+        .admin-fab-item:hover { background: #334155; }
+
         /* --- 戰情室數據樣式 (New) - 修改：更加緊湊 --- */
         .data-war-room {
             display: grid; grid-template-columns: 3.5fr 5fr; gap: 20px; margin-bottom: 20px; /* 修改：調整比例與間距 */
@@ -1971,6 +1982,18 @@ function toggleResCard(id) {
 
     </main>
 
+    <!-- Admin 浮動工具列 -->
+    <button id="admin-lock-btn" onclick="verifyAdminPassword()" title="Admin 登入" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9998; width:44px; height:44px; border-radius:50%; background:#1e293b; color:#fff; border:none; cursor:pointer; font-size:18px; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);">🔑</button>
+
+    <div id="admin-fab-container" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9999; flex-direction:column; align-items:flex-end; gap:10px;">
+        <div id="admin-fab-menu" style="display:none; flex-direction:column; align-items:flex-end; gap:8px;">
+            <button class="admin-fab-item" onclick="openModal('faqAdminModal')"><span>📝 FAQ 管理</span></button>
+            <button class="admin-fab-item" onclick="openModal('cardAdminModal')"><span>🃏 卡片管理</span></button>
+            <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span>➕ 產品更新</span></button>
+        </div>
+        <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;">⚙️</button>
+    </div>
+    
     <script>
         const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
         const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
@@ -2087,9 +2110,30 @@ function toggleResCard(id) {
 
         let growthChartInstance = null;
         let updateChartInstance = null;
+        let isAdminUnlocked = false;
+
+        function verifyAdminPassword() {
+            const input = prompt("請輸入 Admin 密碼：");
+            if (input === null) return;
+            const decoded = atob(ADMIN_KEY).split("").reverse().join("");
+            if (input === decoded) {
+                isAdminUnlocked = true;
+                document.getElementById('admin-lock-btn').style.display = 'none';
+                document.getElementById('admin-fab-container').style.display = 'flex';
+            } else {
+                alert("密碼錯誤。");
+            }
+        }
+
+        function toggleAdminMenu() {
+            const menu = document.getElementById('admin-fab-menu');
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+        }
 
 // --- 密碼混淆邏輯 ---
         const ENCODED_KEY = "NjIwMm5hd2lhVGRuaU15bkE=";
+        const ADMIN_KEY = "bmltZEFnYXR5bkE=";
 
         function verifyLogin() {
             const input = document.getElementById('sitePassword').value;
@@ -2108,7 +2152,7 @@ function toggleResCard(id) {
         function unlockSite() {
             const overlay = document.getElementById('login-overlay');
             if(overlay) overlay.style.display = 'none';
-            // 執行「阻斷式讀取」：密碼對了才去抓資料
+            document.getElementById('admin-lock-btn').style.display = 'flex';
             initProtectedData();
         }
 
