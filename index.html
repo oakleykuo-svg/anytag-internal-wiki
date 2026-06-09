@@ -2039,6 +2039,49 @@ function toggleResCard(id) {
         </div>
       </div>
     </div>
+
+<!-- Card Admin Modal -->
+    <div id="cardAdminModal" class="modal" style="display:none;">
+      <div class="modal-content" style="max-width:860px; width:95%; max-height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:16px;">
+
+        <!-- Header -->
+        <div style="padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+          <h2 style="font-size:18px; font-weight:700; margin:0;">🃏 卡片管理</h2>
+          <button onclick="closeModal('cardAdminModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1;">✕</button>
+        </div>
+
+        <!-- 新增表單 -->
+        <div style="padding:16px 24px; border-bottom:1px solid #e2e8f0; background:#f8fafc; flex-shrink:0;">
+          <div style="font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;">＋ 新增一張卡片</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <input id="card-new-title" type="text" placeholder="卡片標題 *" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <input id="card-new-tag" type="text" placeholder="標籤（例：User Guide）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <input id="card-new-desc" type="text" placeholder="說明文字 *" style="grid-column:1/-1; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <input id="card-new-icon" type="text" placeholder="Font Awesome class（例：fa-solid fa-rocket）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <select id="card-new-role" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
+              <option value="All">全部 (All)</option>
+              <option value="BD">業務 (BD)</option>
+              <option value="IM">執行 (IM)</option>
+            </select>
+            <input id="card-new-btn-text" type="text" placeholder="按鈕文字（例：前往教學）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <select id="card-new-btn-type" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
+              <option value="page">站內跳轉 (page)</option>
+              <option value="external">開新分頁 (external)</option>
+              <option value="modal">開彈窗 (modal)</option>
+            </select>
+            <input id="card-new-btn-target" type="text" placeholder="目標（頁面ID / 網址 / modal ID）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <button id="card-add-btn" onclick="cardAdminAdd()" class="btn" style="padding:0 24px; height:36px; font-size:13px; width:auto;">新增</button>
+          </div>
+        </div>
+
+        <!-- 卡片列表 -->
+        <div style="overflow-y:auto; flex:1; padding:16px 24px;">
+          <div id="card-admin-list"><div style="text-align:center;color:#999;padding:30px;">載入中...</div></div>
+        </div>
+      </div>
+    </div>
     
     <!-- Admin 浮動工具列 -->
     <button id="admin-lock-btn" onclick="verifyAdminPassword()" title="Admin 登入" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9998; width:44px; height:44px; border-radius:50%; background:#1e293b; color:#fff; border:none; cursor:pointer; font-size:18px; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);">🔑</button>
@@ -2046,7 +2089,7 @@ function toggleResCard(id) {
     <div id="admin-fab-container" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9999; flex-direction:column; align-items:flex-end; gap:10px;">
         <div id="admin-fab-menu" style="display:none; flex-direction:column; align-items:flex-end; gap:8px;">
             <button class="admin-fab-item" onclick="toggleAdminMenu(); openFaqAdmin()"><span>📝 FAQ 管理</span></button>
-            <button class="admin-fab-item" onclick="openModal('cardAdminModal')"><span>🃏 卡片管理</span></button>
+            <button class="admin-fab-item" onclick="toggleAdminMenu(); openCardAdmin()"><span>🃏 卡片管理</span></button>
             <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span>➕ 產品更新</span></button>
         </div>
         <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;">⚙️</button>
@@ -2302,6 +2345,140 @@ function toggleResCard(id) {
             await new Promise(r => setTimeout(r, 2000));
         }
         /* ===== FAQ Admin 結束 ===== */
+
+/* ===== Card Admin ===== */
+        let cardAdminData = [];
+
+        async function openCardAdmin() {
+            openModal('cardAdminModal');
+            document.getElementById('card-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
+            const res = await fetch(BLOG_SCRIPT_URL + '?type=quickaccess&t=' + Date.now());
+            const raw = await res.json();
+            cardAdminData = raw;
+            renderCardAdminList();
+        }
+
+        function renderCardAdminList() {
+            const container = document.getElementById('card-admin-list');
+            if (!cardAdminData.length) {
+                container.innerHTML = '<div style="text-align:center;color:#999;padding:30px;">目前沒有卡片</div>';
+                return;
+            }
+            container.innerHTML = cardAdminData.map((item, idx) => `
+                <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                    <div style="flex:1; min-width:0;">
+                      <div id="card-view-${idx}">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                          <i class="${item.icon}" style="color:var(--brand-red); font-size:16px;"></i>
+                          <span style="font-weight:700; font-size:14px;">${item.title}</span>
+                          <span style="font-size:11px; background:#f0f4f8; color:#64748b; padding:2px 8px; border-radius:10px;">${item.tag}</span>
+                          <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:10px;">${item.role}</span>
+                        </div>
+                        <div style="font-size:13px; color:#64748b;">${item.description}</div>
+                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">按鈕：${item.button_text} → ${item.button_type} : ${item.button_target}</div>
+                      </div>
+                      <div id="card-edit-${idx}" style="display:none;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                          <input id="ce-title-${idx}" value="${item.title.replace(/"/g,'&quot;')}" placeholder="標題" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <input id="ce-tag-${idx}" value="${item.tag.replace(/"/g,'&quot;')}" placeholder="標籤" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <input id="ce-desc-${idx}" value="${item.description.replace(/"/g,'&quot;')}" placeholder="說明" style="grid-column:1/-1; padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <input id="ce-icon-${idx}" value="${item.icon.replace(/"/g,'&quot;')}" placeholder="Font Awesome class" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <select id="ce-role-${idx}" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
+                            <option value="All" ${item.role==='All'?'selected':''}>全部 (All)</option>
+                            <option value="BD" ${item.role==='BD'?'selected':''}>業務 (BD)</option>
+                            <option value="IM" ${item.role==='IM'?'selected':''}>執行 (IM)</option>
+                          </select>
+                          <input id="ce-btn-text-${idx}" value="${item.button_text.replace(/"/g,'&quot;')}" placeholder="按鈕文字" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <select id="ce-btn-type-${idx}" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
+                            <option value="page" ${item.button_type==='page'?'selected':''}>站內跳轉 (page)</option>
+                            <option value="external" ${item.button_type==='external'?'selected':''}>開新分頁 (external)</option>
+                            <option value="modal" ${item.button_type==='modal'?'selected':''}>開彈窗 (modal)</option>
+                          </select>
+                          <input id="ce-btn-target-${idx}" value="${item.button_target.replace(/"/g,'&quot;')}" placeholder="目標" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
+                          <button onclick="cardAdminCancelEdit(${idx})" style="padding:0 16px; height:34px; font-size:13px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; color:#475569;">取消</button>
+                          <button id="card-save-btn-${idx}" onclick="cardAdminSave(${idx})" class="btn" style="padding:0 20px; height:34px; font-size:13px; width:auto;">儲存</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="card-actions-${idx}" style="display:flex; gap:4px; flex-shrink:0;">
+                      <button onclick="cardAdminEdit(${idx})" title="編輯" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; cursor:pointer; width:32px; height:32px; font-size:14px; display:flex; align-items:center; justify-content:center;">✏️</button>
+                      <button id="card-del-btn-${idx}" onclick="cardAdminDelete(${idx})" title="刪除" style="background:#fff5f5; border:1px solid #fecaca; border-radius:6px; cursor:pointer; width:32px; height:32px; font-size:14px; display:flex; align-items:center; justify-content:center;">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+            `).join('');
+        }
+
+        function cardAdminEdit(idx) {
+            document.getElementById('card-view-' + idx).style.display = 'none';
+            document.getElementById('card-edit-' + idx).style.display = 'block';
+            document.getElementById('card-actions-' + idx).style.display = 'none';
+        }
+
+        function cardAdminCancelEdit(idx) {
+            document.getElementById('card-view-' + idx).style.display = 'block';
+            document.getElementById('card-edit-' + idx).style.display = 'none';
+            document.getElementById('card-actions-' + idx).style.display = 'flex';
+        }
+
+        async function cardAdminSave(idx) {
+            const btn = document.getElementById('card-save-btn-' + idx);
+            btn.textContent = '儲存中...'; btn.disabled = true;
+            const item = cardAdminData[idx];
+            await adminPost({
+                type: 'quickaccess', action: 'update',
+                data: {
+                    rowIndex:      item.rowIndex,
+                    visible:       true,
+                    title:         document.getElementById('ce-title-' + idx).value,
+                    description:   document.getElementById('ce-desc-' + idx).value,
+                    tag:           document.getElementById('ce-tag-' + idx).value,
+                    icon:          document.getElementById('ce-icon-' + idx).value,
+                    role:          document.getElementById('ce-role-' + idx).value,
+                    button_text:   document.getElementById('ce-btn-text-' + idx).value,
+                    button_type:   document.getElementById('ce-btn-type-' + idx).value,
+                    button_target: document.getElementById('ce-btn-target-' + idx).value
+                }
+            });
+            await openCardAdmin();
+        }
+
+        async function cardAdminDelete(idx) {
+            if (!confirm('確定刪除這張卡片？')) return;
+            const btn = document.getElementById('card-del-btn-' + idx);
+            btn.textContent = '⏳'; btn.disabled = true;
+            await adminPost({ type: 'quickaccess', action: 'delete', data: { rowIndex: cardAdminData[idx].rowIndex } });
+            await openCardAdmin();
+        }
+
+        async function cardAdminAdd() {
+            const title  = document.getElementById('card-new-title').value.trim();
+            const desc   = document.getElementById('card-new-desc').value.trim();
+            if (!title || !desc) { alert('請填寫標題和說明文字！'); return; }
+            const btn = document.getElementById('card-add-btn');
+            btn.textContent = '新增中...'; btn.disabled = true;
+            await adminPost({
+                type: 'quickaccess', action: 'add',
+                data: {
+                    visible:       true,
+                    title,
+                    description:   desc,
+                    tag:           document.getElementById('card-new-tag').value.trim(),
+                    icon:          document.getElementById('card-new-icon').value.trim(),
+                    role:          document.getElementById('card-new-role').value,
+                    button_text:   document.getElementById('card-new-btn-text').value.trim(),
+                    button_type:   document.getElementById('card-new-btn-type').value,
+                    button_target: document.getElementById('card-new-btn-target').value.trim()
+                }
+            });
+            ['card-new-title','card-new-desc','card-new-tag','card-new-icon','card-new-btn-text','card-new-btn-target'].forEach(id => document.getElementById(id).value = '');
+            btn.textContent = '新增'; btn.disabled = false;
+            await openCardAdmin();
+        }
+        /* ===== Card Admin 結束 ===== */
         
         function verifyAdminPassword() {
             const input = prompt("請輸入 Admin 密碼：");
@@ -3013,7 +3190,7 @@ function renderDashboardStats() {
             }
         }
 
-        function copyRowForSheet() {
+        async function copyRowForSheet() {
             const date = document.getElementById('postDate').value;
             const version = document.getElementById('postVersion').value;
             const title = document.getElementById('postTitle').value;
@@ -3027,9 +3204,18 @@ function renderDashboardStats() {
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
             const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}\t${status}\t${role}`;
 
-            navigator.clipboard.writeText(rowString).then(() => {
-                alert("✅ 已複製整列資料！\n請直接去 Google Sheet 的 A 欄 (Date) 按下 Ctrl+V 貼上即可。");
+            const btn = document.querySelector('#postEditorModal .btn[onclick="copyRowForSheet()"]') || document.getElementById('post-submit-btn');
+            const originalText = btn ? btn.textContent : '';
+            if (btn) { btn.textContent = '送出中...'; btn.disabled = true; }
+
+            await adminPost({
+                type: 'post', action: 'add',
+                data: { date, version, title, tags, content: cleanContent, status, role }
             });
+
+            if (btn) { btn.textContent = originalText; btn.disabled = false; }
+            alert("✅ 已成功寫入 Google Sheet！");
+            closeModal('postEditorModal');
         }
 
         function logDecision(id, title) {
