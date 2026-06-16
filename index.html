@@ -2725,30 +2725,6 @@ function renderDashboardStats() {
             sendToSheet("Switch_Tab", role, "User switched view");
         }
 
-        function renderCards() {
-            const container = document.getElementById('quick-access-container');
-            container.innerHTML = '';
-            knowledgeBase.forEach(item => {
-                const itemRoles = item.role ? item.role.split(',').map(r => r.trim()) : ['All'];
-                if (currentRole !== 'All' && item.role !== 'All' && !itemRoles.includes(currentRole)) return;
-
-                const secTags = ['FAQ', 'Template', 'Updates'];
-                const tagClass = secTags.includes(item.tag) ? 'tag-secondary' : 'tag-primary';
-
-                let actionHtml = '';
-                if (item.button_type === 'page') {
-                    actionHtml = `<button class="btn" onclick="navigateTo('${item.button_target}')">${item.button_text}</button>`;
-                } else if (item.button_type === 'external') {
-                    actionHtml = `<a href="${item.button_target}" target="_blank" class="btn-outline">${item.button_text}</a>`;
-                } else if (item.button_type === 'modal') {
-                    actionHtml = `<button class="btn" onclick="openModal('${item.button_target}')">${item.button_text}</button>`;
-                }
-
-                const cardHTML = `<div class="card"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${tagClass}">${item.tag}</span><h3>${item.title}</h3><p>${item.description}</p>${actionHtml}</div>`;
-                container.innerHTML += cardHTML;
-            });
-        }
-
         async function fetchQuickAccessData() {
             try {
                 const res = await fetch(BLOG_SCRIPT_URL + '?type=quickaccess&t=' + new Date().getTime());
@@ -3382,11 +3358,14 @@ function renderDashboardStats() {
                         ${sectionsHtml.length ? sectionsHtml : '<p style="color:#94a3b8;text-align:center;">尚無內容。</p>'}
                     </div>
                 `;
+            // 移除 contenteditable 和表格操作按鈕
+                container.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+                container.querySelectorAll('.res-table-wrap > div').forEach(el => el.style.display = 'none');
             } catch(err) {
                 container.innerHTML = `<div style="text-align:center;color:#e00;padding:30px;">載入失敗：${err.message}</div>`;
             }
         }
-        
+
         function filterResources(cat) {
             document.querySelectorAll('.res-filter-btn').forEach(function(btn) {
                 btn.classList.toggle('active', btn.dataset.cat === cat);
