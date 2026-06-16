@@ -2123,6 +2123,7 @@ function toggleResCard(id) {
                 sessionStorage.setItem('hub_admin', 'true');
                 document.getElementById('admin-lock-btn').style.display = 'none';
                 document.getElementById('admin-fab-container').style.display = 'flex';
+                if (currentResourceDetailId) showResourceDetail(currentResourceDetailId);
             } else {
                 alert("密碼錯誤。");
             }
@@ -2967,6 +2968,7 @@ function renderDashboardStats() {
         ];
 
         let resSections = [];
+        let currentResourceDetailId = null;
 
         async function openResourceModal(toolId = null) {
             resSections = [];
@@ -3217,29 +3219,34 @@ function renderDashboardStats() {
             let toolId = document.getElementById('res-original-id').value;
             if (!toolId) toolId = 'tool-' + Date.now();
 
-            await adminPost({
-                type: 'resources_index',
-                action: mode === 'edit' ? 'update' : 'add',
-                data: {
-                    tool_id:       toolId,
-                    title:         title,
-                    icon:          document.getElementById('res-icon-select').value,
-                    category:      document.getElementById('res-category').value,
-                    tag:           document.getElementById('res-tag').value.trim(),
-                    audience:      document.getElementById('res-audience').value,
-                    description:   document.getElementById('res-description').value.trim(),
-                    feature_chips: document.getElementById('res-chips').value.trim()
-                }
-            });
-
-            await adminPost({
-                type: 'resources_content',
-                action: 'replace_all',
-                data: { tool_id: toolId, sections: resSections.filter(s => s.title || s.content) }
-            });
+            await Promise.all([
+                adminPost({
+                    type: 'resources_index',
+                    action: mode === 'edit' ? 'update' : 'add',
+                    data: {
+                        tool_id:       toolId,
+                        title:         title,
+                        icon:          document.getElementById('res-icon-select').value,
+                        category:      document.getElementById('res-category').value,
+                        tag:           document.getElementById('res-tag').value.trim(),
+                        audience:      document.getElementById('res-audience').value,
+                        description:   document.getElementById('res-description').value.trim(),
+                        feature_chips: document.getElementById('res-chips').value.trim()
+                    }
+                }),
+                adminPost({
+                    type: 'resources_content',
+                    action: 'replace_all',
+                    data: { tool_id: toolId, sections: resSections.filter(s => s.title || s.content) }
+                })
+            ]);
 
             closeModal('resourceAdminModal');
-            await fetchResourcesData();
+            if (mode === 'edit') {
+                await showResourceDetail(toolId);
+            } else {
+                await fetchResourcesData();
+            }
         }
 
         async function fetchResourcesData() {
@@ -3312,6 +3319,7 @@ function renderDashboardStats() {
         }
 
         async function showResourceDetail(toolId) {
+            currentResourceDetailId = toolId;
             showPage('resource-detail');
             const container = document.getElementById('resource-detail-content');
             container.innerHTML = '<div class="loading-state">載入中...</div>';
