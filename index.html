@@ -1976,7 +1976,7 @@ function toggleResCard(id) {
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             });
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 1500));
         }
         /* ===== FAQ Admin 結束 ===== */
 
@@ -2123,7 +2123,14 @@ function toggleResCard(id) {
                 sessionStorage.setItem('hub_admin', 'true');
                 document.getElementById('admin-lock-btn').style.display = 'none';
                 document.getElementById('admin-fab-container').style.display = 'flex';
-                if (currentResourceDetailId) showResourceDetail(currentResourceDetailId);
+                if (currentResourceDetailId) {
+                    showResourceDetail(currentResourceDetailId);
+                } else {
+                    const resourcesSection = document.getElementById('resources');
+                    if (resourcesSection && resourcesSection.classList.contains('active')) {
+                        fetchResourcesData();
+                    }
+                }
             } else {
                 alert("密碼錯誤。");
             }
