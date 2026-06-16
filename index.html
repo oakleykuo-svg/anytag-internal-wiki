@@ -3076,9 +3076,93 @@ function renderDashboardStats() {
             } else if (type === 'tip') {
                 html = `<div style="border-left:4px solid #10b981;background:#f0fdf4;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#065f46;">💡 在這裡輸入提示內容</div>`;
             } else if (type === 'table') {
-                html = `<table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;"><thead><tr><th style="background:#1e293b;color:#fff;padding:8px 12px;text-align:left;">欄位</th><th style="background:#1e293b;color:#fff;padding:8px 12px;text-align:left;">說明</th></tr></thead><tbody><tr><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">項目一</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">說明文字</td></tr><tr><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">項目二</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">說明文字</td></tr></tbody></table>`;
+                html = `<div class="res-table-wrap" style="margin:12px 0;">
+                    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+                        <span style="font-size:12px;color:#94a3b8;font-weight:600;">表格操作：</span>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="resTableAddCol(this)" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;color:#475569;">＋欄</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="resTableDelCol(this)" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;color:#475569;">－欄</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="resTableAddRow(this)" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;color:#475569;">＋列</button>
+                    </div>
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr>
+                            <th style="background:#1e293b;color:#fff;padding:8px 12px;text-align:left;">欄位</th>
+                            <th style="background:#1e293b;color:#fff;padding:8px 12px;text-align:left;">說明</th>
+                            <th style="background:#1e293b;color:#fff;padding:4px 6px;text-align:center;width:30px;"></th>
+                        </tr></thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;" contenteditable="true">項目一</td>
+                                <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;" contenteditable="true">說明文字</td>
+                                <td style="padding:4px 6px;border-bottom:1px solid #e2e8f0;text-align:center;"><button type="button" onmousedown="event.preventDefault()" onclick="resTableDelRow(this)" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:13px;">－</button></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;" contenteditable="true">項目二</td>
+                                <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;" contenteditable="true">說明文字</td>
+                                <td style="padding:4px 6px;border-bottom:1px solid #e2e8f0;text-align:center;"><button type="button" onmousedown="event.preventDefault()" onclick="resTableDelRow(this)" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:13px;">－</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
             }
             document.execCommand('insertHTML', false, html);
+        }
+
+        function resTableAddRow(btn) {
+            const table = btn.closest('.res-table-wrap').querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const colCount = table.querySelector('thead tr').children.length;
+            const tr = document.createElement('tr');
+            for (let i = 0; i < colCount - 1; i++) {
+                const td = document.createElement('td');
+                td.style.cssText = 'padding:8px 12px;border-bottom:1px solid #e2e8f0;';
+                td.contentEditable = 'true';
+                td.textContent = '內容';
+                tr.appendChild(td);
+            }
+            // 最後一欄放 － 按鈕
+            const tdBtn = document.createElement('td');
+            tdBtn.style.cssText = 'padding:4px 6px;border-bottom:1px solid #e2e8f0;text-align:center;';
+            tdBtn.innerHTML = `<button type="button" onmousedown="event.preventDefault()" onclick="resTableDelRow(this)" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:13px;">－</button>`;
+            tr.appendChild(tdBtn);
+            tbody.appendChild(tr);
+        }
+
+        function resTableDelRow(btn) {
+            const tr = btn.closest('tr');
+            const tbody = tr.closest('tbody');
+            if (tbody.children.length <= 1) { alert('至少保留一列！'); return; }
+            tr.remove();
+        }
+
+        function resTableAddCol(btn) {
+            const table = btn.closest('.res-table-wrap').querySelector('table');
+            const headerRow = table.querySelector('thead tr');
+            // 在最後一個 th（空白那欄）之前插入新欄
+            const newTh = document.createElement('th');
+            newTh.style.cssText = 'background:#1e293b;color:#fff;padding:8px 12px;text-align:left;';
+            newTh.textContent = '新欄位';
+            headerRow.insertBefore(newTh, headerRow.lastElementChild);
+            // 每一列也插入新欄
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const newTd = document.createElement('td');
+                newTd.style.cssText = 'padding:8px 12px;border-bottom:1px solid #e2e8f0;';
+                newTd.contentEditable = 'true';
+                newTd.textContent = '內容';
+                tr.insertBefore(newTd, tr.lastElementChild);
+            });
+        }
+
+        function resTableDelCol(btn) {
+            const table = btn.closest('.res-table-wrap').querySelector('table');
+            const headerRow = table.querySelector('thead tr');
+            const colCount = headerRow.children.length;
+            if (colCount <= 2) { alert('至少保留一欄！'); return; }
+            // 刪除倒數第二個 th（最後一個是空白欄）
+            headerRow.children[colCount - 2].remove();
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const cells = tr.children;
+                cells[cells.length - 2].remove();
+            });
         }
 
         function resSectionMoveUp(idx) {
