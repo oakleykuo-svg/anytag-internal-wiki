@@ -3382,14 +3382,47 @@ function renderDashboardStats() {
                         ${sectionsHtml.length ? sectionsHtml : '<p style="color:#94a3b8;text-align:center;">尚無內容。</p>'}
                     </div>
                 `;
-            // 移除 contenteditable 和表格操作按鈕
+            // 移除 contenteditable、表格操作列、最後一欄刪除按鈕
                 container.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
                 container.querySelectorAll('.res-table-wrap > div').forEach(el => el.style.display = 'none');
+                container.querySelectorAll('.res-table-wrap tbody tr td:last-child, .res-table-wrap thead tr th:last-child').forEach(el => el.style.display = 'none');
+                // 預設展開第一個段落
+                const firstAccHeader = container.querySelector('.res-acc-header');
+                if (firstAccHeader) toggleResAccordion(firstAccHeader);
             } catch(err) {
                 container.innerHTML = `<div style="text-align:center;color:#e00;padding:30px;">載入失敗：${err.message}</div>`;
             }
         }
 
+        function toggleResAccordion(header) {
+            const body = header.nextElementSibling;
+            const icon = header.querySelector('.fa-chevron-down');
+            const isOpen = body.dataset.open === 'true';
+
+            // 關閉所有段落
+            const detailContent = document.getElementById('resource-detail-content');
+            if (detailContent) {
+                detailContent.querySelectorAll('.res-acc-header').forEach(h => {
+                    const b = h.nextElementSibling;
+                    const ic = h.querySelector('.fa-chevron-down');
+                    b.style.maxHeight = '0';
+                    b.style.padding = '0 24px';
+                    b.dataset.open = 'false';
+                    h.style.background = '#f8fafc';
+                    if (ic) ic.style.transform = 'rotate(0deg)';
+                });
+            }
+
+            // 開啟點擊的那個（若原本是關的）
+            if (!isOpen) {
+                body.style.maxHeight = (body.scrollHeight + 100) + 'px';
+                body.style.padding = '24px';
+                body.dataset.open = 'true';
+                header.style.background = '#fff';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            }
+        }
+        
         function filterResources(cat) {
             document.querySelectorAll('.res-filter-btn').forEach(function(btn) {
                 btn.classList.toggle('active', btn.dataset.cat === cat);
