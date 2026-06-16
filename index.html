@@ -2084,15 +2084,15 @@ function toggleResCard(id) {
     </div>
     
     <!-- Admin 浮動工具列 -->
-    <button id="admin-lock-btn" onclick="verifyAdminPassword()" title="Admin 登入" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9998; width:44px; height:44px; border-radius:50%; background:#1e293b; color:#fff; border:none; cursor:pointer; font-size:18px; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);">🔑</button>
+    <button id="admin-lock-btn" onclick="verifyAdminPassword()" title="Admin 登入" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9998; width:44px; height:44px; border-radius:50%; background:#1e293b; color:#fff; border:none; cursor:pointer; font-size:18px; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25);"><i class="fa-solid fa-shield-halved"></i></button>
 
     <div id="admin-fab-container" style="display:none; position:fixed; bottom:24px; right:24px; z-index:9999; flex-direction:column; align-items:flex-end; gap:10px;">
         <div id="admin-fab-menu" style="display:none; flex-direction:column; align-items:flex-end; gap:8px;">
-            <button class="admin-fab-item" onclick="toggleAdminMenu(); openFaqAdmin()"><span>📝 FAQ 管理</span></button>
-            <button class="admin-fab-item" onclick="toggleAdminMenu(); openCardAdmin()"><span>🃏 卡片管理</span></button>
-            <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span>➕ 產品更新</span></button>
+            <button class="admin-fab-item" onclick="toggleAdminMenu(); openFaqAdmin()"><span><i class="fa-solid fa-file-pen" style="margin-right:6px;"></i>FAQ 管理</span></button>
+            <button class="admin-fab-item" onclick="toggleAdminMenu(); openCardAdmin()"><span><i class="fa-solid fa-table-cells-large" style="margin-right:6px;"></i>卡片管理</span></button>
+            <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span><i class="fa-solid fa-rocket" style="margin-right:6px;"></i>產品更新</span></button>
         </div>
-        <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;">⚙️</button>
+        <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-screwdriver-wrench"></i></button>
     </div>
     
     <script>
