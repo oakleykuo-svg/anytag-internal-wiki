@@ -2494,6 +2494,7 @@ function toggleResCard(id) {
             const decoded = atob(ADMIN_KEY).split("").reverse().join("");
             if (input === decoded) {
                 isAdminUnlocked = true;
+                sessionStorage.setItem('hub_admin', 'true');
                 document.getElementById('admin-lock-btn').style.display = 'none';
                 document.getElementById('admin-fab-container').style.display = 'flex';
             } else {
@@ -2528,7 +2529,12 @@ function toggleResCard(id) {
         function unlockSite() {
             const overlay = document.getElementById('login-overlay');
             if(overlay) overlay.style.display = 'none';
-            document.getElementById('admin-lock-btn').style.display = 'flex';
+            if (sessionStorage.getItem('hub_admin') === 'true') {
+                isAdminUnlocked = true;
+                document.getElementById('admin-fab-container').style.display = 'flex';
+            } else {
+                document.getElementById('admin-lock-btn').style.display = 'flex';
+            }
             initProtectedData();
         }
 
