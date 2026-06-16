@@ -1514,57 +1514,71 @@
 
 <!-- Resource Admin Modal -->
 <div id="resourceAdminModal" class="modal" style="display:none;">
-  <div class="modal-content" style="max-width:640px;width:95%;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:16px;">
+  <div class="modal-content" style="max-width:700px;width:95%;max-height:92vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:16px;">
     <div style="padding:18px 24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
       <h2 id="resource-modal-title" style="font-size:18px;font-weight:700;margin:0;">新增工具指南</h2>
       <button onclick="closeModal('resourceAdminModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1;">✕</button>
     </div>
-    <div style="padding:24px;overflow-y:auto;flex:1;">
+    <div style="padding:24px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:20px;">
       <input type="hidden" id="res-edit-mode" value="add">
       <input type="hidden" id="res-original-id" value="">
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="grid-column:1/-1;">
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">工具名稱 *</label>
-          <input id="res-title" type="text" placeholder="例：信件發送與追蹤系統" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+      <!-- 基本資訊區 -->
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">基本資訊</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="grid-column:1/-1;">
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">工具名稱 *</label>
+            <input id="res-title" type="text" placeholder="例：信件發送與追蹤系統" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">圖示</label>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <select id="res-icon-select" onchange="updateResIconPreview()" style="flex:1;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;"></select>
+              <div id="res-icon-preview" style="width:42px;height:42px;background:rgba(225,79,75,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">分類</label>
+            <select id="res-category" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
+              <option value="mail">寄信 / 外聯</option>
+              <option value="data">數據追蹤</option>
+              <option value="report">報告產出</option>
+              <option value="ai">AI 工具</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">類型標籤</label>
+            <input id="res-tag" type="text" placeholder="例：System Guide、Extension" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">顯示在卡片上的分類標籤，填一個就好</div>
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">受眾</label>
+            <select id="res-audience" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
+              <option value="All">全體 (All)</option>
+              <option value="BD">業務 (BD)</option>
+              <option value="IM">執行 (IM)</option>
+            </select>
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">簡介</label>
+            <textarea id="res-description" rows="2" placeholder="一句話說明這個工具的用途..." style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;resize:vertical;font-family:inherit;"></textarea>
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">功能標籤</label>
+            <input id="res-chips" type="text" placeholder="例：批次寄信,自動狀態追蹤,回覆自動偵測" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">多個標籤用半形逗號分隔</div>
+          </div>
         </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">Tool ID *</label>
-          <input id="res-tool-id" type="text" placeholder="例：email-system" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;font-family:monospace;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">圖示 (FA class) *</label>
-          <input id="res-icon" type="text" placeholder="例：fa-solid fa-paper-plane" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">分類</label>
-          <select id="res-category" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
-            <option value="mail">寄信 / 外聯</option>
-            <option value="data">數據追蹤</option>
-            <option value="report">報告產出</option>
-            <option value="ai">AI 工具</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">標籤</label>
-          <input id="res-tag" type="text" placeholder="例：System Guide" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">受眾</label>
-          <select id="res-audience" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
-            <option value="All">全體 (All)</option>
-            <option value="BD">業務 (BD)</option>
-            <option value="IM">執行 (IM)</option>
-          </select>
-        </div>
-        <div style="grid-column:1/-1;">
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">簡介</label>
-          <textarea id="res-description" rows="3" placeholder="一句話說明這個工具的用途..." style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;resize:vertical;font-family:inherit;"></textarea>
-        </div>
-        <div style="grid-column:1/-1;">
-          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">功能標籤（逗號分隔）</label>
-          <input id="res-chips" type="text" placeholder="例：批次寄信,自動狀態追蹤,回覆自動偵測" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
-        </div>
+      </div>
+
+      <!-- 段落編輯區 -->
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">內容段落</div>
+        <div id="res-sections-container"></div>
+        <button onclick="resAddSection()" style="margin-top:10px;width:100%;padding:10px;border:2px dashed #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;justify-content:center;gap:6px;" onmouseover="this.style.borderColor='var(--brand-red)';this.style.color='var(--brand-red)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#475569'">
+          <i class="fa-solid fa-plus"></i> 新增段落
+        </button>
       </div>
     </div>
     <div style="padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;">
@@ -1573,7 +1587,7 @@
     </div>
   </div>
 </div>
-        
+
 <!-- 工具詳細頁 -->
 <div id="resource-detail" class="section">
     <div id="resource-detail-content" style="max-width:860px; margin:0 auto;">
