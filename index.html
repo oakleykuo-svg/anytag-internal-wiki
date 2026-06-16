@@ -3045,7 +3045,8 @@ function renderDashboardStats() {
                     </div>
                     <div id="res-editor-${idx}" contenteditable="true"
                         style="padding:12px;min-height:80px;font-size:13px;outline:none;line-height:1.7;color:#334155;"
-                        onblur="resSections[${idx}].content=this.innerHTML">${sec.content}</div>
+                        onblur="resSections[${idx}].content=this.innerHTML"
+                        onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand(event.shiftKey?'outdent':'indent',false,null);}">${sec.content}</div>
                 </div>
             `).join('');
         }
