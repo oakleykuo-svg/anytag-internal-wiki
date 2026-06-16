@@ -1505,480 +1505,13 @@
         <button class="tab-btn res-filter-btn" data-cat="ai" onclick="filterResources('ai')">🤖 AI 工具</button>
     </div>
  
-    <!-- ════════════════════════════════════════════════
-         ▌ 工具大卡片：信件發送與追蹤系統
-         ════════════════════════════════════════════════ -->
-    <div class="res-tool-card" data-category="mail" style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:20px;">
- 
-        <!-- 卡片 Header（永遠顯示） -->
-        <div style="padding:20px 24px;border-bottom:1px solid #f0f0f0;">
-            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
-                <div style="width:48px;height:48px;background:rgba(225,79,75,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--brand-red);flex-shrink:0;">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </div>
-                <div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-                        <h2 style="font-size:17px;font-weight:800;color:#000;margin:0;">信件發送與追蹤系統</h2>
-                        <span class="tag tag-primary" style="margin:0;">System Guide</span>
-                        <span style="background:#f0fdf4;color:#16a34a;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;">for IM</span>
-                    </div>
-                    <p style="font-size:13px;color:#64748b;margin:0;">Google Sheets + Apps Script 全自動信件流程，不需安裝任何軟體，直接在 Sheets 裡操作即可。</p>
-                </div>
-            </div>
-            <!-- 功能 Pills -->
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fa-solid fa-list-check" style="margin-right:5px;color:var(--brand-red);"></i>批次寄信</span>
-                <span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fa-solid fa-arrows-rotate" style="margin-right:5px;color:var(--brand-red);"></i>自動狀態追蹤</span>
-                <span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fa-solid fa-satellite-dish" style="margin-right:5px;color:var(--brand-red);"></i>回覆自動偵測</span>
-                <span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fa-brands fa-google" style="margin-right:5px;color:var(--brand-red);"></i>Gmail 標籤歸類</span>
-                <span style="background:#f8fafc;border:1px solid #e2e8f0;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;"><i class="fa-solid fa-chart-bar" style="margin-right:5px;color:var(--brand-red);"></i>寄送統計</span>
-            </div>
-        </div>
- 
-        <!-- 步驟 Accordion 區塊 -->
-        <div style="background:#f8fafc;">
-            <!-- 提示文字（點擊展開/收起步驟） -->
-            <div onclick="toggleToolSteps('mail-steps')" style="padding:12px 24px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onmouseover="this.style.background='#eef2f7'" onmouseout="this.style.background=''">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <i class="fa-solid fa-hand-point-down" style="color:var(--brand-red);font-size:13px;"></i>
-                    <span style="font-size:12px;color:#64748b;font-weight:600;">點開各步驟查看詳細操作說明</span>
-                </div>
-                <i class="fa-solid fa-chevron-down" id="mail-steps-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;"></i>
-            </div>
-            <div id="mail-steps" style="display:none;">
- 
-            <!-- ── Step 1：初始化設定 ── -->
-            <div style="border-bottom:1px solid #eef0f3;">
-                <div id="es-init-hd" onclick="expandStep('es-init')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:var(--brand-red);color:#fff;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.2;">
-                        <span style="font-size:9px;font-weight:600;opacity:0.85;">STEP</span>
-                        <span style="font-size:14px;font-weight:800;">1</span>
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">初始化設定</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">複製母版 · 開放權限 · 初始化分頁 · 貼上名單 ·
-                            <strong style="color:var(--brand-red);">每人只需做一次</strong>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-init-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-init" style="display:none;padding:0 24px 24px;border-top:1px solid #f0f0f0;background:#fff;">
- 
-                    <!-- Sub-step 1 -->
-                    <div style="display:flex;gap:14px;padding-top:20px;margin-bottom:20px;">
-                        <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">1</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:8px;">複製母版 Sheet</div>
-                            <ul style="padding-left:18px;margin:0 0 10px;font-size:13px;color:#475569;line-height:2.2;">
-                                <li>開啟 <a href="https://docs.google.com/spreadsheets/d/10xFTmBm42LE8o_YaF4J2_lHDn8b6nNk5YxIphNK7eVk/edit?gid=0#gid=0" target="_blank" style="color:var(--brand-red);font-weight:700;text-decoration:underline;">母版 Sheet ↗</a>，點上方選單「檔案」→「建立副本」</li>
-                                <li>將副本改名為你的專案名稱，例如：<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px;">TCL_2026_OOO</code></li>
-                                <li>可將副本移到自己方便管理的資料夾</li>
-                            </ul>
-                            <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#92400e;">
-                                ⚠️ <strong>記得改名！</strong>中央 Overview 用檔案名稱顯示專案名，沒改名主管會看到亂七八糟的檔名。
-                            </div>
-                        </div>
-                    </div>
- 
-                    <!-- Sub-step 2 -->
-                    <div style="display:flex;gap:14px;margin-bottom:20px;">
-                        <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">2</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:8px;">開放編輯權限（非必要，但建議做）</div>
-                            <ul style="padding-left:18px;margin:0 0 10px;font-size:13px;color:#475569;line-height:2.2;">
-                                <li>開啟你的副本 Sheet，右上角點「共用」</li>
-                                <li>將主管加到表單，權限選「<strong>編輯者</strong>」→ 送出</li>
-                            </ul>
-                            <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#92400e;">
-                                ⚠️ <strong>重要！</strong>沒有開放權限，中央系統無法讀取你的 Sheet，主管的 Overview 就會看不到案件進度。
-                            </div>
-                        </div>
-                    </div>
- 
-                    <!-- Sub-step 3 -->
-                    <div style="display:flex;gap:14px;margin-bottom:20px;">
-                        <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">3</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:8px;">初始化分頁</div>
-                            <ul style="padding-left:18px;margin:0 0 10px;font-size:13px;color:#475569;line-height:2.2;">
-                                <li>點上方選單 →「📧 信件發送系統」</li>
-                                <li>點「🏗 初始化名單與狀態分頁」</li>
-                                <li>看到「✅ 初始化完成！」即可</li>
-                            </ul>
-                            <div style="background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#15803d;">
-                                💡 此動作會自動建立好所有欄位和格式，讓你直接開始填名單。
-                            </div>
-                        </div>
-                    </div>
- 
-                    <!-- Sub-step 4：名單欄位表格 -->
-                    <div style="display:flex;gap:14px;">
-                        <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">4</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">貼上名單｜欄位說明</div>
-                            <table style="width:100%;border-collapse:collapse;font-size:13px;border-radius:8px;overflow:hidden;">
-                                <thead><tr style="background:#f1f5f9;">
-                                    <th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0;font-weight:700;color:#475569;width:160px;">欄位</th>
-                                    <th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0;font-weight:700;color:#475569;">說明</th>
-                                    <th style="padding:8px 12px;text-align:center;border-bottom:1px solid #e2e8f0;font-weight:700;color:#475569;width:70px;">必填</th>
-                                </tr></thead>
-                                <tbody>
-                                    <tr style="background:#fff;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;">Name</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">網紅名稱（中英文皆可）</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid #f0f0f0;color:#16a34a;font-weight:700;">✅</td></tr>
-                                    <tr style="background:#f8fafc;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;">Email</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">網紅的聯絡 Email</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid #f0f0f0;color:#16a34a;font-weight:700;">✅</td></tr>
-                                    <tr style="background:#fff;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;">CC</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">副本收件人，多人用逗號分隔</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid #f0f0f0;color:#94a3b8;">選填</td></tr>
-                                    <tr style="background:#f8fafc;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;">BCC</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">密件副本（網紅不會知道）</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid #f0f0f0;color:#94a3b8;">選填</td></tr>
-                                    <tr style="background:#fff;"><td style="padding:8px 12px;font-weight:600;">附件 Drive 連結</td><td style="padding:8px 12px;color:#475569;">多個附件用逗號分隔，支援 Slides / Docs / PDF 等</td><td style="padding:8px 12px;text-align:center;color:#94a3b8;">選填</td></tr>
-                                </tbody>
-                            </table>
-                            <div style="background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#15803d;margin-top:10px;">
-                                💡 「信件主旨、信件內文、寄信狀態、寄信日期、回覆摘要」由系統自動處理，<strong>無需手動填寫</strong>。
-                            </div>
-                        </div>
-                    </div>
- 
-                </div><!-- /es-init body -->
-            </div><!-- /Step 1 row -->
- 
-            <!-- ── Step 2：編輯信件 ── -->
-            <div style="border-bottom:1px solid #eef0f3;">
-                <div id="es-edit-hd" onclick="expandStep('es-edit')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:var(--brand-red);color:#fff;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.2;">
-                        <span style="font-size:9px;font-weight:600;opacity:0.85;">STEP</span>
-                        <span style="font-size:14px;font-weight:800;">2</span>
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">編輯信件</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">使用視覺化信件編輯器撰寫、預覽並套用信件內容</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-edit-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-edit" style="display:none;padding:20px 24px;border-top:1px solid #f0f0f0;background:#fff;">
- 
-                    <p style="font-size:13px;color:#475569;margin:0 0 16px;">點選單「📝 開啟信件編輯器」，支援以下功能：</p>
- 
-                    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:16px;">
-                        <div style="display:flex;gap:12px;">
-                            <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">✏️</div>
-                            <div>
-                                <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:3px;">信件主旨</div>
-                                <div style="font-size:13px;color:#475569;">直接輸入文字即可。</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:12px;">
-                            <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">📝</div>
-                            <div>
-                                <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:3px;">信件內文工具列</div>
-                                <div style="font-size:13px;color:#475569;">支援：粗體、斜體、底線、刪除線、文字顏色、項目符號清單、編號清單、插入超連結、插入圖片</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:12px;">
-                            <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">📎</div>
-                            <div>
-                                <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:3px;">附件 Drive 連結</div>
-                                <div style="font-size:13px;color:#475569;">填入 Drive 連結（多個附件用逗號分隔），支援 Slides / Docs / Sheets / PDF，系統自動轉換為 PDF 附加至信件。</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:12px;">
-                            <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">👁</div>
-                            <div>
-                                <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:3px;">預覽與儲存</div>
-                                <ul style="padding-left:18px;margin:4px 0 0;font-size:13px;color:#475569;line-height:2;">
-                                    <li>點「👁 預覽信件」確認格式（<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;">{{Name}}</code> 在預覽中保持原樣）</li>
-                                    <li>確認後點「💾 儲存並套用」</li>
-                                    <li>看到「✅ 信件內容已套用！」即可</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
- 
-                    <div style="background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#15803d;margin-bottom:16px;">
-                        💡 使用 <code style="background:#dcfce7;padding:1px 6px;border-radius:4px;font-weight:700;">{{Name}}</code> 代表收件人姓名，寄信時自動替換。例如「Hi {{Name}}，」→ 實際寄出變成「Hi Oakley，」
-                    </div>
- 
-                    <!-- 套用範圍 -->
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">套用範圍｜儲存前請務必確認</div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
-                        <div style="background:#fff8f8;border:2px solid var(--brand-red);border-radius:10px;padding:12px;text-align:center;">
-                            <div style="font-weight:800;color:var(--brand-red);font-size:15px;margin-bottom:4px;">全部</div>
-                            <div style="font-size:12px;color:#475569;margin-bottom:4px;">整個案子所有網紅收同一封信</div>
-                            <span style="background:rgba(225,79,75,0.1);color:var(--brand-red);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">最常用</span>
-                        </div>
-                        <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:12px;text-align:center;">
-                            <div style="font-weight:800;color:#7c3aed;font-size:15px;margin-bottom:4px;">選取</div>
-                            <div style="font-size:12px;color:#475569;">從名單中勾選，少數幾位需要不同內容</div>
-                        </div>
-                        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;text-align:center;">
-                            <div style="font-weight:800;color:#059669;font-size:15px;margin-bottom:4px;">範圍</div>
-                            <div style="font-size:12px;color:#475569;">輸入列號範圍，某個連續區間不同信件</div>
-                        </div>
-                    </div>
-                    <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#92400e;">
-                        ⚠️ 如果部分列已發送，請選「從名單中勾選」或「輸入列號範圍」，只套用尚未發送的列，已發送不受影響。
-                    </div>
- 
-                </div><!-- /es-edit body -->
-            </div><!-- /Step 2 row -->
- 
-            <!-- ── Step 3：批次發送 ── -->
-            <div style="border-bottom:1px solid #eef0f3;">
-                <div id="es-send-hd" onclick="expandStep('es-send')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:var(--brand-red);color:#fff;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.2;">
-                        <span style="font-size:9px;font-weight:600;opacity:0.85;">STEP</span>
-                        <span style="font-size:14px;font-weight:800;">3</span>
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">批次發送郵件</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">確認無誤後一鍵寄出 · 每日上限 1,500 封</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-send-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-send" style="display:none;padding:20px 24px;border-top:1px solid #f0f0f0;background:#fff;">
- 
-                    <!-- 五步驟流程條 -->
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:12px;">發送步驟</div>
-                    <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:16px;">
-                        <div style="flex:1;padding:12px 8px;background:#fff;border-right:1px solid #f0f0f0;text-align:center;">
-                            <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;">①</div>
-                            <div style="font-size:11px;font-weight:700;color:#000;">點發送郵件</div>
-                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">選單「📤 發送郵件」</div>
-                        </div>
-                        <div style="flex:1;padding:12px 8px;background:#fff;border-right:1px solid #f0f0f0;text-align:center;">
-                            <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;">②</div>
-                            <div style="font-size:11px;font-weight:700;color:#000;">確認彈窗</div>
-                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">人數、配額、前5位</div>
-                        </div>
-                        <div style="flex:1;padding:12px 8px;background:#fff;border-right:1px solid #f0f0f0;text-align:center;">
-                            <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;">③</div>
-                            <div style="font-size:11px;font-weight:700;color:#000;">設定批次數</div>
-                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">預設 50，可修改</div>
-                        </div>
-                        <div style="flex:1;padding:12px 8px;background:#fff;border-right:1px solid #f0f0f0;text-align:center;">
-                            <div style="width:22px;height:22px;background:var(--brand-red);color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;">④</div>
-                            <div style="font-size:11px;font-weight:700;color:#000;">確認發送</div>
-                            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">點「📤 確認並發送」</div>
-                        </div>
-                        <div style="flex:1;padding:12px 8px;background:#f0fdf4;text-align:center;">
-                            <div style="width:22px;height:22px;background:#16a34a;color:#fff;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;">⑤</div>
-                            <div style="font-size:11px;font-weight:700;color:#15803d;">完成！</div>
-                            <div style="font-size:10px;color:#64748b;margin-top:2px;">看到「✅ 發送完成！」</div>
-                        </div>
-                    </div>
- 
-                    <!-- 注意事項 -->
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">注意事項</div>
-                    <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:13px;color:#92400e;display:flex;align-items:flex-start;gap:8px;">
-                            <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0;"></i>
-                            <span>發送中<strong>勿關閉視窗</strong>，可切換到其他分頁。</span>
-                        </div>
-                        <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:13px;color:#92400e;display:flex;align-items:flex-start;gap:8px;">
-                            <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0;"></i>
-                            <span>每日上限 <strong>1,500 封</strong>，配額不足自動停止，未發送的列自動還原為「未發送」，明天繼續發即可。</span>
-                        </div>
-                        <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:13px;color:#92400e;display:flex;align-items:flex-start;gap:8px;">
-                            <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0;"></i>
-                            <span>同一 Sheet <strong>只由一人發送</strong>，多人協作可分批分工。</span>
-                        </div>
-                    </div>
- 
-                </div><!-- /es-send body -->
-            </div><!-- /Step 3 row -->
- 
-            <!-- ── Step 4：回覆追蹤 ── -->
-            <div style="border-bottom:1px solid #eef0f3;">
-                <div id="es-track-hd" onclick="expandStep('es-track')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:var(--brand-red);color:#fff;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.2;">
-                        <span style="font-size:9px;font-weight:600;opacity:0.85;">STEP</span>
-                        <span style="font-size:14px;font-weight:800;">4</span>
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">安裝回覆自動偵測</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">每天早上 6 點自動掃描 ·
-                            <strong style="color:var(--brand-red);">每個專案只需做一次</strong>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-track-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-track" style="display:none;padding:20px 24px;border-top:1px solid #f0f0f0;background:#fff;">
- 
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">安裝步驟</div>
-                    <ul style="padding-left:20px;margin:0 0 16px;font-size:13px;color:#475569;line-height:2.4;">
-                        <li>點選單「⚙️ 安裝每日自動偵測（每天早上 6 點）」</li>
-                        <li>看到「✅ 每日自動偵測已安裝！」即可</li>
-                        <li>發完第一批信之後記得執行此步驟</li>
-                        <li>若想立即查看，點「🔄 偵測回覆：所有信件」手動觸發</li>
-                        <li>案子結束後：點「🗑 移除每日自動偵測」停止</li>
-                    </ul>
- 
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">自動更新狀態說明</div>
-                    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-                        <div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:8px;padding:10px 14px;">
-                            <span style="background:#dbeafe;color:#1d4ed8;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">溝通中</span>
-                            <span style="font-size:13px;color:#475569;">網紅有回信，內容無婉拒意思</span>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:8px;padding:10px 14px;">
-                            <span style="background:#fef9c3;color:#854d0e;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">非直接婉拒，需確認</span>
-                            <span style="font-size:13px;color:#475569;">有婉拒意思但同時表示之後可能有機會（檔期問題、待確認等）</span>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:12px;background:#f8fafc;border-radius:8px;padding:10px 14px;">
-                            <span style="background:#fee2e2;color:#b91c1c;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">已婉拒</span>
-                            <span style="font-size:13px;color:#475569;">網紅明確拒絕合作</span>
-                        </div>
-                    </div>
-                    <div style="background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#15803d;margin-bottom:16px;">
-                        💡 自動更新欄位：寄信狀態、最新回覆摘要（回信前 50 個字）、最新回覆日期。如果系統誤判，可手動在「寄信狀態」欄改回正確狀態。
-                    </div>
- 
-                    <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">手動偵測選項</div>
-                    <table style="width:100%;border-collapse:collapse;font-size:13px;border-radius:8px;overflow:hidden;">
-                        <thead><tr style="background:#f1f5f9;">
-                            <th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0;font-weight:700;color:#475569;">選單項目</th>
-                            <th style="padding:8px 12px;text-align:left;border-bottom:1px solid #e2e8f0;font-weight:700;color:#475569;">適用情境</th>
-                        </tr></thead>
-                        <tbody>
-                            <tr style="background:#fff;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;">🔄 偵測回覆：所有信件</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">一次偵測所有已寄出的列</td></tr>
-                            <tr style="background:#f8fafc;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;">🔄 偵測回覆：溝通中</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">只看目前溝通中的有沒有新回覆</td></tr>
-                            <tr style="background:#fff;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;">🔄 偵測回覆：非直接婉拒，需確認</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">確認這些網紅是否有新的表態</td></tr>
-                            <tr style="background:#f8fafc;"><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;">🔄 偵測回覆：已婉拒</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#475569;">確認已婉拒的網紅是否改變心意</td></tr>
-                            <tr style="background:#fff;"><td style="padding:8px 12px;white-space:nowrap;">🔄 偵測回覆：超過 N 天沒有回覆</td><td style="padding:8px 12px;color:#475569;">輸入天數，偵測超過該天數沒有新動靜的列</td></tr>
-                        </tbody>
-                    </table>
- 
-                </div><!-- /es-track body -->
-            </div><!-- /Step 4 row -->
- 
-            <!-- ── Step 5：Gmail 標籤 + 寄送統計 ── -->
-            <div style="border-bottom:1px solid #eef0f3;">
-                <div id="es-label-hd" onclick="expandStep('es-label')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:var(--brand-red);color:#fff;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;line-height:1.2;">
-                        <span style="font-size:9px;font-weight:600;opacity:0.85;">STEP</span>
-                        <span style="font-size:14px;font-weight:800;">5</span>
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">Gmail 標籤歸類 ＋ 寄送統計</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">自動標籤分類 · 即時查看回覆率</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-label-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-label" style="display:none;padding:20px 24px;border-top:1px solid #f0f0f0;background:#fff;">
- 
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-                        <div>
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">🏷️ Gmail 標籤自動歸類</div>
-                            <ul style="padding-left:18px;margin:0 0 10px;font-size:13px;color:#475569;line-height:2.2;">
-                                <li>系統自動以<strong>專案名稱（即 Sheet 檔案名稱）</strong>建立 Gmail 標籤</li>
-                                <li>每封邀約信寄出後，自動套上標籤</li>
-                                <li>偵測到網紅回信時，整個信件串也自動進標籤</li>
-                                <li>直接點 Gmail 左側標籤，找到所有往來信件</li>
-                            </ul>
-                            <div style="background:#f0fdf4;border-left:3px solid #4ade80;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#15803d;margin-bottom:8px;">
-                                💡 標籤名稱就是 Sheet 檔案名稱，記得把 Sheet 改成有意義的專案名稱（例：<strong>TCL_2026_Oak</strong>）
-                            </div>
-                            <div style="background:#fff7ed;border-left:3px solid #fb923c;border-radius:0 8px 8px 0;padding:9px 14px;font-size:12px;color:#92400e;">
-                                ⚠️ 中途修改 Sheet 名稱，建議點一次「🏷 為現有信件補套標籤」，讓舊信件進到新標籤。舊標籤可手動在 Gmail 刪除。
-                            </div>
-                        </div>
-                        <div>
-                            <div style="font-size:14px;font-weight:700;color:#000;margin-bottom:10px;">📊 寄送統計</div>
-                            <p style="font-size:13px;color:#475569;margin:0 0 12px;">點選單「📊 寄送統計」即時查看：</p>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;">
-                                    <div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">提案人數</div>
-                                    <div style="font-size:18px;font-weight:800;color:#000;margin-top:4px;">總覽</div>
-                                </div>
-                                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;">
-                                    <div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">已寄出</div>
-                                    <div style="font-size:18px;font-weight:800;color:var(--brand-red);margin-top:4px;">數量</div>
-                                </div>
-                                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;">
-                                    <div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">溝通中</div>
-                                    <div style="font-size:18px;font-weight:800;color:#2563eb;margin-top:4px;">追蹤中</div>
-                                </div>
-                                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center;">
-                                    <div style="font-size:10px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">回覆率</div>
-                                    <div style="font-size:18px;font-weight:800;color:#16a34a;margin-top:4px;">即時</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
- 
-                </div><!-- /es-label body -->
-            </div><!-- /Step 5 row -->
- 
-            <!-- ── FAQ（無 Step 編號） ── -->
-            <div>
-                <div id="es-faq-hd" onclick="expandStep('es-faq')"
-                     style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;background:#fff;transition:background 0.15s;"
-                     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-                    <div style="width:36px;height:36px;background:#475569;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">
-                        ❓
-                    </div>
-                    <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#000;">常見問題</div>
-                        <div style="font-size:12px;color:#94a3b8;margin-top:1px;">發送失敗、配額不足、狀態沒更新……遇到狀況看這裡</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-down" id="es-faq-icon" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;"></i>
-                </div>
-                <div id="es-faq" style="display:none;padding:20px 24px;border-top:1px solid #f0f0f0;background:#fff;">
-                    <div style="display:flex;flex-direction:column;gap:10px;">
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：信件內容要改，但已有部分列發送了怎麼辦？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">開啟信件編輯器，選「從名單中勾選」或「輸入列號範圍」，只套用到尚未發送的列即可，<strong>已發送的列不受影響</strong>。</div>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：發送失敗（深紅底）怎麼辦？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">把那幾列的「寄信狀態」<strong>改回「未發送」</strong>（手動改下拉選單），再重新執行發送。</div>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：今日配額不夠發完怎麼辦？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">系統會自動停止並將未發送的列還原為「未發送」狀態，<strong>明天繼續發</strong>即可。</div>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：網紅的回覆狀態沒有自動更新？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">確認有執行「⚙️ 安裝每日自動偵測」。系統每天早上 6 點才自動執行，若想立即查看可點「🔄 偵測回覆：所有信件」手動觸發。另確認網紅回信主旨格式與原信一致。</div>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：附件無法附上怎麼辦？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">確認 Drive 連結「<strong>你本身就有權限</strong>」，有問題可直接詢問負責人。</div>
-                        </div>
-                        <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;">
-                            <div style="font-size:13px;font-weight:700;color:#000;margin-bottom:5px;">Q：案子結束後要怎麼關閉自動偵測？</div>
-                            <div style="font-size:13px;color:#475569;line-height:1.7;">點選單「🗑 移除每日自動偵測」即可停止。</div>
-                        </div>
-                    </div>
-                </div><!-- /es-faq body -->
-            </div><!-- /FAQ row -->
- 
-        </div><!-- /mail-steps -->
-        </div><!-- /accordion container -->
-    </div><!-- /tool card -->
- 
-    <!-- 未來工具佔位 -->
-    <div style="background:#fff;border:2px dashed #e2e8f0;border-radius:16px;padding:28px;text-align:center;">
-        <div style="width:48px;height:48px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#cbd5e1;font-size:22px;">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-        <h3 style="font-size:15px;font-weight:700;color:#94a3b8;margin-bottom:6px;">更多工具指南即將推出</h3>
-        <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">有需要的工具歡迎到許願池留言，我們會優先建置。</p>
-        <button class="btn-outline" onclick="openModal('bugModal')" style="width:auto;display:inline-flex;">
-            <i class="fa-solid fa-lightbulb" style="margin-right:8px;"></i>我要許願
-        </button>
+    <!-- 動態工具卡片區 -->
+    <div id="resources-tool-list">
+        <div class="loading-state">載入中...</div>
     </div>
- 
+
 </div><!-- /#resources -->
 <!-- ===================== RESOURCES SECTION END ===================== -->
-
-
 
 
 <!-- ===================== JS FUNCTIONS（貼到 </script> 之前）===================== -->
@@ -2544,6 +2077,7 @@ function toggleResCard(id) {
             fetchStatsData();
             startNoticeCarousel();
             fetchFAQData();
+            fetchResourcesData();
         }
 
         // --- 網頁初始化 (EntryPoint) ---
@@ -3323,6 +2857,61 @@ function renderDashboardStats() {
             }
         }
  
+        async function fetchResourcesData() {
+            try {
+                const res = await fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now());
+                const tools = await res.json();
+                renderResourcesList(tools);
+            } catch(err) {
+                const c = document.getElementById('resources-tool-list');
+                if(c) c.innerHTML = '<div style="text-align:center;color:#e00;padding:30px;">載入失敗，請重新整理。</div>';
+            }
+        }
+
+        function renderResourcesList(tools) {
+            const container = document.getElementById('resources-tool-list');
+            if (!container) return;
+            if (!tools || tools.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:30px;">目前沒有工具指南。</div>';
+                return;
+            }
+            container.innerHTML = tools.map(tool => {
+                const chipsHtml = (tool.feature_chips || []).map(chip =>
+                    `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569;font-weight:500;">${chip}</span>`
+                ).join('');
+                const audColor = tool.audience === 'IM' ? 'background:#fff7ed;color:#ea580c;' :
+                                 tool.audience === 'BD' ? 'background:#eff6ff;color:#2563eb;' :
+                                 'background:#f1f5f9;color:#475569;';
+                return `
+                <div class="res-tool-card" data-category="${tool.category}" style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:20px;">
+                    <div style="padding:20px 24px;">
+                        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+                            <div style="width:48px;height:48px;background:rgba(225,79,75,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--brand-red);flex-shrink:0;">
+                                <i class="${tool.icon}"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                                    <span style="font-size:16px;font-weight:700;color:#0f172a;">${tool.title}</span>
+                                    <span style="font-size:11px;padding:2px 8px;background:#fff1f2;color:var(--brand-red);border-radius:4px;font-weight:600;">${tool.tag}</span>
+                                    <span style="font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;${audColor}">for ${tool.audience}</span>
+                                </div>
+                                <p style="font-size:13px;color:#64748b;line-height:1.6;margin:0;">${tool.description}</p>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">${chipsHtml}</div>
+                        <button onclick="showResourceDetail('${tool.tool_id}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--brand-red);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+                            <i class="fa-solid fa-book-open"></i> 查看詳細指南
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function showResourceDetail(toolId) {
+            // Phase 2 實作
+            alert('詳細頁面 Phase 2 實作中！');
+        }
+        
         function filterResources(cat) {
             document.querySelectorAll('.res-filter-btn').forEach(function(btn) {
                 btn.classList.toggle('active', btn.dataset.cat === cat);
