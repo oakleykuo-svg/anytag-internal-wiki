@@ -3395,7 +3395,9 @@ function renderDashboardStats() {
                         ${sectionsHtml.length ? sectionsHtml : '<p style="color:#94a3b8;text-align:center;">尚無內容。</p>'}
                     </div>
                 `;
-            // 移除 contenteditable、表格操作列、最後一欄刪除按鈕
+            // 修正連續 ol 的計數重置問題
+                fixConsecutiveOlCounters(container);
+                // 移除 contenteditable、表格操作列、最後一欄刪除按鈕
                 container.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
                 container.querySelectorAll('.res-table-wrap > div').forEach(el => el.style.display = 'none');
                 container.querySelectorAll('.res-table-wrap tbody tr td:last-child, .res-table-wrap thead tr th:last-child').forEach(el => el.style.display = 'none');
@@ -3407,6 +3409,28 @@ function renderDashboardStats() {
             }
         }
 
+        function fixConsecutiveOlCounters(container) {
+            function processParent(el) {
+                const children = Array.from(el.children);
+                let runningCount = 0;
+                let inRun = false;
+                children.forEach(child => {
+                    if (child.tagName === 'OL') {
+                        if (inRun && runningCount > 0) {
+                            child.setAttribute('start', runningCount + 1);
+                        }
+                        inRun = true;
+                        runningCount += Array.from(child.children).filter(c => c.tagName === 'LI').length;
+                    } else {
+                        runningCount = 0;
+                        inRun = false;
+                    }
+                    processParent(child);
+                });
+            }
+            processParent(container);
+        }
+        
         function toggleResAccordion(header) {
             const body = header.nextElementSibling;
             const icon = header.querySelector('.fa-chevron-down');
