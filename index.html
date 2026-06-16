@@ -3059,7 +3059,7 @@ function renderDashboardStats() {
             }).join('') + adminAddBtn;
         }
 
-        function showResourceDetail(toolId) {
+        async function showResourceDetail(toolId) {
             showPage('resource-detail');
             const container = document.getElementById('resource-detail-content');
             container.innerHTML = '<div class="loading-state">載入中...</div>';
