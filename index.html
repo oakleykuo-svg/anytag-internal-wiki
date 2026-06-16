@@ -2118,9 +2118,17 @@ function toggleResCard(id) {
                 const matchCat = currentFAQCategory === 'All' || item.category === currentFAQCategory;
                 const matchSearch = item.q.toLowerCase().includes(searchInput) || item.a.toLowerCase().includes(searchInput);
                 return matchCat && matchSearch;
-            });
+    });
 
-            if (filtered.length === 0) {
+    // 依分類順序排序，讓「全部」模式下同類別的 FAQ 聚在一起
+    const categoryOrder = ['AnyTag', 'AnyCreator', 'Marketplace'];
+    filtered.sort((a, b) => {
+        const ia = categoryOrder.indexOf(a.category);
+        const ib = categoryOrder.indexOf(b.category);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+
+    if (filtered.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8;">找不到相關問題，請嘗試不同關鍵字。</div>`;
                 return;
             }
