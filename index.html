@@ -3042,6 +3042,7 @@ function renderDashboardStats() {
                         <button type="button" onmousedown="event.preventDefault()" onclick="resFmt(${idx},'insertUnorderedList')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">• 清單</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resFmt(${idx},'insertOrderedList')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">1. 清單</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resAddLink(${idx})" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">🔗</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="resInsertCode(${idx})" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;font-family:monospace;">`code`</button>
                         <span style="border-left:1px solid #cbd5e1;margin:0 2px;"></span>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'step')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">＋步驟</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'warn')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">⚠️ 警告</button>
@@ -3063,6 +3064,14 @@ function renderDashboardStats() {
         function resAddLink(idx) {
             const url = prompt('請輸入連結網址：', 'https://');
             if (url) { document.getElementById('res-editor-' + idx).focus(); document.execCommand('createLink', false, url); }
+        }
+
+        function resInsertCode(idx) {
+            const editor = document.getElementById('res-editor-' + idx);
+            editor.focus();
+            const sel = window.getSelection();
+            const selectedText = sel.toString() || '程式碼';
+            document.execCommand('insertHTML', false, `<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#334155;">${selectedText}</code>`);
         }
 
         function resInsertBlock(idx, type) {
