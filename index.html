@@ -1512,6 +1512,68 @@
 
 </div><!-- /#resources -->
 
+<!-- Resource Admin Modal -->
+<div id="resourceAdminModal" class="modal" style="display:none;">
+  <div class="modal-content" style="max-width:640px;width:95%;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:16px;">
+    <div style="padding:18px 24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+      <h2 id="resource-modal-title" style="font-size:18px;font-weight:700;margin:0;">新增工具指南</h2>
+      <button onclick="closeModal('resourceAdminModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1;">✕</button>
+    </div>
+    <div style="padding:24px;overflow-y:auto;flex:1;">
+      <input type="hidden" id="res-edit-mode" value="add">
+      <input type="hidden" id="res-original-id" value="">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div style="grid-column:1/-1;">
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">工具名稱 *</label>
+          <input id="res-title" type="text" placeholder="例：信件發送與追蹤系統" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">Tool ID *</label>
+          <input id="res-tool-id" type="text" placeholder="例：email-system" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;font-family:monospace;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">圖示 (FA class) *</label>
+          <input id="res-icon" type="text" placeholder="例：fa-solid fa-paper-plane" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">分類</label>
+          <select id="res-category" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
+            <option value="mail">寄信 / 外聯</option>
+            <option value="data">數據追蹤</option>
+            <option value="report">報告產出</option>
+            <option value="ai">AI 工具</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">標籤</label>
+          <input id="res-tag" type="text" placeholder="例：System Guide" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">受眾</label>
+          <select id="res-audience" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;background:#fff;">
+            <option value="All">全體 (All)</option>
+            <option value="BD">業務 (BD)</option>
+            <option value="IM">執行 (IM)</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">簡介</label>
+          <textarea id="res-description" rows="3" placeholder="一句話說明這個工具的用途..." style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;resize:vertical;font-family:inherit;"></textarea>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label style="display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px;">功能標籤（逗號分隔）</label>
+          <input id="res-chips" type="text" placeholder="例：批次寄信,自動狀態追蹤,回覆自動偵測" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+        </div>
+      </div>
+    </div>
+    <div style="padding:16px 24px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;">
+      <button onclick="closeModal('resourceAdminModal')" style="padding:0 20px;height:36px;font-size:13px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;color:#475569;">取消</button>
+      <button id="res-save-btn" onclick="resourceAdminSave()" class="btn" style="padding:0 24px;height:36px;font-size:13px;width:auto;">儲存</button>
+    </div>
+  </div>
+</div>
+        
 <!-- 工具詳細頁 -->
 <div id="resource-detail" class="section">
     <div id="resource-detail-content" style="max-width:860px; margin:0 auto;">
@@ -2864,7 +2926,70 @@ function renderDashboardStats() {
                 document.getElementById('header-desc').innerText = map[pageId][1];
             }
         }
- 
+
+        async function openResourceModal(toolId = null) {
+            document.getElementById('res-edit-mode').value = toolId ? 'edit' : 'add';
+            document.getElementById('res-original-id').value = toolId || '';
+            document.getElementById('resource-modal-title').textContent = toolId ? '編輯工具基本資訊' : '新增工具指南';
+            document.getElementById('res-save-btn').textContent = '儲存';
+            document.getElementById('res-save-btn').disabled = false;
+
+            if (toolId) {
+                // 編輯模式：預填現有資料
+                const res = await fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now());
+                const tools = await res.json();
+                const tool = tools.find(t => t.tool_id === toolId);
+                if (tool) {
+                    document.getElementById('res-tool-id').value = tool.tool_id;
+                    document.getElementById('res-tool-id').readOnly = true;
+                    document.getElementById('res-tool-id').style.background = '#f8fafc';
+                    document.getElementById('res-title').value = tool.title;
+                    document.getElementById('res-icon').value = tool.icon;
+                    document.getElementById('res-category').value = tool.category;
+                    document.getElementById('res-tag').value = tool.tag;
+                    document.getElementById('res-audience').value = tool.audience;
+                    document.getElementById('res-description').value = tool.description;
+                    document.getElementById('res-chips').value = (tool.feature_chips || []).join(',');
+                }
+            } else {
+                // 新增模式：清空
+                ['res-tool-id','res-title','res-icon','res-tag','res-description','res-chips'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('res-tool-id').readOnly = false;
+                document.getElementById('res-tool-id').style.background = '#fff';
+                document.getElementById('res-category').value = 'mail';
+                document.getElementById('res-audience').value = 'All';
+            }
+            openModal('resourceAdminModal');
+        }
+
+        async function resourceAdminSave() {
+            const mode = document.getElementById('res-edit-mode').value;
+            const toolId = document.getElementById('res-tool-id').value.trim();
+            const title = document.getElementById('res-title').value.trim();
+            if (!toolId || !title) { alert('工具名稱和 Tool ID 為必填！'); return; }
+
+            const btn = document.getElementById('res-save-btn');
+            btn.textContent = '儲存中...'; btn.disabled = true;
+
+            await adminPost({
+                type: 'resources_index',
+                action: mode === 'edit' ? 'update' : 'add',
+                data: {
+                    tool_id:       toolId,
+                    title:         title,
+                    icon:          document.getElementById('res-icon').value.trim(),
+                    category:      document.getElementById('res-category').value,
+                    tag:           document.getElementById('res-tag').value.trim(),
+                    audience:      document.getElementById('res-audience').value,
+                    description:   document.getElementById('res-description').value.trim(),
+                    feature_chips: document.getElementById('res-chips').value.trim()
+                }
+            });
+
+            closeModal('resourceAdminModal');
+            await fetchResourcesData();
+        }
+
         async function fetchResourcesData() {
             try {
                 const res = await fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now());
@@ -2883,6 +3008,25 @@ function renderDashboardStats() {
                 container.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:30px;">目前沒有工具指南。</div>';
                 return;
             }
+            const adminAddBtn = isAdminUnlocked ? `
+                <div onclick="openResourceModal()" style="background:#fff;border:2px dashed #e2e8f0;border-radius:16px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--brand-red)'" onmouseout="this.style.borderColor='#e2e8f0'">
+                    <div style="width:48px;height:48px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--brand-red);font-size:22px;">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <h3 style="font-size:15px;font-weight:700;color:#475569;margin-bottom:6px;">新增工具指南</h3>
+                    <p style="font-size:13px;color:#94a3b8;margin:0;">點擊新增一個工具卡片</p>
+                </div>` : `
+                <div style="background:#fff;border:2px dashed #e2e8f0;border-radius:16px;padding:28px;text-align:center;">
+                    <div style="width:48px;height:48px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#cbd5e1;font-size:22px;">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <h3 style="font-size:15px;font-weight:700;color:#94a3b8;margin-bottom:6px;">更多工具指南即將推出</h3>
+                    <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">有需要的工具歡迎到許願池留言，我們會優先建置。</p>
+                    <button class="btn-outline" onclick="openModal('bugModal')" style="width:auto;display:inline-flex;">
+                        <i class="fa-solid fa-lightbulb" style="margin-right:8px;"></i>我要許願
+                    </button>
+                </div>`;
+
             container.innerHTML = tools.map(tool => {
                 const chipsHtml = (tool.feature_chips || []).map(chip =>
                     `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569;font-weight:500;">${chip}</span>`
@@ -2912,10 +3056,10 @@ function renderDashboardStats() {
                         </button>
                     </div>
                 </div>`;
-            }).join('');
+            }).join('') + adminAddBtn;
         }
 
-        async function showResourceDetail(toolId) {
+        function showResourceDetail(toolId) {
             showPage('resource-detail');
             const container = document.getElementById('resource-detail-content');
             container.innerHTML = '<div class="loading-state">載入中...</div>';
@@ -2947,10 +3091,15 @@ function renderDashboardStats() {
                 `).join('');
 
                 container.innerHTML = `
-                    <!-- 返回按鈕 -->
-                    <button onclick="showPage('resources'); fetchResourcesData();" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;margin-bottom:24px;">
-                        <i class="fa-solid fa-arrow-left"></i> 返回資源中心
-                    </button>
+                    <!-- 返回與編輯按鈕列 -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                        <button onclick="showPage('resources'); fetchResourcesData();" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;">
+                            <i class="fa-solid fa-arrow-left"></i> 返回資源中心
+                        </button>
+                        ${isAdminUnlocked ? `<button onclick="openResourceModal('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+                            <i class="fa-solid fa-pen"></i> 編輯基本資訊
+                        </button>` : ''}
+                    </div>
 
                     <!-- 工具標題區 -->
                     <div style="display:flex;align-items:flex-start;gap:16px;padding:24px;background:linear-gradient(135deg,#091632,#1e3a5f);border-radius:16px;color:#fff;margin-bottom:32px;">
