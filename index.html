@@ -257,6 +257,15 @@
         .res-detail-table th { background:#1e293b; color:#fff; padding:10px 14px; text-align:left; }
         .res-detail-table td { padding:10px 14px; border-bottom:1px solid #e2e8f0; }
         .res-detail-table tr:last-child td { border-bottom:none; }
+
+        /* 詳細頁巢狀清單樣式 */
+        #resource-detail-content ol,
+        #resource-detail-content ul { padding-left: 22px; margin: 6px 0 10px; }
+        #resource-detail-content li { margin-bottom: 4px; line-height: 1.7; }
+        #resource-detail-content ol ol, #resource-detail-content ul ul,
+        #resource-detail-content ol ul, #resource-detail-content ul ol { margin: 4px 0; }
+        #resource-detail-content ol { list-style-type: decimal; }
+        #resource-detail-content ul { list-style-type: disc; }
         
         .faq-rich-toolbar {
             display: flex; gap: 2px; padding: 6px 8px;
@@ -3326,10 +3335,18 @@ function renderDashboardStats() {
                     `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569;font-weight:500;">${chip}</span>`
                 ).join('');
 
-                const sectionsHtml = sections.map(sec => `
-                    <div style="margin-bottom:32px;">
-                        <h2 style="font-size:18px;font-weight:700;color:#0f172a;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #f1f5f9;">${sec.section_title}</h2>
-                        <div style="font-size:14px;line-height:1.8;color:#334155;">${sec.section_content}</div>
+                const sectionsHtml = sections.map((sec, idx) => `
+                    <div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:12px;transition:border-color 0.2s;">
+                        <div class="res-acc-header" onclick="toggleResAccordion(this)"
+                             style="padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;transition:background 0.2s;user-select:none;"
+                             onmouseover="this.style.background='#f1f5f9'"
+                             onmouseout="if(this.nextElementSibling.dataset.open!=='true')this.style.background='#f8fafc';else this.style.background='#fff';">
+                            <span style="font-size:15px;font-weight:700;color:#0f172a;">${sec.section_title}</span>
+                            <i class="fa-solid fa-chevron-down" style="color:#94a3b8;font-size:12px;transition:transform 0.3s;flex-shrink:0;margin-left:12px;"></i>
+                        </div>
+                        <div data-open="false" style="font-size:14px;line-height:1.8;color:#334155;overflow:hidden;transition:max-height 0.35s ease, padding 0.3s ease;max-height:0;padding:0 24px;">
+                            ${sec.section_content}
+                        </div>
                     </div>
                 `).join('');
 
