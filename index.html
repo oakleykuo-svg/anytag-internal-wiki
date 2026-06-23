@@ -2013,9 +2013,9 @@ function toggleResCard(id) {
         async function openCardAdmin() {
             openModal('cardAdminModal');
             document.getElementById('card-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
-            const res = await fetch(BLOG_SCRIPT_URL + '?type=quickaccess&t=' + Date.now());
-            const raw = await res.json();
-            cardAdminData = raw;
+            const { data, error } = await _sb.from('quick_access').select('*').order('sort_order', { ascending: true });
+            if (error) { console.error('Card admin load failed:', error); return; }
+            cardAdminData = data;
             renderCardAdminList();
         }
 
@@ -2089,21 +2089,18 @@ function toggleResCard(id) {
             const btn = document.getElementById('card-save-btn-' + idx);
             btn.textContent = '儲存中...'; btn.disabled = true;
             const item = cardAdminData[idx];
-            await adminPost({
-                type: 'quickaccess', action: 'update',
-                data: {
-                    rowIndex:      item.rowIndex,
-                    visible:       true,
-                    title:         document.getElementById('ce-title-' + idx).value,
-                    description:   document.getElementById('ce-desc-' + idx).value,
-                    tag:           document.getElementById('ce-tag-' + idx).value,
-                    icon:          document.getElementById('ce-icon-' + idx).value,
-                    role:          document.getElementById('ce-role-' + idx).value,
-                    button_text:   document.getElementById('ce-btn-text-' + idx).value,
-                    button_type:   document.getElementById('ce-btn-type-' + idx).value,
-                    button_target: document.getElementById('ce-btn-target-' + idx).value
-                }
-            });
+            const { error } = await _sb.from('quick_access').update({
+                visible:       true,
+                title:         document.getElementById('ce-title-' + idx).value,
+                description:   document.getElementById('ce-desc-' + idx).value,
+                tag:           document.getElementById('ce-tag-' + idx).value,
+                icon:          document.getElementById('ce-icon-' + idx).value,
+                role:          document.getElementById('ce-role-' + idx).value,
+                button_text:   document.getElementById('ce-btn-text-' + idx).value,
+                button_type:   document.getElementById('ce-btn-type-' + idx).value,
+                button_target: document.getElementById('ce-btn-target-' + idx).value
+            }).eq('id', item.id);
+            if (error) { console.error('Card save failed:', error); btn.textContent = '儲存'; btn.disabled = false; return; }
             await openCardAdmin();
         }
 
@@ -2111,7 +2108,8 @@ function toggleResCard(id) {
             if (!confirm('確定刪除這張卡片？')) return;
             const btn = document.getElementById('card-del-btn-' + idx);
             btn.textContent = '⏳'; btn.disabled = true;
-            await adminPost({ type: 'quickaccess', action: 'delete', data: { rowIndex: cardAdminData[idx].rowIndex } });
+            const { error } = await _sb.from('quick_access').delete().eq('id', cardAdminData[idx].id);
+            if (error) { console.error('Card delete failed:', error); btn.textContent = '🗑️'; btn.disabled = false; return; }
             await openCardAdmin();
         }
 
@@ -2121,20 +2119,18 @@ function toggleResCard(id) {
             if (!title || !desc) { alert('請填寫標題和說明文字！'); return; }
             const btn = document.getElementById('card-add-btn');
             btn.textContent = '新增中...'; btn.disabled = true;
-            await adminPost({
-                type: 'quickaccess', action: 'add',
-                data: {
-                    visible:       true,
-                    title,
-                    description:   desc,
-                    tag:           document.getElementById('card-new-tag').value.trim(),
-                    icon:          document.getElementById('card-new-icon').value.trim(),
-                    role:          document.getElementById('card-new-role').value,
-                    button_text:   document.getElementById('card-new-btn-text').value.trim(),
-                    button_type:   document.getElementById('card-new-btn-type').value,
-                    button_target: document.getElementById('card-new-btn-target').value.trim()
-                }
+            const { error } = await _sb.from('quick_access').insert({
+                visible:       true,
+                title,
+                description:   desc,
+                tag:           document.getElementById('card-new-tag').value.trim(),
+                icon:          document.getElementById('card-new-icon').value.trim(),
+                role:          document.getElementById('card-new-role').value,
+                button_text:   document.getElementById('card-new-btn-text').value.trim(),
+                button_type:   document.getElementById('card-new-btn-type').value,
+                button_target: document.getElementById('card-new-btn-target').value.trim()
             });
+            if (error) { console.error('Card add failed:', error); btn.textContent = '新增'; btn.disabled = false; return; }
             ['card-new-title','card-new-desc','card-new-tag','card-new-icon','card-new-btn-text','card-new-btn-target'].forEach(id => document.getElementById(id).value = '');
             btn.textContent = '新增'; btn.disabled = false;
             await openCardAdmin();
