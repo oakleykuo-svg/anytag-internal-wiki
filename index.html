@@ -1829,8 +1829,8 @@ function toggleResCard(id) {
             const container = document.getElementById('faqListContainer');
             if(container) container.innerHTML = '<div class="loading-state">載入中...</div>';
             try {
-                const res = await fetch(BLOG_SCRIPT_URL + '?type=faq&t=' + new Date().getTime());
-                const data = await res.json();
+                const { data, error } = await _sb.from('faq').select('*').order('sort_order', { ascending: true });
+                if (error) throw error;
                 faqData = data.map(item => ({
                     category: item.category,
                     q: item.question,
@@ -2178,7 +2178,6 @@ function toggleResCard(id) {
         }
 
         function initProtectedData() {
-            console.log("驗證通過，載入數據...");
             fetchQuickAccessData();
             fetchBlogPosts();
             fetchStatsData();
@@ -2748,8 +2747,8 @@ function renderDashboardStats() {
 
         async function fetchQuickAccessData() {
             try {
-                const res = await fetch(BLOG_SCRIPT_URL + '?type=quickaccess&t=' + new Date().getTime());
-                const data = await res.json();
+                const { data, error } = await _sb.from('quick_access').select('*').order('sort_order', { ascending: true });
+                if (error) throw error;
                 knowledgeBase = data;
                 renderCards();
             } catch(err) {
