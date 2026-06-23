@@ -3401,6 +3401,9 @@ function renderDashboardStats() {
                     `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569;font-weight:500;">${chip}</span>`
                 ).join('');
 
+                const adminBtns = isAdminUnlocked
+                    ? `<button onclick="openResourceModal('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;"><i class="fa-solid fa-pen"></i> 編輯此工具</button><button onclick="deleteResource('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;"><i class="fa-solid fa-trash"></i> 刪除工具</button>`
+                    : '';
                 const sectionsHtml = sections.map((sec, idx) => `
                     <div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:12px;transition:border-color 0.2s;">
                         <div class="res-acc-header" onclick="toggleResAccordion(this)"
@@ -3422,12 +3425,7 @@ function renderDashboardStats() {
                         <button onclick="showPage('resources'); fetchResourcesData();" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;">
                             <i class="fa-solid fa-arrow-left"></i> 返回資源中心
                         </button>
-                        ${isAdminUnlocked ? `<button onclick="openResourceModal('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
-                            <i class="fa-solid fa-pen"></i> 編輯此工具
-                        </button>
-                        <button onclick="deleteResource('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
-                            <i class="fa-solid fa-trash"></i> 刪除工具
-                        </button>` : ''}
+                        ${adminBtns}
                     </div>
 
                     <!-- 工具標題區 -->
