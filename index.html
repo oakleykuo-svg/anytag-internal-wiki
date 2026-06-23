@@ -3207,27 +3207,51 @@ function renderDashboardStats() {
             let toolId = document.getElementById('res-original-id').value;
             if (!toolId) toolId = 'tool-' + Date.now();
 
-            await Promise.all([
-                adminPost({
-                    type: 'resources_index',
-                    action: mode === 'edit' ? 'update' : 'add',
-                    data: {
-                        tool_id:       toolId,
-                        title:         title,
-                        icon:          document.getElementById('res-icon-select').value,
-                        category:      document.getElementById('res-category').value,
-                        tag:           document.getElementById('res-tag').value.trim(),
-                        audience:      document.getElementById('res-audience').value,
-                        description:   document.getElementById('res-description').value.trim(),
-                        feature_chips: document.getElementById('res-chips').value.trim()
-                    }
-                }),
-                adminPost({
-                    type: 'resources_content',
-                    action: 'replace_all',
-                    data: { tool_id: toolId, sections: resSections.filter(s => s.title || s.content) }
-                })
-            ]);
+            const indexData = {
+                tool_id:       toolId,
+                title,
+                icon:          document.getElementById('res-icon-select').value,
+                category:      document.getElementById('res-category').value,
+                tag:           document.getElementById('res-tag').value.trim(),
+                audience:      document.getElementById('res-audience').value,
+                description:   document.getElementById('res-description').value.trim(),
+                feature_chips: document.getElementById('res-chips').value.trim()
+            };
+
+            const newSections = resSections
+                .filter(s => s.title || s.content)
+                .map((s, i) => ({
+                    tool_id:         toolId,
+                    section_order:   i + 1,
+                    section_title:   s.title,
+                    section_content: s.content
+                }));
+
+            try {
+                // Step A：index 寫入 + content 舊資料刪除（可平行）
+                const indexOp = mode === 'edit'
+                    ? _sb.from('resources_index').update(indexData).eq('tool_id', toolId)
+                    : _sb.from('resources_index').insert(indexData);
+
+                const [{ error: indexError }, { error: deleteError }] = await Promise.all([
+                    indexOp,
+                    _sb.from('resources_content').delete().eq('tool_id', toolId)
+                ]);
+                if (indexError) throw indexError;
+                if (deleteError) throw deleteError;
+
+                // Step B：content 新資料插入（必須在刪除之後）
+                if (newSections.length > 0) {
+                    const { error: insertError } = await _sb.from('resources_content').insert(newSections);
+                    if (insertError) throw insertError;
+                }
+            } catch (err) {
+                console.error('Resource save failed:', err);
+                btn.textContent = '儲存';
+                btn.disabled = false;
+                alert('儲存失敗，請重試。');
+                return;
+            }
 
             closeModal('resourceAdminModal');
             if (mode === 'edit') {
@@ -3235,8 +3259,24 @@ function renderDashboardStats() {
             } else {
                 await fetchResourcesData();
             }
-        }
 
+        async function deleteResource(toolId) {
+            if (!confirm('確定刪除這個工具指南？此操作無法復原。')) return;
+            try {
+                const [{ error: contentError }, { error: indexError }] = await Promise.all([
+                    _sb.from('resources_content').delete().eq('tool_id', toolId),
+                    _sb.from('resources_index').delete().eq('tool_id', toolId)
+                ]);
+                if (contentError) throw contentError;
+                if (indexError) throw indexError;
+                showPage('resources');
+                await fetchResourcesData();
+            } catch (err) {
+                console.error('Resource delete failed:', err);
+                alert('刪除失敗，請重試。');
+            }
+        }
+            
         async function fetchResourcesData() {
             try {
                 const { data, error } = await _sb.from('resources_index').select('*');
@@ -3357,6 +3397,9 @@ function renderDashboardStats() {
                         </button>
                         ${isAdminUnlocked ? `<button onclick="openResourceModal('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
                             <i class="fa-solid fa-pen"></i> 編輯此工具
+                        </button>
+                        <button onclick="deleteResource('${toolId}')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#dc2626;border:1px solid #fecaca;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">
+                            <i class="fa-solid fa-trash"></i> 刪除工具
                         </button>` : ''}
                     </div>
 
