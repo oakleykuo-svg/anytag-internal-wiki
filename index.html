@@ -3286,6 +3286,7 @@ function renderDashboardStats() {
             } else {
                 await fetchResourcesData();
             }
+        }
 
         async function deleteResource(toolId) {
             if (!confirm('確定刪除這個工具指南？此操作無法復原。')) return;
