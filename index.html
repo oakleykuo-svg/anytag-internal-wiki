@@ -8,6 +8,7 @@
     <!-- 更新 Font Awesome 版本至 6.5.1 以支援 Threads 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             /* --- 登入遮罩樣式 --- */
@@ -583,12 +584,13 @@
 <!-- 全螢幕登入遮罩 -->
     <div id="login-overlay">
         <div class="login-box">
-            <div class="login-logo"><i class="fa-solid fa-lock"></i></div>
+            <div class="login-logo"><i class="fa-brands fa-google"></i></div>
             <div class="login-title">TAIWAN Support Hub</div>
-            <div class="login-desc">這是 AnyMind 內部機密網頁<br>請輸入密碼</div>
-            <input type="password" id="sitePassword" class="login-input" placeholder="請輸入密碼" onkeypress="if(event.keyCode==13) verifyLogin()">
-            <button class="login-btn" onclick="verifyLogin()">登入系統</button>
-            <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">密碼錯誤，請重新輸入</div>
+            <div class="login-desc">這是 AnyMind 內部機密網頁<br>請用公司 Google 帳號登入</div>
+            <button class="login-btn" id="google-login-btn" onclick="signInWithGoogle()">
+                <i class="fa-brands fa-google" style="margin-right: 8px;"></i>使用 Google 帳號登入
+            </button>
+            <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">此帳號無存取權限，請聯繫管理員。</div>
         </div>
     </div>
     <!-- 許願池 Modal (新版：自定義表單 - 已移除 Email) -->
@@ -1748,6 +1750,10 @@ function toggleResCard(id) {
         const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
         const STATS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec?type=stats"; 
 
+        // ── Supabase ──────────────────────────────────────
+        const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
         let faqData = [];
 
@@ -2136,25 +2142,7 @@ function toggleResCard(id) {
         /* ===== Card Admin 結束 ===== */
         
         function verifyAdminPassword() {
-            const input = prompt("請輸入 Admin 密碼：");
-            if (input === null) return;
-            const decoded = atob(ADMIN_KEY).split("").reverse().join("");
-            if (input === decoded) {
-                isAdminUnlocked = true;
-                sessionStorage.setItem('hub_admin', 'true');
-                document.getElementById('admin-lock-btn').style.display = 'none';
-                document.getElementById('admin-fab-container').style.display = 'flex';
-                if (currentResourceDetailId) {
-                    showResourceDetail(currentResourceDetailId);
-                } else {
-                    const resourcesSection = document.getElementById('resources');
-                    if (resourcesSection && resourcesSection.classList.contains('active')) {
-                        fetchResourcesData();
-                    }
-                }
-            } else {
-                alert("密碼錯誤。");
-            }
+            // 已由 Google OAuth 登入時決定身份，此函式保留為空
         }
 
         function toggleAdminMenu() {
@@ -2163,38 +2151,35 @@ function toggleResCard(id) {
             menu.style.display = isOpen ? 'none' : 'flex';
         }
 
-// --- 密碼混淆邏輯 ---
-        const ENCODED_KEY = "NjIwMm5hd2lhVGRuaU15bkE=";
-        const ADMIN_KEY = "bmltZEFnYVR5bkE=";
-
-        function verifyLogin() {
-            const input = document.getElementById('sitePassword').value;
-            // 解碼：Base64 -> 字串反轉
-            const decoded = atob(ENCODED_KEY).split("").reverse().join("");
-            
-            if (input === decoded) {
-                sessionStorage.setItem('hub_auth', 'true');
-                unlockSite();
-            } else {
+// --- Supabase 認證邏輯 ---
+        async function signInWithGoogle() {
+            const btn = document.getElementById('google-login-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>登入中...';
+            const { error } = await _sb.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.href }
+            });
+            if (error) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-brands fa-google" style="margin-right:8px;"></i>使用 Google 帳號登入';
                 document.getElementById('login-error').style.display = 'block';
-                document.getElementById('sitePassword').value = '';
             }
         }
 
-        function unlockSite() {
+        async function unlockSite(role) {
             const overlay = document.getElementById('login-overlay');
             if(overlay) overlay.style.display = 'none';
-            if (sessionStorage.getItem('hub_admin') === 'true') {
+            if (role === 'admin') {
                 isAdminUnlocked = true;
                 document.getElementById('admin-fab-container').style.display = 'flex';
-            } else {
-                document.getElementById('admin-lock-btn').style.display = 'flex';
             }
             initProtectedData();
         }
 
         function initProtectedData() {
             console.log("驗證通過，載入數據...");
+            fetchQuickAccessData();
             fetchBlogPosts();
             fetchStatsData();
             startNoticeCarousel();
@@ -2203,13 +2188,18 @@ function toggleResCard(id) {
         }
 
         // --- 網頁初始化 (EntryPoint) ---
-        window.onload = function() {
-            // 初始化不具敏感性的 UI 卡片
-            fetchQuickAccessData(); 
-            
-            // 檢查 Session 是否已經登入過
-            if (sessionStorage.getItem('hub_auth') === 'true') {
-                unlockSite();
+        window.onload = async function() {
+            // 檢查 Supabase Session
+            const { data: { session } } = await _sb.auth.getSession();
+            if (session) {
+                const email = session.user.email;
+                const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
+                if (userRow) {
+                    await unlockSite(userRow.role);
+                } else {
+                    await _sb.auth.signOut();
+                    document.getElementById('login-error').style.display = 'block';
+                }
             }
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
