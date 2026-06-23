@@ -1894,8 +1894,9 @@ function toggleResCard(id) {
         async function openFaqAdmin() {
             openModal('faqAdminModal');
             document.getElementById('faq-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
-            const res = await fetch(BLOG_SCRIPT_URL + '?type=faq&t=' + Date.now());
-            faqAdminData = await res.json();
+            const { data, error } = await _sb.from('faq').select('*').order('sort_order', { ascending: true });
+            if (error) { console.error('FAQ admin load failed:', error); return; }
+            faqAdminData = data;
             renderFaqAdminList();
         }
 
@@ -1961,15 +1962,12 @@ function toggleResCard(id) {
             const btn = document.getElementById('faq-save-btn-' + idx);
             btn.textContent = '儲存中...'; btn.disabled = true;
             const item = faqAdminData[idx];
-            await adminPost({
-                type: 'faq', action: 'update',
-                data: {
-                    rowIndex: item.rowIndex,
-                    category: document.getElementById('faq-edit-cat-' + idx).value,
-                    question: document.getElementById('faq-edit-q-' + idx).value,
-                    answer:   document.getElementById('faq-edit-a-' + idx).innerHTML
-                }
-            });
+            const { error } = await _sb.from('faq').update({
+                category: document.getElementById('faq-edit-cat-' + idx).value,
+                question: document.getElementById('faq-edit-q-' + idx).value,
+                answer:   document.getElementById('faq-edit-a-' + idx).innerHTML
+            }).eq('id', item.id);
+            if (error) { console.error('FAQ save failed:', error); btn.textContent = '儲存'; btn.disabled = false; return; }
             await openFaqAdmin();
         }
 
@@ -1977,7 +1975,8 @@ function toggleResCard(id) {
             if (!confirm('確定刪除這筆 FAQ？')) return;
             const btn = document.getElementById('faq-del-btn-' + idx);
             btn.textContent = '⏳'; btn.disabled = true;
-            await adminPost({ type: 'faq', action: 'delete', data: { rowIndex: faqAdminData[idx].rowIndex } });
+            const { error } = await _sb.from('faq').delete().eq('id', faqAdminData[idx].id);
+            if (error) { console.error('FAQ delete failed:', error); btn.textContent = '🗑️'; btn.disabled = false; return; }
             await openFaqAdmin();
         }
 
@@ -1988,7 +1987,8 @@ function toggleResCard(id) {
             if (!category || !question) { alert('請填寫分類和問題標題！'); return; }
             const btn = document.getElementById('faq-add-btn');
             btn.textContent = '新增中...'; btn.disabled = true;
-            await adminPost({ type: 'faq', action: 'add', data: { category, question, answer } });
+            const { error } = await _sb.from('faq').insert({ category, question, answer });
+            if (error) { console.error('FAQ add failed:', error); btn.textContent = '新增'; btn.disabled = false; return; }
             document.getElementById('faq-new-category').value = '';
             document.getElementById('faq-new-question').value = '';
             document.getElementById('faq-new-answer').innerHTML = '';
