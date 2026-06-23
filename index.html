@@ -2983,13 +2983,10 @@ function renderDashboardStats() {
             if (toolId) {
                 document.getElementById('res-sections-container').innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;font-size:13px;">載入中...</div>';
                 openModal('resourceAdminModal');
-                const [indexRes, contentRes] = await Promise.all([
-                    fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now()),
-                    fetch(BLOG_SCRIPT_URL + '?type=resources_content&id=' + toolId + '&t=' + Date.now())
+                const [{ data: tool }, { data: sections }] = await Promise.all([
+                    _sb.from('resources_index').select('*').eq('tool_id', toolId).single(),
+                    _sb.from('resources_content').select('*').eq('tool_id', toolId).order('section_order', { ascending: true })
                 ]);
-                const tools = await indexRes.json();
-                const sections = await contentRes.json();
-                const tool = tools.find(t => t.tool_id === toolId);
                 if (tool) {
                     document.getElementById('res-title').value = tool.title;
                     const matchIcon = RES_ICONS.find(ic => ic.cls === tool.icon);
@@ -2999,7 +2996,7 @@ function renderDashboardStats() {
                     document.getElementById('res-tag').value = tool.tag;
                     document.getElementById('res-audience').value = tool.audience;
                     document.getElementById('res-description').value = tool.description;
-                    document.getElementById('res-chips').value = (tool.feature_chips || []).join(',');
+                    document.getElementById('res-chips').value = tool.feature_chips || '';
                 }
                 resSections = sections.map(s => ({ title: s.section_title, content: s.section_content }));
             } else {
