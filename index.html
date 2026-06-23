@@ -2191,9 +2191,12 @@ function toggleResCard(id) {
         window.onload = async function() {
             // 檢查 Supabase Session
             const { data: { session } } = await _sb.auth.getSession();
+            console.log('[DEBUG] session:', session);
             if (session) {
                 const email = session.user.email;
-                const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
+                console.log('[DEBUG] email:', email);
+                const { data: userRow, error } = await _sb.from('allowed_users').select('role').eq('email', email).single();
+                console.log('[DEBUG] userRow:', userRow, 'error:', error);
                 if (userRow) {
                     await unlockSite(userRow.role);
                 } else {
