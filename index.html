@@ -3246,8 +3246,12 @@ function renderDashboardStats() {
 
         async function fetchResourcesData() {
             try {
-                const res = await fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now());
-                const tools = await res.json();
+                const { data, error } = await _sb.from('resources_index').select('*');
+                if (error) throw error;
+                const tools = data.map(tool => ({
+                    ...tool,
+                    feature_chips: tool.feature_chips ? tool.feature_chips.split(',').map(c => c.trim()) : []
+                }));
                 renderResourcesList(tools);
             } catch(err) {
                 const c = document.getElementById('resources-tool-list');
@@ -3320,15 +3324,14 @@ function renderDashboardStats() {
             container.innerHTML = '<div class="loading-state">載入中...</div>';
 
             try {
-                // 同時抓 index（找基本資料）和 content（段落內容）
-                const [indexRes, contentRes] = await Promise.all([
-                    fetch(BLOG_SCRIPT_URL + '?type=resources_index&t=' + Date.now()),
-                    fetch(BLOG_SCRIPT_URL + '?type=resources_content&id=' + toolId + '&t=' + Date.now())
+                // 直接用 tool_id 精準查詢
+                const [{ data: tool, error: toolError }, { data: sections, error: sectionsError }] = await Promise.all([
+                    _sb.from('resources_index').select('*').eq('tool_id', toolId).single(),
+                    _sb.from('resources_content').select('*').eq('tool_id', toolId).order('section_order', { ascending: true })
                 ]);
-                const allTools = await indexRes.json();
-                const sections = await contentRes.json();
-                const tool = allTools.find(t => t.tool_id === toolId);
-                if (!tool) throw new Error('找不到工具資料');
+                if (toolError || !tool) throw new Error('找不到工具資料');
+                if (sectionsError) throw sectionsError;
+                tool.feature_chips = tool.feature_chips ? tool.feature_chips.split(',').map(c => c.trim()) : [];
 
                 const audColor = tool.audience === 'IM' ? 'background:#fff7ed;color:#ea580c;' :
                                  tool.audience === 'BD' ? 'background:#eff6ff;color:#2563eb;' :
