@@ -2237,10 +2237,9 @@ function toggleResCard(id) {
         // --- 以下為其他全域函式 ---
 
         async function fetchStatsData() {
-            if(!STATS_SCRIPT_URL.startsWith("http")) return;
             try {
-                const response = await fetch(STATS_SCRIPT_URL + "&t=" + new Date().getTime());
-                const data = await response.json();
+                const { data, error } = await _sb.from('stats').select('*').order('date', { ascending: true });
+                if (error) throw error;
                 renderInfluencerStats(data);
             } catch (error) {
                 console.error("Fetch Stats Failed:", error);
@@ -2315,16 +2314,16 @@ function toggleResCard(id) {
                 `;
             };
 
-            document.getElementById('hero-total').innerText = Number(latest.total).toLocaleString();
-            renderPlatStat('stat-ig', latest.ig, weekAgoData.ig);
-            renderPlatStat('stat-fb', latest.fb, weekAgoData.fb);
-            renderPlatStat('stat-yt', latest.yt, weekAgoData.yt);
+            document.getElementById('hero-total').innerText = Number(latest.total_unique).toLocaleString();
+            renderPlatStat('stat-ig', latest.instagram, weekAgoData.instagram);
+            renderPlatStat('stat-fb', latest.facebook, weekAgoData.facebook);
+            renderPlatStat('stat-yt', latest.youtube, weekAgoData.youtube);
             renderPlatStat('stat-tiktok', latest.tiktok, weekAgoData.tiktok);
             renderPlatStat('stat-threads', latest.threads, weekAgoData.threads);
 
             const monthAgoData = findDataDaysAgo(data, 30);
-            if (monthAgoData && monthAgoData.total > 0) {
-                const growth = ((latest.total - monthAgoData.total) / monthAgoData.total) * 100;
+            if (monthAgoData && monthAgoData.total_unique > 0) {
+                const growth = ((latest.total_unique - monthAgoData.total_unique) / monthAgoData.total_unique) * 100;
                 const trendEl = document.getElementById('hero-trend');
                 if (growth >= 0) {
                     trendEl.innerHTML = `<span class="trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +${growth.toFixed(1)}% (MoM)</span>`;
@@ -2366,7 +2365,7 @@ function toggleResCard(id) {
             
             for(let i = 1; i < weeklySnapshots.length; i++) {
                  chartLabels.push(formatDate(weeklySnapshots[i].date));
-                 chartData.push(weeklySnapshots[i].total - weeklySnapshots[i-1].total);
+                 chartData.push(weeklySnapshots[i].total_unique - weeklySnapshots[i-1].total_unique);
             }
             
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
@@ -2421,14 +2420,13 @@ function toggleResCard(id) {
         }
 
         async function fetchBlogPosts() {
-            if(!BLOG_SCRIPT_URL.startsWith("http")) return;
             try {
-                const response = await fetch(BLOG_SCRIPT_URL + "?t=" + new Date().getTime());
-                const posts = await response.json();
-                allBlogPosts = posts; 
-                populateMonthFilter(); 
-                applyFilters(); 
-                renderDashboardStats(); 
+                const { data, error } = await _sb.from('posts').select('*').order('date', { ascending: false });
+                if (error) throw error;
+                allBlogPosts = data;
+                populateMonthFilter();
+                applyFilters();
+                renderDashboardStats();
             } catch (error) {
                 console.error("Fetch Blog Failed:", error);
             }
