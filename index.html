@@ -634,9 +634,8 @@
             <span class="close-modal" onclick="closeModal('postEditorModal')">&times;</span>
             <div class="editor-container">
                 <div class="editor-title">📝 新增產品日誌</div>
-                <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #0369a1;">
-                    <i class="fa-solid fa-circle-info"></i> <strong>使用說明：</strong>在此處編輯完內容後，點擊「複製整列資料」，然後到 Google Sheet 的 <strong>A 欄 (Date)</strong> 貼上即可。
-                </div>
+                <input type="hidden" id="post-edit-mode" value="add">
+                <input type="hidden" id="post-edit-id" value="">
                 <div class="grid-2" style="margin-bottom: 0;">
                     <div class="editor-field">
                         <label class="editor-label">日期 (Date)</label>
@@ -708,7 +707,7 @@
                     </div>
                 </div>
 
-                <button class="btn" onclick="copyRowForSheet()">📑 複製整列資料 (給 Sheet 用)</button>
+                <button class="btn" onclick="copyRowForSheet()">💾 儲存</button>
             </div>
         </div>
     </div>
@@ -2415,6 +2414,29 @@ function toggleResCard(id) {
             }
         }
 
+        async function editPost(postId) {
+            const post = allBlogPosts.find(p => p.id === postId);
+            if (!post) return;
+            document.getElementById('post-edit-mode').value = 'edit';
+            document.getElementById('post-edit-id').value = postId;
+            document.querySelector('#postEditorModal .editor-title').textContent = '✏️ 編輯產品日誌';
+            document.getElementById('postDate').value = post.date;
+            document.getElementById('postVersion').value = post.version || '';
+            document.getElementById('postTitle').value = post.title;
+            document.getElementById('postTags').value = post.tags || '';
+            document.getElementById('postStatus').value = post.status;
+            document.getElementById('postRole').value = post.role;
+            document.getElementById('richEditor').innerHTML = post.content;
+            openModal('postEditorModal');
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('確定刪除這篇日誌？此操作無法復原。')) return;
+            const { error } = await _sb.from('posts').delete().eq('id', postId);
+            if (error) { console.error('Post delete failed:', error); alert('刪除失敗，請重試。'); return; }
+            await fetchBlogPosts();
+        }
+        
         async function fetchBlogPosts() {
             try {
                 const { data, error } = await _sb.from('posts').select('*').order('date', { ascending: false });
@@ -2641,6 +2663,11 @@ function renderDashboardStats() {
                                 </div>
                             </div>
                             ${contentHtml}
+                            ${isAdminUnlocked ? `
+                            <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+                                <button onclick="editPost('${post.id}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                <button onclick="deletePost('${post.id}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:#fff5f5;color:#dc2626;border:1px solid #fecaca;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;"><i class="fa-solid fa-trash"></i> 刪除</button>
+                            </div>` : ''}
                         </div>
                     </div>
                 `;
@@ -2772,12 +2799,17 @@ function renderDashboardStats() {
         }
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function openEditor() {
-            const password = prompt("請輸入管理員密碼：");
-            if (password === "AnyTagAdmin") { 
-                openModal('postEditorModal');
-                document.getElementById('postDate').valueAsDate = new Date();
-                if(document.getElementById('richEditor').innerHTML.trim() === '') document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
-            } else if (password !== null) { alert("密碼錯誤，無法存取。"); }
+            document.getElementById('post-edit-mode').value = 'add';
+            document.getElementById('post-edit-id').value = '';
+            document.querySelector('#postEditorModal .editor-title').textContent = '📝 新增產品日誌';
+            document.getElementById('postDate').valueAsDate = new Date();
+            document.getElementById('postVersion').value = '';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postTags').value = '';
+            document.getElementById('postStatus').value = 'Released';
+            document.getElementById('postRole').value = 'All';
+            document.getElementById('richEditor').innerHTML = '<p>請在此輸入內容...</p>';
+            openModal('postEditorModal');
         }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
         window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.style.display = "none"; }
@@ -2823,6 +2855,8 @@ function renderDashboardStats() {
         }
 
         async function copyRowForSheet() {
+            const mode = document.getElementById('post-edit-mode').value;
+            const postId = document.getElementById('post-edit-id').value;
             const date = document.getElementById('postDate').value;
             const version = document.getElementById('postVersion').value;
             const title = document.getElementById('postTitle').value;
@@ -2834,20 +2868,22 @@ function renderDashboardStats() {
             if (!title.trim()) { alert("❌ 請填寫「標題 (Title)」！否則日誌無法顯示。"); return; }
 
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
-            const rowString = `${date}\t${version}\t${title}\t${tags}\t${cleanContent}\t${status}\t${role}`;
 
             const btn = document.querySelector('#postEditorModal .btn[onclick="copyRowForSheet()"]') || document.getElementById('post-submit-btn');
             const originalText = btn ? btn.textContent : '';
             if (btn) { btn.textContent = '送出中...'; btn.disabled = true; }
 
-            await adminPost({
-                type: 'post', action: 'add',
-                data: { date, version, title, tags, content: cleanContent, status, role }
-            });
+            const dbOp = mode === 'edit'
+                ? _sb.from('posts').update({ date, version, title, tags, content: cleanContent, status, role }).eq('id', postId)
+                : _sb.from('posts').insert({ date, version, title, tags, content: cleanContent, status, role });
+
+            const { error } = await dbOp;
 
             if (btn) { btn.textContent = originalText; btn.disabled = false; }
-            alert("✅ 已成功寫入 Google Sheet！");
+            if (error) { console.error('Post save failed:', error); alert('儲存失敗，請重試。'); return; }
+            alert(mode === 'edit' ? "✅ 已成功更新！" : "✅ 已成功新增！");
             closeModal('postEditorModal');
+            await fetchBlogPosts();
         }
 
         function logDecision(id, title) {
