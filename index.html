@@ -593,40 +593,6 @@
             <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">此帳號無存取權限，請聯繫管理員。</div>
         </div>
     </div>
-    <!-- 許願池 Modal (新版：自定義表單 - 已移除 Email) -->
-    <div id="bugModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <span class="close-modal" onclick="closeModal('bugModal')">&times;</span>
-            <div class="editor-container">
-                <div class="editor-title">💬 許願池 / 問題回報</div>
-                <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #0369a1;">
-                    <i class="fa-solid fa-lightbulb"></i> 感謝您的回饋！這些內容會直接傳送到產品部門，我們將盡快評估。
-                </div>
-
-                <div class="editor-field">
-                    <!-- 修改：提示改為 Slack ID -->
-                    <label class="editor-label">姓名 (Slack ID) *</label>
-                    <input type="text" id="bugName" class="editor-input" placeholder="例如：Alex (alex_chen)">
-                </div>
-
-                <div class="editor-field">
-                    <label class="editor-label">類型 *</label>
-                    <select id="bugType" class="editor-select">
-                        <option value="需求">🙏 新增需求 (Feature Request)</option>
-                        <option value="Bug">🐛 系統 Bug 回報</option>
-                        <option value="其他">💬 其他建議</option>
-                    </select>
-                </div>
-
-                <div class="editor-field">
-                    <label class="editor-label">問題或建議說明 *</label>
-                    <textarea id="bugContent" class="editor-textarea" placeholder="請詳細說明您遇到的狀況，或希望新增的功能..."></textarea>
-                </div>
-
-                <button class="btn" onclick="submitBugReport()">送出留言</button>
-            </div>
-        </div>
-    </div>
 
     <!-- 新增日誌編輯器 Modal -->
     <div id="postEditorModal" class="modal">
@@ -707,7 +673,7 @@
                     </div>
                 </div>
 
-                <button class="btn" onclick="copyRowForSheet()">💾 儲存</button>
+                <button class="btn" onclick="savePost()">💾 儲存</button>
             </div>
         </div>
     </div>
@@ -1793,11 +1759,7 @@ function toggleResCard(id) {
         <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-screwdriver-wrench"></i></button>
     </div>
     
-    <script>
-        const LOGGER_URL = "YOUR_PERSONAL_SCRIPT_URL_HERE"; 
-        const BLOG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec";
-        const BUG_REPORT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFr_Yv6q-pDPWxQEjMkTINrbJAwmCbcGLc_xaIUlK3IUsC1vXGIlPVlonxOFaEk880/exec";
-        const STATS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlMmOsrQd41GTZdC0MjS_z_ZZd8lIqEsb18n3oHis1rtNKLDtw2bd0DGDymWcedQPn9Q/exec?type=stats"; 
+    <script> 
 
         // ── Supabase ──────────────────────────────────────
         const SUPABASE_URL  = 'https://aywpfumdwktkavoxshtm.supabase.co';
@@ -2342,12 +2304,9 @@ function toggleResCard(id) {
         window.onload = async function() {
             // 檢查 Supabase Session
             const { data: { session } } = await _sb.auth.getSession();
-            console.log('[DEBUG] session:', session);
             if (session) {
                 const email = session.user.email;
-                console.log('[DEBUG] email:', email);
                 const { data: userRow, error } = await _sb.from('allowed_users').select('role').eq('email', email).single();
-                console.log('[DEBUG] userRow:', userRow, 'error:', error);
                 if (userRow) {
                     await unlockSite(userRow.role);
                 } else {
@@ -2843,53 +2802,6 @@ function renderDashboardStats() {
             document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
         }
 
-        function submitBugReport() {
-            if(!BUG_REPORT_SCRIPT_URL.startsWith("http") || BUG_REPORT_SCRIPT_URL.includes("YOUR_BUG_REPORT")) {
-                alert("⚠️ 請先設定許願池的 Google Apps Script 網址！");
-                return;
-            }
-
-            const name = document.getElementById('bugName').value;
-            const type = document.getElementById('bugType').value;
-            const content = document.getElementById('bugContent').value;
-            const slackId = document.getElementById('bugName').value; 
-
-            if (!name || !content) {
-                alert("❌ 請填寫姓名與內容！");
-                return;
-            }
-
-            const btn = document.querySelector('#bugModal .btn');
-            const originalText = btn.innerText;
-            btn.innerText = "傳送中...";
-            btn.disabled = true;
-
-            const payload = {
-                name: name,
-                type: type,
-                content: content,
-                email: "Slack: " + name 
-            };
-
-            fetch(BUG_REPORT_SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain" }, 
-                body: JSON.stringify(payload)
-            }).then(() => {
-                alert("✅ 留言已送出！感謝您的回饋。");
-                document.getElementById('bugName').value = '';
-                document.getElementById('bugContent').value = '';
-                closeModal('bugModal');
-            }).catch(err => {
-                alert("❌ 發送失敗，請稍後再試。");
-                console.error(err);
-            }).finally(() => {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            });
-        }
-
         let knowledgeBase = [];
 
         let currentRole = 'All';
@@ -2920,7 +2832,6 @@ function renderDashboardStats() {
                  if(btn.innerText.includes(role === 'All' ? '全部' : role)) btn.classList.add('active');
             });
             renderCards();
-            sendToSheet("Switch_Tab", role, "User switched view");
         }
 
         async function fetchQuickAccessData() {
@@ -3011,7 +2922,7 @@ function renderDashboardStats() {
             }
         }
 
-        async function copyRowForSheet() {
+        async function savePost() {
             const mode = document.getElementById('post-edit-mode').value;
             const postId = document.getElementById('post-edit-id').value;
             const date = document.getElementById('postDate').value;
@@ -3026,7 +2937,7 @@ function renderDashboardStats() {
 
             const cleanContent = content.replace(/(\r\n|\n|\r)/gm, "");
 
-            const btn = document.querySelector('#postEditorModal .btn[onclick="copyRowForSheet()"]') || document.getElementById('post-submit-btn');
+            const btn = document.querySelector('#postEditorModal .btn[onclick="savePost()"]') || document.getElementById('post-submit-btn');
             const originalText = btn ? btn.textContent : '';
             if (btn) { btn.textContent = '送出中...'; btn.disabled = true; }
 
@@ -3043,25 +2954,6 @@ function renderDashboardStats() {
             await fetchBlogPosts();
         }
 
-        function logDecision(id, title) {
-            const timestamp = new Date().toISOString();
-            console.log(`[Log] Time: ${timestamp} | User Clicked: ${title} (ID: ${id})`);
-            sendToSheet("Click", title, `ID: ${id}`);
-        }
-
-        function sendToSheet(action, label, detail) {
-             if(LOGGER_URL === "YOUR_PERSONAL_SCRIPT_URL_HERE") {
-                 console.log("Mock logging:", action, label, detail);
-                 return;
-             }
-             fetch(LOGGER_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify({ action, label, detail, user: "Unknown" })
-            }).catch(e => console.error("Log failed", e));
-        }
-
         function smartSearch() {
             if (searchDebounce) clearTimeout(searchDebounce);
             let input = document.getElementById('searchInput').value.toLowerCase();
@@ -3074,7 +2966,6 @@ function renderDashboardStats() {
                 if (item.title.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input) || item.tag.toLowerCase().includes(input) || (item.keywords && item.keywords.toLowerCase().includes(input))) {
                     foundCount++;
                     let alertHtml = item.riskLevel === 'high' ? `<div style="color:red; font-size:12px; margin-bottom:5px;"><i class="fa-solid fa-triangle-exclamation"></i> 注意：此為高風險操作</div>` : '';
-                    if (item.riskLevel === 'high') sendToSheet("Risk_Alert", input, `Triggered by: ${item.title}`);
                     let actionHtml = item.customHtml || `<a href="${item.btnLink}" target="_blank" class="${item.btnStyle}" onclick="logDecision('${item.id}', '${item.title}')">${item.btnText}</a>`;
                     const cardHTML = `<div class="card" style="border: ${item.riskLevel === 'high' ? '1px solid red' : ''}"><div class="card-icon"><i class="${item.icon}"></i></div><span class="tag ${item.tagClass}">${item.tag}</span>${alertHtml}<h3>${item.title}</h3><p>${item.desc}</p>${actionHtml}</div>`;
                     container.innerHTML += cardHTML;
@@ -3083,7 +2974,6 @@ function renderDashboardStats() {
             
             if (foundCount === 0) {
                 container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:20px;">找不到相關結果，請嘗試搜尋「SOP」或「數據」。</div>`;
-                if(input.length > 1) { searchDebounce = setTimeout(() => { sendToSheet("Search_Failed", input, "No Result Found"); }, 2000); }
             }
         }
 
