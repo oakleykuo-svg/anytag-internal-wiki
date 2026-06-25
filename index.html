@@ -1496,8 +1496,8 @@
                 <!-- 底部提示 -->
                 <div style="margin-top: 30px; padding: 20px; background: #fff; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0;">
                     <p style="color: #64748b; font-size: 14px; margin-bottom: 10px;">找不到您要的答案？</p>
-                    <button class="btn" style="width: auto; display: inline-flex;" onclick="openModal('bugModal')">
-                        <i class="fa-solid fa-paper-plane" style="margin-right: 8px;"></i> 提交問題回報 (許願池)
+                    <button class="btn" style="width: auto; display: inline-flex;" onclick="window.open('https://slack.com/app_redirect?team=T1DU69V8A&channel=U05VDGNG5NU', '_blank')">
+                        <i class="fa-brands fa-slack" style="margin-right: 8px;"></i> 傳訊息給 Kiki
                     </button>
                 </div>
             </div>
@@ -1649,6 +1649,55 @@ function toggleResCard(id) {
 
     </main>
 
+    <!-- Stats Admin Modal -->
+    <div id="statsAdminModal" class="modal" style="display:none;">
+      <div class="modal-content" style="max-width:860px; width:95%; max-height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:16px;">
+        <div style="padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+          <h2 style="font-size:18px; font-weight:700; margin:0;">📊 Stats 管理</h2>
+          <button onclick="closeModal('statsAdminModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1;">✕</button>
+        </div>
+        <div style="padding:16px 24px; border-bottom:1px solid #e2e8f0; background:#f8fafc; flex-shrink:0;">
+          <div style="font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;">＋ 新增快照</div>
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">日期 *</label>
+              <input type="date" id="stats-new-date" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Instagram</label>
+              <input type="number" id="stats-new-instagram" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Facebook</label>
+              <input type="number" id="stats-new-facebook" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">YouTube</label>
+              <input type="number" id="stats-new-youtube" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">TikTok</label>
+              <input type="number" id="stats-new-tiktok" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Threads</label>
+              <input type="number" id="stats-new-threads" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Total Unique *</label>
+              <input type="number" id="stats-new-total" placeholder="0" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+              <button id="stats-add-btn" onclick="statsAdminAdd()" class="btn" style="padding:0 24px;height:38px;font-size:13px;width:100%;">新增</button>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-y:auto; flex:1; padding:16px 24px;">
+          <div id="stats-admin-list"><div style="text-align:center;color:#999;padding:30px;">載入中...</div></div>
+        </div>
+      </div>
+    </div>
+    
     <!-- FAQ Admin Modal -->
     <div id="faqAdminModal" class="modal" style="display:none;">
       <div class="modal-content" style="max-width:820px; width:95%; max-height:90vh; display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:16px;">
@@ -1739,6 +1788,7 @@ function toggleResCard(id) {
             <button class="admin-fab-item" onclick="toggleAdminMenu(); openFaqAdmin()"><span><i class="fa-solid fa-file-pen" style="margin-right:6px;"></i>FAQ 管理</span></button>
             <button class="admin-fab-item" onclick="toggleAdminMenu(); openCardAdmin()"><span><i class="fa-solid fa-table-cells-large" style="margin-right:6px;"></i>卡片管理</span></button>
             <button class="admin-fab-item" onclick="openModal('postEditorModal')"><span><i class="fa-solid fa-rocket" style="margin-right:6px;"></i>產品更新</span></button>
+            <button class="admin-fab-item" onclick="toggleAdminMenu(); openStatsAdmin()"><span><i class="fa-solid fa-chart-bar" style="margin-right:6px;"></i>Stats 管理</span></button>
         </div>
         <button onclick="toggleAdminMenu()" style="width:50px; height:50px; border-radius:50%; background:var(--brand-red); color:#fff; border:none; cursor:pointer; font-size:22px; box-shadow:0 4px 16px rgba(225,79,75,0.4); display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-screwdriver-wrench"></i></button>
     </div>
@@ -2126,6 +2176,122 @@ function toggleResCard(id) {
             await openCardAdmin();
         }
         /* ===== Card Admin 結束 ===== */
+
+        /* ===== Stats Admin ===== */
+        let statsAdminData = [];
+
+        async function openStatsAdmin() {
+            openModal('statsAdminModal');
+            document.getElementById('stats-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
+            const { data, error } = await _sb.from('stats').select('*').order('date', { ascending: false });
+            if (error) { console.error('Stats admin load failed:', error); return; }
+            statsAdminData = data;
+            renderStatsAdminList();
+        }
+
+        function renderStatsAdminList() {
+            const container = document.getElementById('stats-admin-list');
+            if (!statsAdminData.length) {
+                container.innerHTML = '<div style="text-align:center;color:#999;padding:30px;">目前沒有快照資料</div>';
+                return;
+            }
+            container.innerHTML = statsAdminData.map(function(item, idx) {
+                return '<div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; margin-bottom:8px;">' +
+                    '<div id="stats-view-' + idx + '" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">' +
+                        '<div style="flex:1; min-width:0;">' +
+                            '<div style="font-weight:700; font-size:14px; color:#1e293b; margin-bottom:6px;">' + item.date + '</div>' +
+                            '<div style="display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:#64748b;">' +
+                                '<span><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> ' + (item.instagram || 0).toLocaleString() + '</span>' +
+                                '<span><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> ' + (item.facebook || 0).toLocaleString() + '</span>' +
+                                '<span><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> ' + (item.youtube || 0).toLocaleString() + '</span>' +
+                                '<span><i class="fa-brands fa-tiktok"></i> ' + (item.tiktok || 0).toLocaleString() + '</span>' +
+                                '<span><i class="fa-brands fa-threads"></i> ' + (item.threads || 0).toLocaleString() + '</span>' +
+                                '<span style="font-weight:700; color:#0f172a;">Total: ' + (item.total_unique || 0).toLocaleString() + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="display:flex; gap:4px; flex-shrink:0;">' +
+                            '<button onclick="statsAdminEdit(' + idx + ')" title="編輯" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; cursor:pointer; width:32px; height:32px; font-size:14px; display:flex; align-items:center; justify-content:center;">✏️</button>' +
+                            '<button id="stats-del-btn-' + idx + '" onclick="statsAdminDelete(' + idx + ')" title="刪除" style="background:#fff5f5; border:1px solid #fecaca; border-radius:6px; cursor:pointer; width:32px; height:32px; font-size:14px; display:flex; align-items:center; justify-content:center;">🗑️</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div id="stats-edit-' + idx + '" style="display:none;">' +
+                        '<div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:10px;">' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">日期 *</label><input type="date" id="stats-edit-date-' + idx + '" value="' + item.date + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Instagram</label><input type="number" id="stats-edit-ig-' + idx + '" value="' + (item.instagram || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Facebook</label><input type="number" id="stats-edit-fb-' + idx + '" value="' + (item.facebook || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">YouTube</label><input type="number" id="stats-edit-yt-' + idx + '" value="' + (item.youtube || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">TikTok</label><input type="number" id="stats-edit-tt-' + idx + '" value="' + (item.tiktok || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Threads</label><input type="number" id="stats-edit-th-' + idx + '" value="' + (item.threads || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                            '<div><label style="font-size:11px;font-weight:700;color:#64748b;display:block;margin-bottom:3px;">Total Unique *</label><input type="number" id="stats-edit-total-' + idx + '" value="' + (item.total_unique || 0) + '" style="width:100%;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;"></div>' +
+                        '</div>' +
+                        '<div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">' +
+                            '<button onclick="statsAdminCancelEdit(' + idx + ')" style="padding:0 16px; height:34px; font-size:13px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; color:#475569;">取消</button>' +
+                            '<button id="stats-save-btn-' + idx + '" onclick="statsAdminSave(' + idx + ')" class="btn" style="padding:0 20px; height:34px; font-size:13px; width:auto;">儲存</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function statsAdminEdit(idx) {
+            document.getElementById('stats-view-' + idx).style.display = 'none';
+            document.getElementById('stats-edit-' + idx).style.display = 'block';
+        }
+
+        function statsAdminCancelEdit(idx) {
+            document.getElementById('stats-view-' + idx).style.display = 'flex';
+            document.getElementById('stats-edit-' + idx).style.display = 'none';
+        }
+
+        async function statsAdminSave(idx) {
+            const btn = document.getElementById('stats-save-btn-' + idx);
+            btn.textContent = '儲存中...'; btn.disabled = true;
+            const { error } = await _sb.from('stats').update({
+                date:         document.getElementById('stats-edit-date-' + idx).value,
+                instagram:    parseInt(document.getElementById('stats-edit-ig-' + idx).value) || 0,
+                facebook:     parseInt(document.getElementById('stats-edit-fb-' + idx).value) || 0,
+                youtube:      parseInt(document.getElementById('stats-edit-yt-' + idx).value) || 0,
+                tiktok:       parseInt(document.getElementById('stats-edit-tt-' + idx).value) || 0,
+                threads:      parseInt(document.getElementById('stats-edit-th-' + idx).value) || 0,
+                total_unique: parseInt(document.getElementById('stats-edit-total-' + idx).value) || 0
+            }).eq('id', statsAdminData[idx].id);
+            if (error) { console.error('Stats save failed:', error); btn.textContent = '儲存'; btn.disabled = false; return; }
+            await openStatsAdmin();
+            await fetchStatsData();
+        }
+
+        async function statsAdminDelete(idx) {
+            if (!confirm('確定刪除這筆快照？此操作無法復原。')) return;
+            const btn = document.getElementById('stats-del-btn-' + idx);
+            btn.textContent = '⏳'; btn.disabled = true;
+            const { error } = await _sb.from('stats').delete().eq('id', statsAdminData[idx].id);
+            if (error) { console.error('Stats delete failed:', error); btn.textContent = '🗑️'; btn.disabled = false; return; }
+            await openStatsAdmin();
+            await fetchStatsData();
+        }
+
+        async function statsAdminAdd() {
+            const date  = document.getElementById('stats-new-date').value;
+            const total = document.getElementById('stats-new-total').value;
+            if (!date || !total) { alert('請填寫日期與 Total Unique！'); return; }
+            const btn = document.getElementById('stats-add-btn');
+            btn.textContent = '新增中...'; btn.disabled = true;
+            const { error } = await _sb.from('stats').insert({
+                date,
+                instagram:    parseInt(document.getElementById('stats-new-instagram').value) || 0,
+                facebook:     parseInt(document.getElementById('stats-new-facebook').value) || 0,
+                youtube:      parseInt(document.getElementById('stats-new-youtube').value) || 0,
+                tiktok:       parseInt(document.getElementById('stats-new-tiktok').value) || 0,
+                threads:      parseInt(document.getElementById('stats-new-threads').value) || 0,
+                total_unique: parseInt(total) || 0
+            });
+            if (error) { console.error('Stats add failed:', error); btn.textContent = '新增'; btn.disabled = false; return; }
+            ['stats-new-date','stats-new-instagram','stats-new-facebook','stats-new-youtube','stats-new-tiktok','stats-new-threads','stats-new-total'].forEach(function(id) { document.getElementById(id).value = ''; });
+            btn.textContent = '新增'; btn.disabled = false;
+            await openStatsAdmin();
+            await fetchStatsData();
+        }
+        /* ===== Stats Admin 結束 ===== */
         
         function verifyAdminPassword() {
             // 已由 Google OAuth 登入時決定身份，此函式保留為空
@@ -3341,8 +3507,8 @@ function renderDashboardStats() {
                     </div>
                     <h3 style="font-size:15px;font-weight:700;color:#94a3b8;margin-bottom:6px;">更多工具指南即將推出</h3>
                     <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">有需要的工具歡迎到許願池留言，我們會優先建置。</p>
-                    <button class="btn-outline" onclick="openModal('bugModal')" style="width:auto;display:inline-flex;">
-                        <i class="fa-solid fa-lightbulb" style="margin-right:8px;"></i>我要許願
+                    <button class="btn-outline" onclick="window.open('https://slack.com/app_redirect?team=T1DU69V8A&channel=U05VDGNG5NU', '_blank')" style="width:auto;display:inline-flex;">
+                        <i class="fa-brands fa-slack" style="margin-right:8px;"></i>傳訊息給 Kiki
                     </button>
                 </div>`;
 
