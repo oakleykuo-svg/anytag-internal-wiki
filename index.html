@@ -2301,19 +2301,29 @@ function toggleResCard(id) {
         }
 
         // --- 網頁初始化 (EntryPoint) ---
-        window.onload = async function() {
-            // 檢查 Supabase Session
-            const { data: { session } } = await _sb.auth.getSession();
-            if (session) {
-                const email = session.user.email;
-                const { data: userRow, error } = await _sb.from('allowed_users').select('role').eq('email', email).single();
-                if (userRow) {
-                    await unlockSite(userRow.role);
-                } else {
-                    await _sb.auth.signOut();
-                    document.getElementById('login-error').style.display = 'block';
-                }
+        async function handleSession(session) {
+            if (!session) return;
+            const email = session.user.email;
+            const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
+            if (userRow) {
+                await unlockSite(userRow.role);
+            } else {
+                await _sb.auth.signOut();
+                document.getElementById('login-error').style.display = 'block';
             }
+        }
+
+        window.onload = async function() {
+            // 監聽 OAuth 重導向後的登入事件（處理首次登入）
+            _sb.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN') {
+                    await handleSession(session);
+                }
+            });
+
+            // 檢查已存在的 Session（處理已登入過的使用者）
+            const { data: { session } } = await _sb.auth.getSession();
+            await handleSession(session);
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
             if (initHash) {
