@@ -852,9 +852,9 @@
                     </div>
                 </div>
 
-                <!-- 右側：成長趨勢圖 -->
+                <!-- 右側：累積成長趨勢圖 -->
                 <div class="chart-section">
-                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 每週網紅新增數 (Weekly Growth)</div>
+                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📈 網紅總數成長趨勢 (Total Unique Trend)</div>
                     <div style="flex:1; position:relative;">
                         <canvas id="influencerGrowthChart"></canvas>
                     </div>
@@ -2540,72 +2540,73 @@ function toggleResCard(id) {
                 }
             }
 
-            const weeklySnapshots = [];
-            let currentRef = data[data.length - 1];
-            weeklySnapshots.push(currentRef);
-            
-            for (let i = 0; i < 8; i++) {
-                const targetDate = new Date(currentRef.date);
-                targetDate.setDate(targetDate.getDate() - 7);
-                let closest = null;
-                let minDiff = Infinity;
-                let currentIndex = data.indexOf(currentRef);
-                
-                for(let j = currentIndex - 1; j >= 0; j--) {
-                     const d = new Date(data[j].date);
-                     const diff = Math.abs(d - targetDate);
-                     if(diff < minDiff) {
-                         minDiff = diff;
-                         closest = data[j];
-                     }
-                }
-                
-                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { 
-                     weeklySnapshots.unshift(closest); 
-                     currentRef = closest;
-                } else {
-                     break; 
-                }
-            }
-            
-            const chartLabels = [];
-            const chartData = [];
-            
-            for(let i = 1; i < weeklySnapshots.length; i++) {
-                 chartLabels.push(formatDate(weeklySnapshots[i].date));
-                 chartData.push(weeklySnapshots[i].total_unique - weeklySnapshots[i-1].total_unique);
-            }
-            
+            // 取最近 30 天內的資料點畫成累積趨勢線
+            const thirtyDaysAgo = new Date(latest.date);
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recentData = data.filter(d => new Date(d.date) >= thirtyDaysAgo);
+
+            const CLEANUP_DATE = '2026-06-30'; // 資料庫清理日期標記
+
+            const chartLabels = recentData.map(d => formatDate(d.date));
+            const chartData = recentData.map(d => d.total_unique);
+            const cleanupIndex = recentData.findIndex(d => d.date === CLEANUP_DATE);
+
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
             
             if (growthChartInstance) {
                 growthChartInstance.destroy();
             }
 
+            const cleanupLinePlugin = {
+                id: 'cleanupLine',
+                afterDraw(chart) {
+                    if (cleanupIndex === -1) return;
+                    const xScale = chart.scales.x;
+                    const yScale = chart.scales.y;
+                    const xPos = xScale.getPixelForValue(cleanupIndex);
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash([4, 4]);
+                    ctx.moveTo(xPos, yScale.top);
+                    ctx.lineTo(xPos, yScale.bottom);
+                    ctx.strokeStyle = '#94a3b8';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '11px Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('資料庫清理', xPos, yScale.top + 12);
+                    ctx.restore();
+                }
+            };
+
             growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Weekly New Influencers',
+                        label: 'Total Unique Influencers',
                         data: chartData,
                         borderColor: '#E14F4B',
                         backgroundColor: 'rgba(225, 79, 75, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#E14F4B',
-                        pointRadius: 5,
+                        pointRadius: 4,
                         fill: true,
                         tension: 0.3
                     }]
                 },
+                plugins: [cleanupLinePlugin],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { 
-                            beginAtZero: true, 
+                            beginAtZero: false, 
                             grid: { borderDash: [2, 4] }
                         },
                         x: { grid: { display: false } }
