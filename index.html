@@ -2398,7 +2398,13 @@ function toggleResCard(id) {
             // 檢查已存在的 Session（處理已登入過的使用者）
             // 加上自我修復機制：若 localStorage 內的 session 資料損毀，自動清除並重新載入
             try {
-                const { data: { session }, error: sessionError } = await _sb.auth.getSession();
+                // 加上 5 秒逾時保護：如果 getSession() 卡住不回應（例如擴充功能干擾），
+                // 就不再乾等，直接視為沒有 session，顯示登入畫面
+                const sessionPromise = _sb.auth.getSession();
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('getSession timeout')), 3000)
+                );
+                const { data: { session }, error: sessionError } = await Promise.race([sessionPromise, timeoutPromise]);
                 if (sessionError) throw sessionError;
                 if (session) {
                     await handleSession(session);
