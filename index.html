@@ -588,7 +588,10 @@
 <body>
 <!-- 全螢幕登入遮罩 -->
     <div id="login-overlay">
-        <div class="login-box">
+        <div id="login-loading">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 32px; color: var(--brand-red);"></i>
+        </div>
+        <div class="login-box" id="login-box" style="display:none;">
             <div class="login-logo"><i class="fa-brands fa-google"></i></div>
             <div class="login-title">TAIWAN Support Hub</div>
             <div class="login-desc">這是 AnyMind 內部機密網頁<br>請用公司 Google 帳號登入</div>
@@ -781,9 +784,14 @@
                 <h1 id="header-title">AnyTag/AnyCreator Support Hub</h1>
                 <p id="header-desc">Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！</p>
             </div>
-            <div class="search-box">
-                <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                <input type="text" id="searchInput" placeholder="搜尋 SOP、FAQ 或資源..." onkeyup="smartSearch()">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div class="search-box">
+                    <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" id="searchInput" placeholder="搜尋 SOP、FAQ 或資源..." onkeyup="smartSearch()">
+                </div>
+                <button onclick="logoutUser()" title="登出" style="width:42px; height:42px; border-radius:50%; background:#fff; border:none; box-shadow:var(--shadow-sm); cursor:pointer; color:#64748b; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
         </div>
 
@@ -2305,6 +2313,12 @@ function toggleResCard(id) {
             menu.style.display = isOpen ? 'none' : 'flex';
         }
 
+        async function logoutUser() {
+            if (!confirm('確定要登出嗎？')) return;
+            await _sb.auth.signOut();
+            window.location.reload();
+        }
+
 // --- Supabase 認證邏輯 ---
         async function signInWithGoogle() {
             const btn = document.getElementById('google-login-btn');
@@ -2341,6 +2355,13 @@ function toggleResCard(id) {
         }
 
         // --- 網頁初始化 (EntryPoint) ---
+        function showLoginForm() {
+            const loading = document.getElementById('login-loading');
+            const box = document.getElementById('login-box');
+            if (loading) loading.style.display = 'none';
+            if (box) box.style.display = 'block';
+        }
+
         async function handleSession(session) {
             if (!session) return;
             const email = session.user.email;
@@ -2352,10 +2373,14 @@ function toggleResCard(id) {
             } else {
                 await _sb.auth.signOut();
                 document.getElementById('login-error').style.display = 'block';
+                showLoginForm();
             }
         }
 
         window.onload = async function() {
+            // 判斷網址是否帶有 OAuth 重導向的 token（首次登入流程）
+            const hasAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+
             // 監聽 OAuth 重導向後的登入事件（處理首次登入）
             _sb.auth.onAuthStateChange(async (event, session) => {
                 if (event === 'SIGNED_IN') {
@@ -2365,7 +2390,20 @@ function toggleResCard(id) {
 
             // 檢查已存在的 Session（處理已登入過的使用者）
             const { data: { session } } = await _sb.auth.getSession();
-            await handleSession(session);
+            if (session) {
+                await handleSession(session);
+            } else if (!hasAuthRedirect) {
+                // 沒有 session，也不是 OAuth 重導向 → 直接顯示登入畫面
+                showLoginForm();
+            }
+
+            // 保險機制：3 秒後如果還卡在載入動畫，強制顯示登入表單
+            setTimeout(() => {
+                const box = document.getElementById('login-box');
+                if (box && box.style.display === 'none' && document.getElementById('login-overlay').style.display !== 'none') {
+                    showLoginForm();
+                }
+            }, 3000);
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
             if (initHash) {
