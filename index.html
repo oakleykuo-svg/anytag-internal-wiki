@@ -1789,8 +1789,12 @@ function toggleResCard(id) {
         // 監聽器要在 client 建立後立刻註冊，不能等到 window.onload
         // 否則 Supabase 處理網址裡 token 的事件會在監聽器掛上去之前就發生並漏接
         _sb.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN') {
-                await handleSession(session);
+            if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+                if (session) {
+                    await handleSession(session);
+                } else if (event === 'INITIAL_SESSION') {
+                    showLoginForm();
+                }
             }
         });
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
@@ -2403,32 +2407,8 @@ function toggleResCard(id) {
             // 判斷網址是否帶有 OAuth 重導向的 token（首次登入流程）
             const hasAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
 
-            // 檢查已存在的 Session（處理已登入過的使用者）
-            // 加上自我修復機制：若 localStorage 內的 session 資料損毀，自動清除並重新載入
-            try {
-                // 加上 5 秒逾時保護：如果 getSession() 卡住不回應（例如擴充功能干擾），
-                // 就不再乾等，直接視為沒有 session，顯示登入畫面
-                const sessionPromise = _sb.auth.getSession();
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('getSession timeout')), 1500)
-                );
-                const { data: { session }, error: sessionError } = await Promise.race([sessionPromise, timeoutPromise]);
-                if (sessionError) throw sessionError;
-                if (session) {
-                    await handleSession(session);
-                } else if (!hasAuthRedirect) {
-                    showLoginForm();
-                }
-            } catch (err) {
-                console.error('Session 讀取異常，自動清除損毀資料並重新載入:', err);
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith('sb-') || key.includes('supabase')) {
-                        localStorage.removeItem(key);
-                    }
-                });
-                window.location.href = window.location.pathname;
-                return;
-            }
+            // 登入狀態判斷已交給上方的 onAuthStateChange（INITIAL_SESSION / SIGNED_IN）處理
+            // 這裡不再手動呼叫 getSession()，避免因逾時而誤刪有效的登入資料
 
             // 保險機制：3 秒後如果還卡在載入動畫，強制顯示登入表單
             setTimeout(() => {
