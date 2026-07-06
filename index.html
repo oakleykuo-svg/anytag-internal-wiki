@@ -298,6 +298,11 @@
             content: attr(data-placeholder);
             color: #aaa;
         }
+        .faq-rich-editor ul, .faq-rich-editor ol { padding-left: 24px; margin: 4px 0; }
+        .faq-rich-editor li { margin-bottom: 2px; line-height: 1.7; }
+        .faq-rich-editor ul ul { list-style-type: circle; }
+        .faq-rich-editor ul ul ul { list-style-type: square; }
+        .faq-rich-editor ol ol { list-style-type: lower-alpha; }
 
         /* --- 戰情室數據樣式 (New) - 修改：更加緊湊 --- */
         .data-war-room {
@@ -1822,6 +1827,8 @@ function toggleResCard(id) {
                 `;
                 container.innerHTML += html;
             });
+
+            fixConsecutiveOlCounters(container);
         }
 
         function filterFAQCategory(cat) {
