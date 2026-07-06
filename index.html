@@ -1779,7 +1779,12 @@ function toggleResCard(id) {
         // ── Supabase ──────────────────────────────────────
         const SUPABASE_URL  = 'https://aywpfumdwktkavoxshtm.supabase.co';
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5d3BmdW1kd2t0a2F2b3hzaHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU4MTYsImV4cCI6MjA5NzM0MTgxNn0.SfSXmflWUIgCWPKZ-i87dXMY_0_Uq0zJMC3Medd6z2s';
-        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+            auth: {
+                // 繞過 navigator.locks 機制：避免被瀏覽器擴充功能干擾導致 getSession() 卡死
+                lock: async (name, acquireTimeout, fn) => await fn()
+            }
+        });
 
         // 監聽器要在 client 建立後立刻註冊，不能等到 window.onload
         // 否則 Supabase 處理網址裡 token 的事件會在監聽器掛上去之前就發生並漏接
@@ -2334,7 +2339,10 @@ function toggleResCard(id) {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>登入中...';
             const { error } = await _sb.auth.signInWithOAuth({
                 provider: 'google',
-                options: { redirectTo: window.location.href }
+                options: {
+                    redirectTo: window.location.href,
+                    queryParams: { prompt: 'select_account' }
+                }
             });
             if (error) {
                 btn.disabled = false;
@@ -2402,7 +2410,7 @@ function toggleResCard(id) {
                 // 就不再乾等，直接視為沒有 session，顯示登入畫面
                 const sessionPromise = _sb.auth.getSession();
                 const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('getSession timeout')), 3000)
+                    setTimeout(() => reject(new Error('getSession timeout')), 1500)
                 );
                 const { data: { session }, error: sessionError } = await Promise.race([sessionPromise, timeoutPromise]);
                 if (sessionError) throw sessionError;
