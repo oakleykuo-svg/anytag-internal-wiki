@@ -2347,6 +2347,8 @@ function toggleResCard(id) {
             const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
             if (userRow) {
                 await unlockSite(userRow.role);
+            } else if (email.endsWith('@anymindgroup.com')) {
+                await unlockSite('viewer');
             } else {
                 await _sb.auth.signOut();
                 document.getElementById('login-error').style.display = 'block';
