@@ -2396,12 +2396,24 @@ function toggleResCard(id) {
             const hasAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
 
             // 檢查已存在的 Session（處理已登入過的使用者）
-            const { data: { session } } = await _sb.auth.getSession();
-            if (session) {
-                await handleSession(session);
-            } else if (!hasAuthRedirect) {
-                // 沒有 session，也不是 OAuth 重導向 → 直接顯示登入畫面
-                showLoginForm();
+            // 加上自我修復機制：若 localStorage 內的 session 資料損毀，自動清除並重新載入
+            try {
+                const { data: { session }, error: sessionError } = await _sb.auth.getSession();
+                if (sessionError) throw sessionError;
+                if (session) {
+                    await handleSession(session);
+                } else if (!hasAuthRedirect) {
+                    showLoginForm();
+                }
+            } catch (err) {
+                console.error('Session 讀取異常，自動清除損毀資料並重新載入:', err);
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('sb-') || key.includes('supabase')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                window.location.href = window.location.pathname;
+                return;
             }
 
             // 保險機制：3 秒後如果還卡在載入動畫，強制顯示登入表單
