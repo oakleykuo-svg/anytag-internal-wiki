@@ -3217,13 +3217,38 @@ function renderDashboardStats() {
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'warn')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">⚠️ 警告</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'tip')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">💡 提示</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'table')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">表格</button>
+                        <span style="border-left:1px solid #cbd5e1;margin:0 2px;"></span>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="resToggleSource(${idx})" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;font-family:monospace;">&lt;/&gt; 貼原始碼</button>
                     </div>
                     <div id="res-editor-${idx}" contenteditable="true"
                         style="padding:12px;min-height:80px;font-size:13px;outline:none;line-height:1.7;color:#334155;"
                         onblur="resSections[${idx}].content=this.innerHTML"
                         onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand(event.shiftKey?'outdent':'indent',false,null);}">${sec.content}</div>
+                    <div id="res-source-${idx}" style="display:none;padding:12px;border-top:1px solid #e2e8f0;background:#f8fafc;">
+                        <textarea id="res-source-input-${idx}" style="width:100%;min-height:140px;font-family:monospace;font-size:12px;padding:8px;border:1px solid #e2e8f0;border-radius:6px;box-sizing:border-box;" placeholder="貼上 HTML 原始碼..."></textarea>
+                        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+                            <button type="button" onclick="resApplySource(${idx})" style="padding:5px 14px;border:none;border-radius:6px;background:var(--brand-red);color:#fff;cursor:pointer;font-size:12px;font-weight:600;">套用</button>
+                        </div>
+                    </div>
                 </div>
             `).join('');
+        }
+
+        function resToggleSource(idx) {
+            const panel = document.getElementById('res-source-' + idx);
+            if (!panel) return;
+            const isOpen = panel.style.display !== 'none';
+            if (!isOpen) {
+                document.getElementById('res-source-input-' + idx).value = resSections[idx].content;
+            }
+            panel.style.display = isOpen ? 'none' : 'block';
+        }
+
+        function resApplySource(idx) {
+            const html = document.getElementById('res-source-input-' + idx).value;
+            resSections[idx].content = html;
+            document.getElementById('res-editor-' + idx).innerHTML = html;
+            resToggleSource(idx);
         }
 
         function resFmt(idx, cmd) {
