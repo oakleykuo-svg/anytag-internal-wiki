@@ -599,6 +599,11 @@
                 <i class="fa-brands fa-google" style="margin-right: 8px;"></i>使用 Google 帳號登入
             </button>
             <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">此帳號無存取權限，請聯繫管理員。</div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                <button onclick="clearAuthCacheAndReload()" style="background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">
+                    登入卡住了嗎？點此清除快取重試
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2381,6 +2386,16 @@ function toggleResCard(id) {
         }
 
         // --- 網頁初始化 (EntryPoint) ---
+        function clearAuthCacheAndReload() {
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('sb-') || key.includes('supabase')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            sessionStorage.clear();
+            window.location.href = window.location.pathname;
+        }
+
         function showLoginForm() {
             const loading = document.getElementById('login-loading');
             const box = document.getElementById('login-box');
