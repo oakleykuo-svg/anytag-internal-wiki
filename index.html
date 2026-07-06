@@ -1688,8 +1688,10 @@ function toggleResCard(id) {
               <button type="button" onmousedown="event.preventDefault()" onclick="faqFormat('insertUnorderedList')" title="無序清單">• 清單</button>
               <button type="button" onmousedown="event.preventDefault()" onclick="faqFormat('insertOrderedList')" title="有序清單">1. 清單</button>
               <button type="button" onmousedown="event.preventDefault()" onclick="faqAddLink()" title="插入連結">🔗 連結</button>
+              <button type="button" onmousedown="event.preventDefault()" onclick="faqAddImage()" title="插入圖片">🖼</button>
+              <input type="color" onmousedown="saveSelection()" oninput="faqApplyColor(this.value)" title="文字顏色" value="#000000" style="width:22px;height:22px;padding:0;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;vertical-align:middle;">
             </div>
-            <div id="faq-new-answer" contenteditable="true" class="faq-rich-editor" onfocus="faqActiveEditorId='faq-new-answer'" style="min-height:70px;"></div>
+            <div id="faq-new-answer" contenteditable="true" class="faq-rich-editor" onfocus="faqActiveEditorId='faq-new-answer'" onkeydown="faqHandleTab(event)" style="min-height:70px;"></div>
           </div>
           <div style="display:flex; justify-content:flex-end; margin-top:8px;">
             <button id="faq-add-btn" onclick="faqAdminAdd()" class="btn" style="padding:0 24px; height:36px; font-size:13px; width:auto;">新增</button>
@@ -1902,6 +1904,35 @@ function toggleResCard(id) {
             }
         }
 
+        function faqApplyColor(value) {
+            const editor = document.getElementById(faqActiveEditorId);
+            if (!editor) return;
+            editor.focus();
+            restoreSelection();
+            document.execCommand('foreColor', false, value);
+        }
+
+        function faqAddImage() {
+            let url = prompt('請輸入圖片網址（支援 Google Drive 分享連結）：', 'https://');
+            if (!url) return;
+            if (url.includes('drive.google.com')) {
+                const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+                if (idMatch) url = 'https://drive.google.com/thumbnail?id=' + idMatch[1] + '&sz=w1000';
+            }
+            const editor = document.getElementById(faqActiveEditorId);
+            if (!editor) return;
+            editor.focus();
+            document.execCommand('insertImage', false, url);
+        }
+
+        function faqHandleTab(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                if (e.shiftKey) document.execCommand('outdent', false, null);
+                else document.execCommand('indent', false, null);
+            }
+        }
+
         async function openFaqAdmin() {
             openModal('faqAdminModal');
             document.getElementById('faq-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
@@ -1938,8 +1969,10 @@ function toggleResCard(id) {
                             <button type="button" onmousedown="event.preventDefault()" onclick="faqFormat('insertUnorderedList')">• 清單</button>
                             <button type="button" onmousedown="event.preventDefault()" onclick="faqFormat('insertOrderedList')">1. 清單</button>
                             <button type="button" onmousedown="event.preventDefault()" onclick="faqAddLink()">🔗 連結</button>
+                            <button type="button" onmousedown="event.preventDefault()" onclick="faqAddImage()">🖼</button>
+                            <input type="color" onmousedown="saveSelection()" oninput="faqApplyColor(this.value)" value="#000000" style="width:22px;height:22px;padding:0;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;vertical-align:middle;">
                           </div>
-                          <div id="faq-edit-a-${idx}" contenteditable="true" class="faq-rich-editor" onfocus="faqActiveEditorId='faq-edit-a-${idx}'">${item.answer}</div>
+                          <div id="faq-edit-a-${idx}" contenteditable="true" class="faq-rich-editor" onfocus="faqActiveEditorId='faq-edit-a-${idx}'" onkeydown="faqHandleTab(event)">${item.answer}</div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end;">
                           <button onclick="faqAdminCancelEdit(${idx})" style="padding:0 16px; height:34px; font-size:13px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; color:#475569;">取消</button>
