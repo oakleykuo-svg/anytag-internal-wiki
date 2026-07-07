@@ -1773,6 +1773,14 @@ function toggleResCard(id) {
         const SUPABASE_URL  = 'https://aywpfumdwktkavoxshtm.supabase.co';
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5d3BmdW1kd2t0a2F2b3hzaHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU4MTYsImV4cCI6MjA5NzM0MTgxNn0.SfSXmflWUIgCWPKZ-i87dXMY_0_Uq0zJMC3Medd6z2s';
         const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        // 監聽器必須在 createClient 後立即註冊，才接得到 OAuth 重導回來的 SIGNED_IN 事件
+        let authHandled = false;
+        _sb.auth.onAuthStateChange(async (event, session) => {
+            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && !authHandled) {
+                authHandled = true;
+                await handleSession(session);
+            }
+        });
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
         let faqData = [];
 
@@ -2369,16 +2377,7 @@ function toggleResCard(id) {
         }
 
         window.onload = async function() {
-            // 監聽 OAuth 重導向後的登入事件（處理首次登入）
-            _sb.auth.onAuthStateChange(async (event, session) => {
-                if (event === 'SIGNED_IN') {
-                    await handleSession(session);
-                }
-            });
-
-            // 檢查已存在的 Session（處理已登入過的使用者）
-            const { data: { session } } = await _sb.auth.getSession();
-            await handleSession(session);
+            
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
             if (initHash) {
