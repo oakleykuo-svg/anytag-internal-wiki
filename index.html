@@ -2322,7 +2322,7 @@ function toggleResCard(id) {
             } catch (err) {
                 console.error('Sign out error:', err);
             } finally {
-                location.reload();
+                window.location.replace(window.location.origin + window.location.pathname);
             }
         }
         
@@ -2333,7 +2333,7 @@ function toggleResCard(id) {
             const { error } = await _sb.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.href,
+                    redirectTo: window.location.origin + window.location.pathname,
                     queryParams: { prompt: 'select_account' }
                 }
             });
