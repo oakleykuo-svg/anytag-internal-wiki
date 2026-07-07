@@ -1779,10 +1779,10 @@ function toggleResCard(id) {
         });
         // 監聽器必須在 createClient 後立即註冊，才接得到 OAuth 重導回來的 SIGNED_IN 事件
         let authHandled = false;
-        _sb.auth.onAuthStateChange(async (event, session) => {
+        _sb.auth.onAuthStateChange((event, session) => {
             if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && !authHandled) {
                 authHandled = true;
-                await handleSession(session);
+                setTimeout(() => { handleSession(session); }, 0);
             }
         });
 
