@@ -770,7 +770,10 @@
             </div>
         </div>
         
-        <div style="margin-top: auto; font-size: 11px; color: #6d7f96; padding-left: 12px; line-height: 1.5;">
+        <div class="nav-item" onclick="signOutUser()" style="margin-top: auto; margin-bottom: 10px;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> 登出
+        </div>
+        <div style="font-size: 11px; color: #6d7f96; padding-left: 12px; line-height: 1.5;">
             AnyMind Group © 2025<br>Internal Use Only<br>
             <span style="color: var(--brand-red);">v.0.0.1 (Beta)</span>
         </div>
@@ -2304,6 +2307,17 @@ function toggleResCard(id) {
         }
 
 // --- Supabase 認證邏輯 ---
+        async function signOutUser() {
+            if (!confirm('確定要登出嗎？')) return;
+            try {
+                await _sb.auth.signOut();
+            } catch (err) {
+                console.error('Sign out error:', err);
+            } finally {
+                location.reload();
+            }
+        }
+        
         async function signInWithGoogle() {
             const btn = document.getElementById('google-login-btn');
             btn.disabled = true;
