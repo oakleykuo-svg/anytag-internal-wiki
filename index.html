@@ -2371,8 +2371,14 @@ function toggleResCard(id) {
             if (userRow) {
                 await unlockSite(userRow.role);
             } else {
-                await _sb.auth.signOut();
-                document.getElementById('login-error').style.display = 'block';
+                const errEl = document.getElementById('login-error');
+                errEl.innerHTML = '<strong>' + email + '</strong><br>此帳號無存取權限，請聯繫管理員。';
+                errEl.style.display = 'block';
+                try {
+                    await _sb.auth.signOut();
+                } catch (err) {
+                    console.error('Sign out after rejection failed:', err);
+                }
             }
         }
 
