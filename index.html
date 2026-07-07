@@ -588,10 +588,7 @@
 <body>
 <!-- 全螢幕登入遮罩 -->
     <div id="login-overlay">
-        <div id="login-loading">
-            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 32px; color: var(--brand-red);"></i>
-        </div>
-        <div class="login-box" id="login-box" style="display:none;">
+        <div class="login-box">
             <div class="login-logo"><i class="fa-brands fa-google"></i></div>
             <div class="login-title">TAIWAN Support Hub</div>
             <div class="login-desc">這是 AnyMind 內部機密網頁<br>請用公司 Google 帳號登入</div>
@@ -599,11 +596,6 @@
                 <i class="fa-brands fa-google" style="margin-right: 8px;"></i>使用 Google 帳號登入
             </button>
             <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">此帳號無存取權限，請聯繫管理員。</div>
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
-                <button onclick="clearAuthCacheAndReload()" style="background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer; text-decoration:underline;">
-                    登入卡住了嗎？點此清除快取重試
-                </button>
-            </div>
         </div>
     </div>
 
@@ -789,14 +781,9 @@
                 <h1 id="header-title">AnyTag/AnyCreator Support Hub</h1>
                 <p id="header-desc">Welcome！遇到AnyTag/AnyCreator的疑難雜症了嗎？我來幫你解決！</p>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div class="search-box">
-                    <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="searchInput" placeholder="搜尋 SOP、FAQ 或資源..." onkeyup="smartSearch()">
-                </div>
-                <button onclick="logoutUser()" title="登出" style="width:42px; height:42px; border-radius:50%; background:#fff; border:none; box-shadow:var(--shadow-sm); cursor:pointer; color:#64748b; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
+            <div class="search-box">
+                <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="searchInput" placeholder="搜尋 SOP、FAQ 或資源..." onkeyup="smartSearch()">
             </div>
         </div>
 
@@ -857,9 +844,9 @@
                     </div>
                 </div>
 
-                <!-- 右側：累積成長趨勢圖 -->
+                <!-- 右側：成長趨勢圖 -->
                 <div class="chart-section">
-                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📈 網紅總數成長趨勢 (Total Unique Trend)</div>
+                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 每週網紅新增數 (Weekly Growth)</div>
                     <div style="flex:1; position:relative;">
                         <canvas id="influencerGrowthChart"></canvas>
                     </div>
@@ -1784,24 +1771,7 @@ function toggleResCard(id) {
         // ── Supabase ──────────────────────────────────────
         const SUPABASE_URL  = 'https://aywpfumdwktkavoxshtm.supabase.co';
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5d3BmdW1kd2t0a2F2b3hzaHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU4MTYsImV4cCI6MjA5NzM0MTgxNn0.SfSXmflWUIgCWPKZ-i87dXMY_0_Uq0zJMC3Medd6z2s';
-        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-            auth: {
-                // 繞過 navigator.locks 機制：避免被瀏覽器擴充功能干擾導致 getSession() 卡死
-                lock: async (name, acquireTimeout, fn) => await fn()
-            }
-        });
-
-        // 監聽器要在 client 建立後立刻註冊，不能等到 window.onload
-        // 否則 Supabase 處理網址裡 token 的事件會在監聽器掛上去之前就發生並漏接
-        _sb.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-                if (session) {
-                    await handleSession(session);
-                } else if (event === 'INITIAL_SESSION') {
-                    showLoginForm();
-                }
-            }
-        });
+        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
         let faqData = [];
 
@@ -2335,12 +2305,6 @@ function toggleResCard(id) {
             menu.style.display = isOpen ? 'none' : 'flex';
         }
 
-        async function logoutUser() {
-            if (!confirm('確定要登出嗎？')) return;
-            await _sb.auth.signOut();
-            window.location.reload();
-        }
-
 // --- Supabase 認證邏輯 ---
         async function signInWithGoogle() {
             const btn = document.getElementById('google-login-btn');
@@ -2348,10 +2312,7 @@ function toggleResCard(id) {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>登入中...';
             const { error } = await _sb.auth.signInWithOAuth({
                 provider: 'google',
-                options: {
-                    redirectTo: window.location.href,
-                    queryParams: { prompt: 'select_account' }
-                }
+                options: { redirectTo: window.location.href }
             });
             if (error) {
                 btn.disabled = false;
@@ -2361,12 +2322,6 @@ function toggleResCard(id) {
         }
 
         async function unlockSite(role) {
-            // 清除網址列殘留的 OAuth token，避免下次重整時混淆
-            if (window.location.hash.includes('access_token')) {
-                history.replaceState(null, '', window.location.pathname + window.location.hash.replace(/^#.*/, '').replace(/access_token[^&]*&?/g, ''));
-                // 保守處理：直接清空 hash，保留原本的頁面錨點需求較低，直接清空最安全
-                history.replaceState(null, '', window.location.pathname + window.location.search);
-            }
             const overlay = document.getElementById('login-overlay');
             if(overlay) overlay.style.display = 'none';
             if (role === 'admin') {
@@ -2386,52 +2341,29 @@ function toggleResCard(id) {
         }
 
         // --- 網頁初始化 (EntryPoint) ---
-        function clearAuthCacheAndReload() {
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('sb-') || key.includes('supabase')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            sessionStorage.clear();
-            window.location.href = window.location.pathname;
-        }
-
-        function showLoginForm() {
-            const loading = document.getElementById('login-loading');
-            const box = document.getElementById('login-box');
-            if (loading) loading.style.display = 'none';
-            if (box) box.style.display = 'block';
-        }
-
         async function handleSession(session) {
             if (!session) return;
             const email = session.user.email;
             const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
             if (userRow) {
                 await unlockSite(userRow.role);
-            } else if (email.endsWith('@anymindgroup.com')) {
-                await unlockSite('viewer');
             } else {
                 await _sb.auth.signOut();
                 document.getElementById('login-error').style.display = 'block';
-                showLoginForm();
             }
         }
 
         window.onload = async function() {
-            // 判斷網址是否帶有 OAuth 重導向的 token（首次登入流程）
-            const hasAuthRedirect = window.location.hash.includes('access_token') || window.location.search.includes('code=');
-
-            // 登入狀態判斷已交給上方的 onAuthStateChange（INITIAL_SESSION / SIGNED_IN）處理
-            // 這裡不再手動呼叫 getSession()，避免因逾時而誤刪有效的登入資料
-
-            // 保險機制：3 秒後如果還卡在載入動畫，強制顯示登入表單
-            setTimeout(() => {
-                const box = document.getElementById('login-box');
-                if (box && box.style.display === 'none' && document.getElementById('login-overlay').style.display !== 'none') {
-                    showLoginForm();
+            // 監聽 OAuth 重導向後的登入事件（處理首次登入）
+            _sb.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN') {
+                    await handleSession(session);
                 }
-            }, 3000);
+            });
+
+            // 檢查已存在的 Session（處理已登入過的使用者）
+            const { data: { session } } = await _sb.auth.getSession();
+            await handleSession(session);
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
             if (initHash) {
@@ -2561,73 +2493,72 @@ function toggleResCard(id) {
                 }
             }
 
-            // 取最近 30 天內的資料點畫成累積趨勢線
-            const thirtyDaysAgo = new Date(latest.date);
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            const recentData = data.filter(d => new Date(d.date) >= thirtyDaysAgo);
-
-            const CLEANUP_DATE = '2026-06-30'; // 資料庫清理日期標記
-
-            const chartLabels = recentData.map(d => formatDate(d.date));
-            const chartData = recentData.map(d => d.total_unique);
-            const cleanupIndex = recentData.findIndex(d => d.date === CLEANUP_DATE);
-
+            const weeklySnapshots = [];
+            let currentRef = data[data.length - 1];
+            weeklySnapshots.push(currentRef);
+            
+            for (let i = 0; i < 8; i++) {
+                const targetDate = new Date(currentRef.date);
+                targetDate.setDate(targetDate.getDate() - 7);
+                let closest = null;
+                let minDiff = Infinity;
+                let currentIndex = data.indexOf(currentRef);
+                
+                for(let j = currentIndex - 1; j >= 0; j--) {
+                     const d = new Date(data[j].date);
+                     const diff = Math.abs(d - targetDate);
+                     if(diff < minDiff) {
+                         minDiff = diff;
+                         closest = data[j];
+                     }
+                }
+                
+                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { 
+                     weeklySnapshots.unshift(closest); 
+                     currentRef = closest;
+                } else {
+                     break; 
+                }
+            }
+            
+            const chartLabels = [];
+            const chartData = [];
+            
+            for(let i = 1; i < weeklySnapshots.length; i++) {
+                 chartLabels.push(formatDate(weeklySnapshots[i].date));
+                 chartData.push(weeklySnapshots[i].total_unique - weeklySnapshots[i-1].total_unique);
+            }
+            
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
             
             if (growthChartInstance) {
                 growthChartInstance.destroy();
             }
 
-            const cleanupLinePlugin = {
-                id: 'cleanupLine',
-                afterDraw(chart) {
-                    if (cleanupIndex === -1) return;
-                    const xScale = chart.scales.x;
-                    const yScale = chart.scales.y;
-                    const xPos = xScale.getPixelForValue(cleanupIndex);
-                    const ctx = chart.ctx;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.setLineDash([4, 4]);
-                    ctx.moveTo(xPos, yScale.top);
-                    ctx.lineTo(xPos, yScale.bottom);
-                    ctx.strokeStyle = '#94a3b8';
-                    ctx.lineWidth = 1.5;
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.fillStyle = '#64748b';
-                    ctx.font = '11px Inter, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('資料庫清理', xPos, yScale.top + 12);
-                    ctx.restore();
-                }
-            };
-
             growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Total Unique Influencers',
+                        label: 'Weekly New Influencers',
                         data: chartData,
                         borderColor: '#E14F4B',
                         backgroundColor: 'rgba(225, 79, 75, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#E14F4B',
-                        pointRadius: 4,
+                        pointRadius: 5,
                         fill: true,
                         tension: 0.3
                     }]
                 },
-                plugins: [cleanupLinePlugin],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { 
-                            beginAtZero: false, 
+                            beginAtZero: true, 
                             grid: { borderDash: [2, 4] }
                         },
                         x: { grid: { display: false } }
@@ -3239,38 +3170,13 @@ function renderDashboardStats() {
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'warn')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">⚠️ 警告</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'tip')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">💡 提示</button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="resInsertBlock(${idx},'table')" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;">表格</button>
-                        <span style="border-left:1px solid #cbd5e1;margin:0 2px;"></span>
-                        <button type="button" onmousedown="event.preventDefault()" onclick="resToggleSource(${idx})" style="padding:2px 8px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px;font-family:monospace;">&lt;/&gt; 貼原始碼</button>
                     </div>
                     <div id="res-editor-${idx}" contenteditable="true"
                         style="padding:12px;min-height:80px;font-size:13px;outline:none;line-height:1.7;color:#334155;"
                         onblur="resSections[${idx}].content=this.innerHTML"
                         onkeydown="if(event.key==='Tab'){event.preventDefault();document.execCommand(event.shiftKey?'outdent':'indent',false,null);}">${sec.content}</div>
-                    <div id="res-source-${idx}" style="display:none;padding:12px;border-top:1px solid #e2e8f0;background:#f8fafc;">
-                        <textarea id="res-source-input-${idx}" style="width:100%;min-height:140px;font-family:monospace;font-size:12px;padding:8px;border:1px solid #e2e8f0;border-radius:6px;box-sizing:border-box;" placeholder="貼上 HTML 原始碼..."></textarea>
-                        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
-                            <button type="button" onclick="resApplySource(${idx})" style="padding:5px 14px;border:none;border-radius:6px;background:var(--brand-red);color:#fff;cursor:pointer;font-size:12px;font-weight:600;">套用</button>
-                        </div>
-                    </div>
                 </div>
             `).join('');
-        }
-
-        function resToggleSource(idx) {
-            const panel = document.getElementById('res-source-' + idx);
-            if (!panel) return;
-            const isOpen = panel.style.display !== 'none';
-            if (!isOpen) {
-                document.getElementById('res-source-input-' + idx).value = resSections[idx].content;
-            }
-            panel.style.display = isOpen ? 'none' : 'block';
-        }
-
-        function resApplySource(idx) {
-            const html = document.getElementById('res-source-input-' + idx).value;
-            resSections[idx].content = html;
-            document.getElementById('res-editor-' + idx).innerHTML = html;
-            resToggleSource(idx);
         }
 
         function resFmt(idx, cmd) {
