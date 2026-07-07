@@ -590,6 +590,13 @@
 <!-- 全螢幕登入遮罩 -->
     <div id="login-overlay">
         <div class="login-box">
+            <!-- 狀態 A：驗證身份中（預設顯示） -->
+            <div id="auth-checking" style="padding: 20px 0;">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 32px; color: var(--brand-red);"></i>
+                <div style="margin-top: 16px; font-size: 15px; color: #666; font-weight: 600;">驗證身份中...</div>
+            </div>
+            <!-- 狀態 B：登入表單（預設隱藏） -->
+            <div id="auth-login-form" style="display: none;">
             <div class="login-logo"><i class="fa-brands fa-google"></i></div>
             <div class="login-title">TAIWAN Support Hub</div>
             <div class="login-desc">這是 AnyMind 內部機密網頁<br>請用公司 Google 帳號登入</div>
@@ -597,6 +604,7 @@
                 <i class="fa-brands fa-google" style="margin-right: 8px;"></i>使用 Google 帳號登入
             </button>
             <div id="login-error" style="color: red; font-size: 13px; margin-top: 15px; display: none;">此帳號無存取權限，請聯繫管理員。</div>
+            </div><!-- /#auth-login-form -->
         </div>
     </div>
 
@@ -1775,10 +1783,18 @@ function toggleResCard(id) {
         const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
         // 監聽器必須在 createClient 後立即註冊，才接得到 OAuth 重導回來的 SIGNED_IN 事件
         let authHandled = false;
+        function showLoginForm() {
+            const checking = document.getElementById('auth-checking');
+            const form = document.getElementById('auth-login-form');
+            if (checking) checking.style.display = 'none';
+            if (form) form.style.display = 'block';
+        }
         _sb.auth.onAuthStateChange(async (event, session) => {
             if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && !authHandled) {
                 authHandled = true;
                 await handleSession(session);
+            } else if (event === 'INITIAL_SESSION' && !session) {
+                showLoginForm();
             }
         });
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
@@ -2371,6 +2387,7 @@ function toggleResCard(id) {
             if (userRow) {
                 await unlockSite(userRow.role);
             } else {
+                showLoginForm();
                 const errEl = document.getElementById('login-error');
                 errEl.innerHTML = '<strong>' + email + '</strong><br>此帳號無存取權限，請聯繫管理員。';
                 errEl.style.display = 'block';
