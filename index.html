@@ -1772,7 +1772,11 @@ function toggleResCard(id) {
         // ── Supabase ──────────────────────────────────────
         const SUPABASE_URL  = 'https://aywpfumdwktkavoxshtm.supabase.co';
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF5d3BmdW1kd2t0a2F2b3hzaHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NjU4MTYsImV4cCI6MjA5NzM0MTgxNn0.SfSXmflWUIgCWPKZ-i87dXMY_0_Uq0zJMC3Medd6z2s';
-        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+            auth: {
+                lock: async (name, acquireTimeout, fn) => await fn()
+            }
+        });
         // 監聽器必須在 createClient 後立即註冊，才接得到 OAuth 重導回來的 SIGNED_IN 事件
         let authHandled = false;
         _sb.auth.onAuthStateChange(async (event, session) => {
@@ -1781,6 +1785,20 @@ function toggleResCard(id) {
                 await handleSession(session);
             }
         });
+
+        // 備援機制：如果上面的監聽器在 1.5 秒內沒有觸發，主動再檢查一次登入狀態
+        setTimeout(async () => {
+            if (authHandled) return;
+            try {
+                const { data: { session } } = await _sb.auth.getSession();
+                if (session && !authHandled) {
+                    authHandled = true;
+                    await handleSession(session);
+                }
+            } catch (err) {
+                console.error('Fallback getSession 失敗:', err);
+            }
+        }, 1500);
         /* --- FAQ / 疑難排解資料與邏輯 (全域變數區) --- */
         let faqData = [];
 
