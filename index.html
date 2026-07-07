@@ -2380,7 +2380,8 @@ function toggleResCard(id) {
             
             // 讀取網址 Hash，直接跳到對應頁面
             const initHash = window.location.hash.replace('#', '');
-            if (initHash) {
+            const initTarget = initHash ? document.getElementById(initHash) : null;
+            if (initTarget && initTarget.classList.contains('section')) {
                 showPage(initHash);
             }
 
