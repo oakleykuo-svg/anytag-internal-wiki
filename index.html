@@ -8,6 +8,7 @@
     <!-- 更新 Font Awesome 版本至 6.5.1 以支援 Threads 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -843,7 +844,7 @@
 
                 <!-- 右側：成長趨勢圖 -->
                 <div class="chart-section">
-                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 每週網紅新增數 (Weekly Growth)</div>
+                    <div style="font-weight:700; margin-bottom:15px; color:#333;">📊 網紅總數 30 天趨勢 (Total Unique Trend)</div>
                     <div style="flex:1; position:relative;">
                         <canvas id="influencerGrowthChart"></canvas>
                     </div>
@@ -2490,61 +2491,67 @@ function toggleResCard(id) {
                 }
             }
 
-            const weeklySnapshots = [];
-            let currentRef = data[data.length - 1];
-            weeklySnapshots.push(currentRef);
-            
-            for (let i = 0; i < 8; i++) {
-                const targetDate = new Date(currentRef.date);
-                targetDate.setDate(targetDate.getDate() - 7);
-                let closest = null;
-                let minDiff = Infinity;
-                let currentIndex = data.indexOf(currentRef);
-                
-                for(let j = currentIndex - 1; j >= 0; j--) {
-                     const d = new Date(data[j].date);
-                     const diff = Math.abs(d - targetDate);
-                     if(diff < minDiff) {
-                         minDiff = diff;
-                         closest = data[j];
-                     }
-                }
-                
-                if(closest && minDiff < 3 * 24 * 60 * 60 * 1000) { 
-                     weeklySnapshots.unshift(closest); 
-                     currentRef = closest;
-                } else {
-                     break; 
-                }
-            }
-            
-            const chartLabels = [];
-            const chartData = [];
-            
-            for(let i = 1; i < weeklySnapshots.length; i++) {
-                 chartLabels.push(formatDate(weeklySnapshots[i].date));
-                 chartData.push(weeklySnapshots[i].total_unique - weeklySnapshots[i-1].total_unique);
-            }
-            
+            // --- 30 天 Total Unique 趨勢 ---
+            const CLEANUP_DATE = '2026-06-30'; // 資料庫清理事件日期
+
+            const latestDate = new Date(latest.date);
+            const cutoffDate = new Date(latestDate);
+            cutoffDate.setDate(cutoffDate.getDate() - 30);
+
+            const trendData = data.filter(item => {
+                const d = new Date(item.date);
+                return d >= cutoffDate && d <= latestDate;
+            });
+
+            const chartLabels = trendData.map(item => formatDate(item.date));
+            const chartData = trendData.map(item => item.total_unique);
+
+            // 找出清理事件在資料中的位置（用格式化後的日期比對）
+            const cleanupLabel = formatDate(new Date(CLEANUP_DATE).toISOString());
+            const cleanupIndex = chartLabels.indexOf(cleanupLabel);
+
             const ctx = document.getElementById('influencerGrowthChart').getContext('2d');
             
             if (growthChartInstance) {
                 growthChartInstance.destroy();
             }
 
+            const annotationConfig = cleanupIndex !== -1 ? {
+                annotations: {
+                    cleanupLine: {
+                        type: 'line',
+                        xMin: cleanupIndex,
+                        xMax: cleanupIndex,
+                        borderColor: '#f59e0b',
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        label: {
+                            display: true,
+                            content: '⚠️ 資料庫清理 (-1.5萬)',
+                            position: 'start',
+                            backgroundColor: 'rgba(245, 158, 11, 0.9)',
+                            color: '#fff',
+                            font: { size: 11, weight: 'bold' },
+                            padding: 6,
+                            borderRadius: 6
+                        }
+                    }
+                }
+            } : {};
+
             growthChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Weekly New Influencers',
+                        label: 'Total Unique Influencers',
                         data: chartData,
                         borderColor: '#E14F4B',
                         backgroundColor: 'rgba(225, 79, 75, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#E14F4B',
-                        pointRadius: 5,
+                        pointRadius: 4,
                         fill: true,
                         tension: 0.3
                     }]
@@ -2552,13 +2559,34 @@ function toggleResCard(id) {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        annotation: annotationConfig,
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    if (context.dataIndex === cleanupIndex) {
+                                        return '⚠️ 此日進行資料庫清理，移除約 1.5 萬筆無效帳號';
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: { 
-                            beginAtZero: true, 
-                            grid: { borderDash: [2, 4] }
+                            beginAtZero: false, 
+                            grid: { borderDash: [2, 4] },
+                            ticks: {
+                                callback: function(value) {
+                                    return (value / 1000).toFixed(0) + 'k';
+                                }
+                            }
                         },
-                        x: { grid: { display: false } }
+                        x: { 
+                            grid: { display: false },
+                            ticks: { maxTicksLimit: 4, maxRotation: 0 }
+                        }
                     }
                 }
             });
