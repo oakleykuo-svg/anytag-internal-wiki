@@ -2324,7 +2324,10 @@ function toggleResCard(id) {
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>登入中...';
             const { error } = await _sb.auth.signInWithOAuth({
                 provider: 'google',
-                options: { redirectTo: window.location.href }
+                options: {
+                    redirectTo: window.location.href,
+                    queryParams: { prompt: 'select_account' }
+                }
             });
             if (error) {
                 btn.disabled = false;
