@@ -2388,6 +2388,8 @@ function toggleResCard(id) {
             const { data: userRow } = await _sb.from('allowed_users').select('role').eq('email', email).single();
             if (userRow) {
                 await unlockSite(userRow.role);
+            } else if (email.endsWith('@anymindgroup.com')) {
+                await unlockSite('viewer');
             } else {
                 const errEl = document.getElementById('login-error');
                 errEl.innerHTML = '<strong>' + email + '</strong><br>此帳號無存取權限，請聯繫管理員。';
