@@ -2389,6 +2389,11 @@ function toggleResCard(id) {
             if (userRow) {
                 await unlockSite(userRow.role);
             } else if (email.endsWith('@anymindgroup.com')) {
+                try {
+                    await _sb.from('allowed_users').insert({ email: email, role: 'viewer' });
+                } catch (err) {
+                    console.error('Auto-add allowed_users failed:', err);
+                }
                 await unlockSite('viewer');
             } else {
                 const errEl = document.getElementById('login-error');
