@@ -210,6 +210,9 @@
 
         /* --- 卡片樣式 --- */
         .card { background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.5); position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+        .glow-blob { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: 0; }
+        .glow-blob-red { width: 320px; height: 320px; top: -90px; left: -60px; background: rgba(225, 79, 75, 0.45); }
+        .glow-blob-navy { width: 280px; height: 280px; bottom: -70px; right: -40px; background: rgba(9, 22, 50, 0.4); }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(9, 22, 50, 0.15); border-color: rgba(9, 22, 50, 0.1); }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--brand-red); opacity: 0; transition: opacity 0.3s; }
         .card:hover::before { opacity: 1; }
@@ -868,14 +871,19 @@
             </div>
 
             <h3 style="margin-bottom: 20px; font-weight: 700;">捷徑 (Quick Access)</h3>
-            
-            <div class="tabs-container">
-                <button class="tab-btn active" onclick="filterRole('All')">全部</button>
-                <button class="tab-btn" onclick="filterRole('BD')">業務專區 (BD)</button>
-                <button class="tab-btn" onclick="filterRole('IM')">執行專區 (IM)</button>
-            </div>
 
-            <div id="quick-access-container" class="grid-4"></div>
+            <div style="position: relative;">
+                <div class="glow-blob glow-blob-red"></div>
+                <div class="glow-blob glow-blob-navy"></div>
+
+                <div class="tabs-container" style="position: relative; z-index: 1;">
+                    <button class="tab-btn active" onclick="filterRole('All')">全部</button>
+                    <button class="tab-btn" onclick="filterRole('BD')">業務專區 (BD)</button>
+                    <button class="tab-btn" onclick="filterRole('IM')">執行專區 (IM)</button>
+                </div>
+
+                <div id="quick-access-container" class="grid-4" style="position: relative; z-index: 1;"></div>
+            </div>
 
             <h3 style="margin-bottom: 20px; font-weight: 700;">平台狀態概覽</h3>
             <div class="table-container">
