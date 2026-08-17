@@ -212,7 +212,7 @@
         .card { background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.5); position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
         .glow-blob { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: 0; }
         .glow-blob-red { width: 320px; height: 320px; top: -90px; left: -60px; background: rgba(225, 79, 75, 0.45); }
-        .glow-blob-navy { width: 280px; height: 280px; bottom: -70px; right: -40px; background: rgba(9, 22, 50, 0.4); }
+        .glow-blob-navy { width: 280px; height: 280px; bottom: -70px; right: -40px; background: rgba(225, 79, 75, 0.45); }
         .card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(9, 22, 50, 0.15); border-color: rgba(9, 22, 50, 0.1); }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--brand-red); opacity: 0; transition: opacity 0.3s; }
         .card:hover::before { opacity: 1; }
@@ -1736,7 +1736,10 @@ function toggleResCard(id) {
             <input id="card-new-title" type="text" placeholder="卡片標題 *" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
             <input id="card-new-tag" type="text" placeholder="標籤（例：User Guide）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
             <input id="card-new-desc" type="text" placeholder="說明文字 *" style="grid-column:1/-1; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
-            <input id="card-new-icon" type="text" placeholder="Font Awesome class（例：fa-solid fa-rocket）" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select id="card-new-icon-select" onchange="updateCardNewIconPreview()" style="flex:1; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;"></select>
+              <div id="card-new-icon-preview" style="width:36px; height:36px; background:rgba(9,22,50,0.06); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"></div>
+            </div>
             <select id="card-new-role" style="padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
               <option value="All">全部 (All)</option>
               <option value="BD">業務 (BD)</option>
@@ -2087,9 +2090,57 @@ function toggleResCard(id) {
 /* ===== Card Admin ===== */
         let cardAdminData = [];
 
+        const CARD_ICONS = [
+            { label: '火箭（更新/新功能）',     cls: 'fa-solid fa-rocket' },
+            { label: '放大鏡（搜尋）',           cls: 'fa-solid fa-magnifying-glass' },
+            { label: '搜尋定位（教學/SOP）',     cls: 'fa-solid fa-magnifying-glass-location' },
+            { label: '問號（FAQ）',              cls: 'fa-solid fa-circle-question' },
+            { label: '對話框（留言/回饋）',      cls: 'fa-solid fa-comments' },
+            { label: '商店（銷售）',             cls: 'fa-solid fa-shop' },
+            { label: '文件',                     cls: 'fa-solid fa-file-lines' },
+            { label: '簡報檔（PPT範本）',        cls: 'fa-solid fa-file-powerpoint' },
+            { label: '折線圖（數據趨勢）',       cls: 'fa-solid fa-chart-line' },
+            { label: '資料夾',                   cls: 'fa-solid fa-folder-open' },
+            { label: '鏈結',                     cls: 'fa-solid fa-link' },
+            { label: '星星',                     cls: 'fa-solid fa-star' },
+            { label: '書本',                     cls: 'fa-solid fa-book-open' },
+            { label: '機器人（AI）',             cls: 'fa-solid fa-robot' },
+            { label: '工具（設定）',             cls: 'fa-solid fa-screwdriver-wrench' },
+            { label: '閃電（自動化）',           cls: 'fa-solid fa-bolt' },
+            { label: '鈴鐺（通知）',             cls: 'fa-solid fa-bell' },
+            { label: '禮物',                     cls: 'fa-solid fa-gift' },
+            { label: '使用者群組',               cls: 'fa-solid fa-users' },
+            { label: '行事曆',                   cls: 'fa-solid fa-calendar' },
+            { label: '讚',                       cls: 'fa-solid fa-thumbs-up' },
+            { label: '靶心（目標）',             cls: 'fa-solid fa-bullseye' },
+            { label: '報紙（動態）',             cls: 'fa-solid fa-newspaper' },
+            { label: '燈泡（想法）',             cls: 'fa-solid fa-lightbulb' },
+            { label: '盾牌（安全/保障）',        cls: 'fa-solid fa-shield-halved' },
+            { label: '魔杖（創作者）',           cls: 'fa-solid fa-wand-magic-sparkles' },
+        ];
+
+        function cardIconOptionsHtml(selectedCls) {
+            const hasMatch = CARD_ICONS.some(ic => ic.cls === selectedCls);
+            const extra = (selectedCls && !hasMatch) ? `<option value="${selectedCls}" selected>目前使用中（${selectedCls}）</option>` : '';
+            return extra + CARD_ICONS.map(ic => `<option value="${ic.cls}" ${ic.cls === selectedCls ? 'selected' : ''}>${ic.label}</option>`).join('');
+        }
+
+        function updateCardNewIconPreview() {
+            const cls = document.getElementById('card-new-icon-select').value;
+            document.getElementById('card-new-icon-preview').innerHTML = `<i class="${cls}" style="font-size:18px;color:var(--brand-red);"></i>`;
+        }
+
+        function updateCardEditIconPreview(idx) {
+            const cls = document.getElementById('ce-icon-select-' + idx).value;
+            document.getElementById('ce-icon-preview-' + idx).innerHTML = `<i class="${cls}" style="font-size:16px;color:var(--brand-red);"></i>`;
+        }
+
         async function openCardAdmin() {
             openModal('cardAdminModal');
             document.getElementById('card-admin-list').innerHTML = '<div style="text-align:center;color:#999;padding:30px;">載入中...</div>';
+            const iconSel = document.getElementById('card-new-icon-select');
+            iconSel.innerHTML = cardIconOptionsHtml(null);
+            updateCardNewIconPreview();
             const { data, error } = await _sb.from('quick_access').select('*').order('sort_order', { ascending: true });
             if (error) { console.error('Card admin load failed:', error); return; }
             cardAdminData = data;
@@ -2121,7 +2172,10 @@ function toggleResCard(id) {
                           <input id="ce-title-${idx}" value="${item.title.replace(/"/g,'&quot;')}" placeholder="標題" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
                           <input id="ce-tag-${idx}" value="${item.tag.replace(/"/g,'&quot;')}" placeholder="標籤" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
                           <input id="ce-desc-${idx}" value="${item.description.replace(/"/g,'&quot;')}" placeholder="說明" style="grid-column:1/-1; padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
-                          <input id="ce-icon-${idx}" value="${item.icon.replace(/"/g,'&quot;')}" placeholder="Font Awesome class" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none;">
+                          <div style="display:flex; gap:8px; align-items:center;">
+                            <select id="ce-icon-select-${idx}" onchange="updateCardEditIconPreview(${idx})" style="flex:1; padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">${cardIconOptionsHtml(item.icon)}</select>
+                            <div id="ce-icon-preview-${idx}" style="width:32px; height:32px; background:rgba(9,22,50,0.06); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="${item.icon}" style="font-size:16px;color:var(--brand-red);"></i></div>
+                          </div>
                           <select id="ce-role-${idx}" style="padding:7px 10px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; background:#fff;">
                             <option value="All" ${item.role==='All'?'selected':''}>全部 (All)</option>
                             <option value="BD" ${item.role==='BD'?'selected':''}>業務 (BD)</option>
@@ -2171,7 +2225,7 @@ function toggleResCard(id) {
                 title:         document.getElementById('ce-title-' + idx).value,
                 description:   document.getElementById('ce-desc-' + idx).value,
                 tag:           document.getElementById('ce-tag-' + idx).value,
-                icon:          document.getElementById('ce-icon-' + idx).value,
+                icon:          document.getElementById('ce-icon-select-' + idx).value,
                 role:          document.getElementById('ce-role-' + idx).value,
                 button_text:   document.getElementById('ce-btn-text-' + idx).value,
                 button_type:   document.getElementById('ce-btn-type-' + idx).value,
@@ -2201,14 +2255,14 @@ function toggleResCard(id) {
                 title,
                 description:   desc,
                 tag:           document.getElementById('card-new-tag').value.trim(),
-                icon:          document.getElementById('card-new-icon').value.trim(),
+                icon:          document.getElementById('card-new-icon-select').value,
                 role:          document.getElementById('card-new-role').value,
                 button_text:   document.getElementById('card-new-btn-text').value.trim(),
                 button_type:   document.getElementById('card-new-btn-type').value,
                 button_target: document.getElementById('card-new-btn-target').value.trim()
             });
             if (error) { console.error('Card add failed:', error); btn.textContent = '新增'; btn.disabled = false; return; }
-            ['card-new-title','card-new-desc','card-new-tag','card-new-icon','card-new-btn-text','card-new-btn-target'].forEach(id => document.getElementById(id).value = '');
+            ['card-new-title','card-new-desc','card-new-tag','card-new-btn-text','card-new-btn-target'].forEach(id => document.getElementById(id).value = '');
             btn.textContent = '新增'; btn.disabled = false;
             await openCardAdmin();
         }
